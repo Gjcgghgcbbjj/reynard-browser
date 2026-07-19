@@ -11,6 +11,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        StabilityDiagnostics.shared.record(
+            .startup,
+            name: "scene.willConnect",
+            metadata: ["activationState": String(scene.activationState.rawValue)]
+        )
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let browserViewController = BrowserViewController()
@@ -30,21 +35,28 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         handleIncomingURLContexts(URLContexts)
     }
     
-    func sceneDidDisconnect(_ scene: UIScene) {}
+    func sceneDidDisconnect(_ scene: UIScene) {
+        StabilityDiagnostics.shared.record(.session, name: "scene.didDisconnect")
+    }
     
-    func sceneDidBecomeActive(_ scene: UIScene) {}
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        StabilityDiagnostics.shared.record(.session, name: "scene.didBecomeActive")
+    }
     
     func sceneWillResignActive(_ scene: UIScene) {
+        StabilityDiagnostics.shared.record(.session, name: "scene.willResignActive")
         (window?.rootViewController as? BrowserViewController)?
             .sessionManager.applicationWillResignActive()
     }
     
     func sceneWillEnterForeground(_ scene: UIScene) {
+        StabilityDiagnostics.shared.record(.session, name: "scene.willEnterForeground")
         (window?.rootViewController as? BrowserViewController)?
             .sessionManager.setApplicationForeground(true)
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
+        StabilityDiagnostics.shared.record(.session, name: "scene.didEnterBackground")
         (window?.rootViewController as? BrowserViewController)?
             .sessionManager.setApplicationForeground(false)
     }
@@ -57,6 +69,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func handleIncomingURL(_ incomingURL: URL) {
+        StabilityDiagnostics.shared.recordURL(
+            .session,
+            name: "scene.handleIncomingURL",
+            urlString: incomingURL.absoluteString
+        )
         guard let browserViewController = window?.rootViewController as? BrowserViewController,
               let resolvedURL = resolvedBrowserURL(from: incomingURL) else {
             return

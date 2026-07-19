@@ -12,6 +12,7 @@ struct AboutSettingsSection {
     enum Row: CaseIterable {
         case appVersion
         case engineVersion
+        case exportDiagnostics
         case sourceCode
         case supportProject
         case githubProfile
@@ -34,6 +35,8 @@ struct AboutSettingsSection {
             return valueCell(title: NSLocalizedString("Reynard Browser", comment: ""), value: "\(version) (\(build))")
         case .engineVersion:
             return valueCell(title: NSLocalizedString("Engine Version", comment: ""), value: GeckoRuntime.version)
+        case .exportDiagnostics:
+            return linkCell(title: NSLocalizedString("Export Diagnostics", comment: ""))
         case .sourceCode:
             return linkCell(title: NSLocalizedString("View Source Code", comment: ""))
         case .supportProject:
@@ -43,9 +46,18 @@ struct AboutSettingsSection {
         }
     }
     
-    func selectRow(at index: Int) {
-        guard Row.allCases.indices.contains(index),
-              let url = url(for: Row.allCases[index]) else {
+    func selectRow(at index: Int, from viewController: UIViewController) {
+        guard Row.allCases.indices.contains(index) else {
+            return
+        }
+
+        let row = Row.allCases[index]
+        if case .exportDiagnostics = row {
+            DiagnosticsExportCoordinator.present(from: viewController)
+            return
+        }
+
+        guard let url = url(for: row) else {
             return
         }
         
@@ -60,7 +72,7 @@ struct AboutSettingsSection {
             return URL(string: "https://buymeacoffee.com/hnimnot")
         case .githubProfile:
             return URL(string: "https://github.com/minh-ton")
-        case .appVersion, .engineVersion:
+        case .appVersion, .engineVersion, .exportDiagnostics:
             return nil
         }
     }

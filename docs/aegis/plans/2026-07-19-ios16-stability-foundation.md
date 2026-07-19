@@ -173,6 +173,7 @@ builds.
 - `Package.swift`
 - `browser/Reynard/StabilityCore/StabilityEvent.swift`
 - `browser/Reynard/StabilityCore/StabilityEventBuffer.swift`
+- `browser/Reynard/StabilityCore/URLRedactor.swift`
 - `browser/Reynard/StabilityCore/RetryWindow.swift`
 - `browser/Reynard/StabilityCore/ContentProcessRecoveryPolicy.swift`
 - `browser/Reynard/StabilityCore/JITRetryPolicy.swift`
@@ -182,6 +183,7 @@ builds.
 - `browser/Reynard/Client/Stability/DiagnosticsExportCoordinator.swift`
 - `browser/Reynard/Client/Interface/ContentView/Recovery/ContentRecoveryViewController.swift`
 - `Tests/ReynardStabilityCoreTests/StabilityEventBufferTests.swift`
+- `Tests/ReynardStabilityCoreTests/URLRedactorTests.swift`
 - `Tests/ReynardStabilityCoreTests/RetryWindowTests.swift`
 - `Tests/ReynardStabilityCoreTests/ContentProcessRecoveryPolicyTests.swift`
 - `Tests/ReynardStabilityCoreTests/JITRetryPolicyTests.swift`
