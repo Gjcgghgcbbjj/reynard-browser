@@ -68,7 +68,9 @@ requirements from the existing Gecko/iOS ownership boundaries.
 - App Store eligibility or Apple entitlement acquisition.
 - A Blink port.
 - Cloud rendering or a proxy service.
-- Account sync, password sync, or a new extension ecosystem.
+- Via proprietary account services, password/cookie/history sync, or a new
+  extension ecosystem. A project-owned CloudKit sync module is in scope when
+  built with a valid Apple Team and iCloud container.
 - A visual redesign unrelated to stability or recovery.
 - Features outside the documented Via parity matrix unless separately approved.
 

@@ -20,7 +20,8 @@ ArchitectureReviewRequired: `yes`
   least one arm64 and one arm64e iOS 16 device, with all remaining known issues
   documented and no unresolved data-loss or launch-blocking defect.
 - **Non-goals:** App Store support, BrowserEngineKit, Blink, cloud browsing,
-  copying Via's visual identity/assets, or proprietary account services.
+  copying Via's visual identity/assets, Via's proprietary account services, or
+  syncing passwords, cookies, private tabs, downloads, and browsing history.
 
 ## 2. BaselineReadSetHint
 
@@ -111,7 +112,8 @@ ArchitectureReviewRequired: `yes`
 - **Value:** old iPhones gain a modern browser engine that behaves predictably
   enough for daily browsing and provides Via-style lightweight customization.
 - **Non-goals:** feature parity with desktop Firefox or Safari, Via branding,
-  or compatibility with Via's private sync services.
+  or compatibility with Via's private sync services. The project supplies its
+  own optional CloudKit synchronization.
 - **Trade-offs:** some performance depends on JIT/private entitlement behavior;
   supporting old OS versions increases device-specific testing cost; direct
   feature parity increases scope and must be delivered in gated phases.
@@ -248,9 +250,12 @@ retained where it already satisfies the behavior.
    and script exceptions owned by the existing site-settings boundary.
 9. **Privacy controls:** third-party cookie blocking, tracker blocking,
    clear-site-data controls, and explicit private-mode behavior.
-10. **Local backup portability:** import/export bookmarks, settings, filter
+10. **Backup portability:** import/export bookmarks, settings, filter
     subscriptions, site settings, and user-script metadata in a documented,
     versioned archive.
+11. **Automatic CloudKit sync:** synchronize the approved data categories
+    through a project-owned private CloudKit database when the build has a valid
+    Apple Team and iCloud container configuration.
 
 #### Parity Phase 2: extended tools
 
@@ -267,12 +272,41 @@ retained where it already satisfies the behavior.
 6. **Settings portability:** human-readable export/import suitable for moving
    between TrollStore installations.
 
-#### Explicit parity substitutions and exclusions
+#### CloudKit synchronization for iOS 16
 
-- Via's iCloud sync is substituted with local import/export in the unsigned
-  TrollStore build because a project-owned Apple CloudKit container and
-  provisioning entitlement are not available. Cloud/WebDAV sync requires a
-  separate approved design.
+- Use a CloudKit private database and a custom record zone so each signed-in
+  iCloud user owns an isolated sync dataset.
+- Because the minimum OS is iOS 16, do not depend on `CKSyncEngine`. Incremental
+  synchronization uses `CKFetchRecordZoneChangesOperation`, persisted server
+  change tokens, batched `CKModifyRecordsOperation` uploads, and CloudKit
+  database/zone subscriptions where push entitlement is available.
+- Sync triggers are app activation, meaningful local changes, network recovery,
+  opportunistic background refresh, and silent CloudKit pushes in builds that
+  have valid push provisioning.
+- The open-source tree contains no personal Team ID or container credential.
+  `CloudSync.xcconfig`/entitlement values are injected by the builder. Builds
+  without a valid CloudKit configuration keep local data and local backup fully
+  usable while clearly showing that automatic sync is unavailable.
+- Required synchronized categories are bookmarks/folders, homepage favorites,
+  an allowlisted set of browser settings, custom search engines, per-site
+  settings, filter subscriptions/custom rules, and user scripts when the user
+  enables script sync.
+- Excluded categories are passwords, cookies, browsing history, private tabs,
+  download files/history, diagnostics, form contents, and page cache.
+- Each entity has a stable UUID, schema version, modification metadata, and
+  deletion tombstone/change event. Offline changes queue locally and retry with
+  bounded backoff.
+- CloudKit change tags detect conflicts. Collection entities merge by stable
+  identity; scalar settings use the newest accepted record; destructive
+  conflicts are surfaced in sync diagnostics instead of silently deleting both
+  sides.
+- Disabling sync stops transfer but does not delete cloud data. Cloud deletion
+  is a separate explicit destructive action.
+
+#### Explicit parity boundaries
+
+- Local import/export remains mandatory even when CloudKit is configured, so
+  users can migrate between independently built TrollStore packages.
 - Via branding, icons, screenshots, copy, proprietary services, and internal
   rule sources are not copied.
 - Gecko WebExtensions are the preferred implementation boundary for blocking,
@@ -355,7 +389,17 @@ retained where it already satisfies the behavior.
    be reset per site.
 9. A backup created on one clean installation can restore the documented data
    categories on another installation of the same or newer schema version.
-10. All Phase 1 features remain usable after the background, termination, and
+10. Two devices signed into the same iCloud account converge bookmarks,
+    favorites, allowed settings, site rules, filter configuration, and opted-in
+    user scripts after create, edit, reorder, and delete operations.
+11. Offline edits upload after connectivity returns; simultaneous edits produce
+    a deterministic result or a visible conflict record without data-store
+    corruption.
+12. Reinstalling the app and enabling the same configured CloudKit container can
+    restore synchronized categories without restoring excluded private data.
+13. Builds without valid CloudKit entitlements remain functional and explain
+    why automatic sync is unavailable.
+14. All Phase 1 features remain usable after the background, termination, and
     JIT-recovery scenarios in section 8.
 
 ### 9.2 Phase 2
@@ -376,17 +420,17 @@ retained where it already satisfies the behavior.
 
 - **Affected layers:** startup, JIT, Gecko helper/process bridge, session
   lifecycle, tab orchestration, SQLite persistence, failure UI, diagnostics,
-  Gecko add-ons/WebExtensions, site settings, backup/import/export, packaging,
-  and tests.
+  Gecko add-ons/WebExtensions, site settings, CloudKit sync,
+  backup/import/export, packaging, and tests.
 - **Owners:** existing owners remain authoritative; one diagnostics owner is
   added to remove ad-hoc observability; web-content modification remains owned
   by Gecko/WebExtensions rather than UIKit.
 - **Invariants:** real Gecko rendering, explicit JIT degradation, transactional
   user data, upstream patch isolation, no silent WebKit fallback.
-- **Compatibility:** iOS 16 TrollStore, arm64/arm64e, existing user data and
-  upstream updateability.
+- **Compatibility:** iOS 16 TrollStore, arm64/arm64e, existing user data,
+  upstream updateability, and optional Apple Team/container configuration.
 - **Non-goals:** App Store, Blink, cloud proxying, Via branding/private services,
-  and unrelated features.
+  sensitive browsing-data sync, and unrelated features.
 
 ## 11. Architecture Integrity Lens
 
@@ -395,10 +439,13 @@ retained where it already satisfies the behavior.
 - **Canonical owner / contract:** JIT in `JITController`, sessions in
   `SessionManager`, live tabs in `TabManagerImpl`, persisted snapshots in
   `TabManagementStore`, engine behavior in Gecko patches, and content
-  modification in Gecko WebExtensions.
+  modification in Gecko WebExtensions. A dedicated sync coordinator owns
+  CloudKit transport and sync state; existing stores remain canonical for local
+  browser data.
 - **Responsibility overlap:** UI-level reload loops, duplicate tab snapshots,
-  scattered diagnostic flags, or native reimplementations of blocking/script
-  engines would create competing owners and are prohibited.
+  scattered diagnostic flags, native reimplementations of blocking/script
+  engines, or a CloudKit-owned parallel browser database would create competing
+  owners and are prohibited.
 - **Higher-level simplification:** add typed lifecycle outcomes at owner
   boundaries instead of adding more controller-specific boolean guards.
 - **Retirement / falsifier:** any temporary compatibility branch must name the
@@ -411,8 +458,8 @@ retained where it already satisfies the behavior.
 - **Artifact class:** high-risk cross-boundary reliability work.
 - **Target files / artifacts:** JIT controller/support, session manager, tab
   manager/store, Gecko bridge/patches when proven necessary, diagnostics,
-  WebExtension integrations, site settings, backup/import/export, tests, and
-  release scripts.
+  WebExtension integrations, site settings, CloudKit sync adapters,
+  backup/import/export, tests, and release scripts.
 - **Current pressure:** several owner files exceed 800–1,500 lines and no test
   target is checked in.
 - **Projected post-change pressure:** at risk if recovery logic or Via-parity
@@ -424,8 +471,9 @@ retained where it already satisfies the behavior.
 ### Plan-Time Complexity Check
 
 - **Better file boundary:** diagnostics, deterministic startup/retry state
-  transitions, backup codecs, and bundled WebExtension coordination should have
-  dedicated small owners; existing behavior owners stay in place.
+  transitions, backup codecs, CloudKit transport/state, and bundled WebExtension
+  coordination should have dedicated small owners; existing behavior owners
+  stay in place.
 - **Recommendation:** `extract helper` for new cross-cutting diagnostics/state
   logic; otherwise `edit-in-place` at the canonical owner.
 
@@ -433,6 +481,8 @@ retained where it already satisfies the behavior.
 
 - A durable ADR will be warranted only if implementation introduces a new
   startup state machine contract, changes the Gecko helper/process topology, or
-  changes persistent schema/recovery semantics.
+  changes persistent schema/recovery semantics. The CloudKit record schema,
+  local-store adapter boundary, and conflict policy require an ADR when their
+  executable form is finalized.
 - Ordinary bug fixes and diagnostics additions do not by themselves require an
   ADR.
