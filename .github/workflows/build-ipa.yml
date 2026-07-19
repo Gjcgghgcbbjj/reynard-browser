@@ -1,0 +1,154 @@
+name: Build IPA and TrollStore TIPA
+
+on:
+  workflow_dispatch:
+    inputs:
+      xcode_version:
+        description: Xcode application name installed on the runner
+        required: true
+        default: Xcode_16.4.app
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-ipa-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build iOS archive and packages
+    runs-on: macos-15
+    timeout-minutes: 360
+
+    env:
+      MOZ_AUTOMATION: "1"
+      RUST_BACKTRACE: "1"
+      XCODE_APP: ${{ inputs.xcode_version }}
+
+    steps:
+      - name: Checkout application source
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 0
+
+      - name: Select Xcode and reclaim disk space
+        shell: bash
+        run: |
+          set -euo pipefail
+          XCODE_PATH="/Applications/${XCODE_APP}"
+          test -d "$XCODE_PATH"
+          sudo xcode-select --switch "$XCODE_PATH/Contents/Developer"
+          for candidate in /Applications/Xcode*.app; do
+            if [[ "$candidate" != "$XCODE_PATH" ]]; then
+              sudo rm -rf "$candidate"
+            fi
+          done
+          sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/* || true
+          {
+            sw_vers
+            xcodebuild -version
+            xcrun --sdk iphoneos --show-sdk-version
+            df -h /
+          } | tee build-environment.log
+
+      - name: Install build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew update
+          brew install ldid nasm yasm ccache
+          rustup target add aarch64-apple-ios
+          python3 --version
+          rustc --version
+          cargo --version
+          ldid -h >/dev/null 2>&1 || true
+
+      - name: Restore Rust dependency caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            support/idevice/target
+          key: ios-rust-${{ runner.os }}-${{ hashFiles('support/idevice/Cargo.lock', 'support/idevice/ffi/Cargo.toml') }}
+          restore-keys: |
+            ios-rust-${{ runner.os }}-
+
+      - name: Fetch pinned Gecko source
+        shell: zsh {0}
+        run: |
+          set -euo pipefail
+          ./tools/development/update-gecko.sh 2>&1 | tee update-gecko.log
+
+      - name: Bootstrap Gecko build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd engine/firefox
+          ./mach bootstrap --application-choice browser 2>&1 | tee ../../gecko-bootstrap.log
+
+      - name: Apply Reynard Gecko patches
+        shell: zsh {0}
+        run: |
+          set -euo pipefail
+          ./tools/development/apply-patches.sh </dev/null 2>&1 | tee apply-patches.log
+
+      - name: Build idevice dependency
+        shell: zsh {0}
+        run: |
+          set -euo pipefail
+          ./tools/development/build-idevice.sh 2>&1 | tee build-idevice.log
+
+      - name: Build Gecko for iOS arm64
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./tools/development/build-gecko.sh 2>&1 | tee build-gecko.log
+
+      - name: Validate Xcode project
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -list -project browser/Reynard.xcodeproj 2>&1 | tee xcode-project-list.log
+
+      - name: Build application archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./tools/release/build-app.sh 2>&1 | tee build-app.log
+
+      - name: Package IPA and TrollStore builds
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./tools/release/create-ipa.sh 2>&1 | tee create-ipa.log
+          test -s dist/Reynard.ipa
+          test -s dist/Reynard-TrollStore.tipa
+          test -s dist/Reynard-Jailbroken.ipa
+          shasum -a 256 dist/Reynard.ipa dist/Reynard-TrollStore.tipa dist/Reynard-Jailbroken.ipa | tee dist/SHA256SUMS.txt
+
+      - name: Upload installable packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: reynard-ios-packages-${{ github.run_id }}
+          path: |
+            dist/Reynard.ipa
+            dist/Reynard-TrollStore.tipa
+            dist/Reynard-Jailbroken.ipa
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reynard-build-logs-${{ github.run_id }}
+          path: |
+            *.log
+            dist/Reynard.xcarchive/Info.plist
+          if-no-files-found: warn
+          retention-days: 14
