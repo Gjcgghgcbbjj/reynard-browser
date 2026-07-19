@@ -17,6 +17,10 @@ let package = Package(
             name: "ReynardBrowserCore",
             targets: ["ReynardBrowserCore"]
         ),
+        .library(
+            name: "ReynardGeckoCore",
+            targets: ["ReynardGeckoCore"]
+        ),
     ],
     targets: [
         .target(
@@ -36,6 +40,17 @@ let package = Package(
             name: "ReynardBrowserCoreTests",
             dependencies: ["ReynardBrowserCore"],
             path: "Tests/ReynardBrowserCoreTests"
+        ),
+        .target(
+            name: "ReynardGeckoCore",
+            path: "browser/GeckoView/Session/FindInPage",
+            exclude: ["SessionFinder.swift"],
+            sources: ["FindInPageResult.swift"]
+        ),
+        .testTarget(
+            name: "ReynardGeckoCoreTests",
+            dependencies: ["ReynardGeckoCore"],
+            path: "Tests/ReynardGeckoCoreTests"
         ),
     ]
 )

@@ -102,6 +102,7 @@ public class GeckoSession {
         set { mediaSessionHandler.setDelegate(newValue) }
     }
     public lazy var mediaSession = MediaSession(session: self)
+    public lazy var finder = SessionFinder(dispatcher: dispatcher)
     private lazy var autofillHandler = GeckoAutofillHandler(session: self)
     private lazy var pictureInPictureHandler = newPictureInPictureHandler(self)
     public var pictureInPictureDelegate: PictureInPictureDelegate? {
