@@ -9,6 +9,7 @@ import UIKit
 
 struct GeneralSettingsSection {
     enum Row: CaseIterable {
+        case webFeatures
         case addons
         case browsing
         case search
@@ -29,6 +30,8 @@ struct GeneralSettingsSection {
         }
         
         switch Row.allCases[index] {
+        case .webFeatures:
+            return SettingsViewUtils.disclosureCell(title: NSLocalizedString("Web Features", comment: ""))
         case .addons:
             return SettingsViewUtils.disclosureCell(title: NSLocalizedString("Add-ons", comment: ""))
         case .browsing:
@@ -55,6 +58,8 @@ struct GeneralSettingsSection {
         
         let destination: UIViewController
         switch Row.allCases[index] {
+        case .webFeatures:
+            return SettingsViewUtils.disclosureCell(title: NSLocalizedString("Web Features", comment: ""))
         case .addons:
             destination = AddonsPreferencesViewController()
         case .browsing:

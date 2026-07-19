@@ -28,6 +28,7 @@ enum SettingsViewUtils {
     
     static func disclosureCell(title: String) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+        BrowserListStyle.apply(to: cell)
         cell.textLabel?.text = title
         cell.accessoryType = .disclosureIndicator
         return cell
@@ -35,6 +36,7 @@ enum SettingsViewUtils {
     
     static func actionCell(title: String, tintColor: UIColor?) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+        BrowserListStyle.apply(to: cell)
         cell.textLabel?.text = title
         cell.textLabel?.textColor = tintColor
         return cell
