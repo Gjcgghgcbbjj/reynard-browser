@@ -5,11 +5,11 @@
   "baselineRefs": [
     "docs/aegis/plans/2026-07-19-ios16-stability-foundation.md"
   ],
-  "scopeStatus": "Task 5 stayed within startup migration reliability and required a dedicated blocking recovery view at the scene root",
-  "compatStatus": "Destination folder names and store schemas remain unchanged; source data is retained until hashed inventory verification; Gecko and WebKit boundaries unchanged",
-  "retirementStatus": "Recoverable migration fatalError paths were removed; no alternate store or migration database was introduced",
+  "scopeStatus": "Task 6 implemented the planned completion-bearing tab transaction and bounded lifecycle flush without changing normal interaction persistence",
+  "compatStatus": "SQLite schema and transaction content remain unchanged; main-thread blocking was not introduced; diagnostics remain observer-only",
+  "retirementStatus": "Fire-and-forget persistence is retired only at resign-active/background boundaries; normal async persistence remains canonical",
   "newRiskSignals": [
-    "The added SceneDelegate recovery-root path and full directory fingerprint cost require Xcode and device timing verification"
+    "UIBackgroundTask and SQLite completion timing require physical forced-termination evidence"
   ],
   "decision": "continue"
 }

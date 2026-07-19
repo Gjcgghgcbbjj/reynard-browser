@@ -1,22 +1,23 @@
 {
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-19-ios16-stability-foundation",
-  "currentTodo": "Task 6: harden tab persistence and lifecycle flushing",
+  "currentTodo": "Task 7: add repeatable CI and iOS 16 device evidence",
   "completedTodos": [
     "Task 1: portable stability core, commit 511a6cd",
     "Task 2: diagnostics/redaction, commit 0a21668; Xcode verification pending",
     "Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending",
     "Task 4: bounded JIT retry and selected-session recreation, commit 2ef79a1; device verification pending",
-    "Task 5: verified recoverable startup migration, commit 1d47791; Xcode/manual UI verification pending"
+    "Task 5: verified recoverable startup migration, commit 1d47791; Xcode/manual UI verification pending",
+    "Task 6: bounded lifecycle tab persistence flush, commit bba9b72; device termination verification pending"
   ],
-  "activeSlice": "Task 6 lifecycle persistence flush",
+  "activeSlice": "Task 7 CI workflow, packaging path, and device checklist",
   "evidenceRefs": [
-    "24 Swift tests passed",
-    "Interrupted migration retry harness passed",
-    "Diagnostics migration integration typechecked with Gecko stub",
-    "commit 1d47791"
+    "28 Swift tests passed",
+    "LifecycleFlushPolicy typechecked and four policy scenarios passed",
+    "Store/TabManager/Scene modified files parsed",
+    "commit bba9b72"
   ],
-  "blockedOn": "Xcode compile, startup failure UI inspection, and device migration simulation require macOS/iOS",
-  "nextStep": "Read TabManagementStore queue/transaction behavior and add pure LifecycleFlushPolicy tests before wiring Scene lifecycle callbacks",
+  "blockedOn": "Full Xcode build and ten forced-termination cycles require macOS/iOS",
+  "nextStep": "Add macOS stability-core workflow, iOS 16 evidence checklist, and README build/test instructions; validate shell, plist, YAML, and package commands locally",
   "updatedAt": "2026-07-19"
 }

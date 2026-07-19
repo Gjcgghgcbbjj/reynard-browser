@@ -128,3 +128,31 @@
 - New risk signals:
 - The added SceneDelegate recovery-root path and full directory fingerprint cost require Xcode and device timing verification
 - Advisory decision: continue
+
+## Checkpoint Update
+
+- Current todo: Task 7: add repeatable CI and iOS 16 device evidence
+- Active slice: Task 7 CI workflow, packaging path, and device checklist
+- Completed todos:
+- Task 1: portable stability core, commit 511a6cd
+- Task 2: diagnostics/redaction, commit 0a21668; Xcode verification pending
+- Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending
+- Task 4: bounded JIT retry and selected-session recreation, commit 2ef79a1; device verification pending
+- Task 5: verified recoverable startup migration, commit 1d47791; Xcode/manual UI verification pending
+- Task 6: bounded lifecycle tab persistence flush, commit bba9b72; device termination verification pending
+- Evidence refs:
+- 28 Swift tests passed
+- LifecycleFlushPolicy typechecked and four policy scenarios passed
+- Store/TabManager/Scene modified files parsed
+- commit bba9b72
+- Blocked on: Full Xcode build and ten forced-termination cycles require macOS/iOS
+- Next step: Add macOS stability-core workflow, iOS 16 evidence checklist, and README build/test instructions; validate shell, plist, YAML, and package commands locally
+
+## DriftCheckDraft
+
+- Scope status: Task 6 implemented the planned completion-bearing tab transaction and bounded lifecycle flush without changing normal interaction persistence
+- Compatibility status: SQLite schema and transaction content remain unchanged; main-thread blocking was not introduced; diagnostics remain observer-only
+- Retirement status: Fire-and-forget persistence is retired only at resign-active/background boundaries; normal async persistence remains canonical
+- New risk signals:
+- UIBackgroundTask and SQLite completion timing require physical forced-termination evidence
+- Advisory decision: continue

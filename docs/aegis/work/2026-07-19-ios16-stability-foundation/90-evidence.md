@@ -81,3 +81,19 @@ No evidence has been recorded yet.
 - Source: 1d47791
 - Summary: Added verified staged file migration, typed startup reports, blocking retry/export UI, diagnostics integration, and deferred JIT startup on migration failure
 - Verifier: git show --stat 1d47791
+
+## EvidenceBundleDraft
+
+- Artifact key: task6-source-checks
+- Type: test
+- Source: Docker Swift tests, LifecycleFlushPolicy typecheck, app Swift parse, and lifecycle structural assertions
+- Summary: 28 tests passed; one-in-flight, coalesced waiter, timeout, and ordering tests passed; store completion/flush interfaces and both Scene boundaries were structurally confirmed
+- Verifier: Swift 6.1.3 Linux container plus repository assertions
+
+## EvidenceBundleDraft
+
+- Artifact key: task6-commit
+- Type: commit
+- Source: bba9b72
+- Summary: Added bounded flush coordination, completion-bearing tab transactions, lifecycle snapshot persistence, background task lease, and persistence diagnostics
+- Verifier: git show --stat bba9b72
