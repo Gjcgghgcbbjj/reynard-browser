@@ -1,0 +1,81 @@
+name: Stability Core
+
+on:
+  push:
+    paths:
+      - "Package.swift"
+      - "Tests/**"
+      - "browser/Reynard/StabilityCore/**"
+      - "browser/Reynard/**/*.swift"
+      - "browser/Reynard/Resources/*.xcstrings"
+      - "browser/**/*.plist"
+      - "tools/**/*.sh"
+      - ".github/workflows/stability-core.yml"
+  pull_request:
+    paths:
+      - "Package.swift"
+      - "Tests/**"
+      - "browser/Reynard/StabilityCore/**"
+      - "browser/Reynard/**/*.swift"
+      - "browser/Reynard/Resources/*.xcstrings"
+      - "browser/**/*.plist"
+      - "tools/**/*.sh"
+      - ".github/workflows/stability-core.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stability-core-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  portable-tests:
+    name: Portable stability tests
+    runs-on: macos-15
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Record environment
+        run: |
+          mkdir -p artifacts
+          {
+            sw_vers
+            xcodebuild -version
+            swift --version
+            git rev-parse HEAD
+          } | tee artifacts/environment.txt
+
+      - name: Check whitespace
+        run: git diff --check
+
+      - name: Run stability-core tests
+        shell: bash
+        run: |
+          set -o pipefail
+          swift test --package-path . 2>&1 | tee artifacts/swift-test.log
+
+      - name: Validate Xcode project shape
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild -list -project browser/Reynard.xcodeproj 2>&1 | tee artifacts/xcode-project-list.log
+
+      - name: Validate property lists
+        run: find browser -name '*.plist' -print0 | xargs -0 -n1 plutil -lint
+
+      - name: Validate shell scripts
+        run: find tools -name '*.sh' -print0 | xargs -0 -n1 bash -n
+
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stability-core-${{ github.run_id }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 14

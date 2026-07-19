@@ -149,6 +149,51 @@ Build dependencies and the Gecko engine.
 
 To run Reynard, open `Reynard.xcodeproj` in Xcode and build/run it from there.
 
+### Stability tests
+
+The Foundation-only stability policies can be built and tested without Gecko
+or UIKit:
+
+```bash
+swift test --package-path .
+git diff --check
+find tools -name '*.sh' -print0 | xargs -0 -n1 bash -n
+```
+
+On macOS, also validate the Xcode project and property lists:
+
+```bash
+xcodebuild -list -project browser/Reynard.xcodeproj
+find browser -name '*.plist' -print0 | xargs -0 -n1 plutil -lint
+```
+
+The `Stability Core` GitHub Actions workflow runs these checks on macOS and
+retains its environment and test logs for 14 days.
+
+Windows and WSL can be used for source development and the portable Swift tests
+(for example with the `swift:6.1-noble` Docker image). A full iOS build still
+requires Apple's iOS SDK and Xcode on macOS; this can be provided by a local Mac
+or a macOS GitHub Actions runner.
+
+### Release packaging
+
+After the Gecko framework and idevice dependency have been built, create the
+archive and installable packages on macOS:
+
+```bash
+./tools/release/build-app.sh
+./tools/release/create-ipa.sh
+```
+
+The outputs are written under `dist/`, including `Reynard.ipa`,
+`Reynard-TrollStore.tipa`, and `Reynard-Jailbroken.ipa`. Packaging requires
+`ldid` in addition to the build dependencies listed above.
+
+Before calling an iOS 16 build stable, complete
+[`docs/testing/ios16-stability-checklist.md`](docs/testing/ios16-stability-checklist.md)
+on both arm64 and arm64e hardware. Diagnostic evidence committed or attached to
+a shared test run must exclude full website URLs.
+
 ## Notes
 
 This project initially started out of curiosity. I wanted to see if I could get Gecko to run without the [BrowserEngineKit](https://developer.apple.com/documentation/browserenginekit) framework, so it could be further modified to run on iOS versions as far back as possible. I got it working, and since then, I’ve been focusing on developing engine patches for better UIKit integration, fixing bugs, and turning this into a full, usable browser.
