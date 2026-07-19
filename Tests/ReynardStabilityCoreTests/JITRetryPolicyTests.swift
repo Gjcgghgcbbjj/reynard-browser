@@ -29,6 +29,14 @@ final class JITRetryPolicyTests: XCTestCase {
         XCTAssertEqual(policy.decide(at: date(2)), .retry)
     }
 
+    func testRetryBudgetExpiresAtWindowBoundary() {
+        var policy = JITRetryPolicy(limit: 1, interval: 30)
+
+        XCTAssertEqual(policy.decide(at: date(0)), .retry)
+        XCTAssertEqual(policy.decide(at: date(29.999)), .offerJITLess)
+        XCTAssertEqual(policy.decide(at: date(30)), .retry)
+    }
+
     private func date(_ offset: TimeInterval) -> Date {
         Date(timeIntervalSince1970: 100 + offset)
     }

@@ -8266,6 +8266,28 @@
         }
       }
     },
+    "Retry JIT" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry JIT"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer le JIT"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重试 JIT"
+          }
+        }
+      }
+    },
     "The tab and its address were preserved. Retry the page or export diagnostics if the problem continues." : {
       "localizations" : {
         "en" : {

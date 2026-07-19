@@ -11,18 +11,65 @@ import UIKit
 
 final class JITController {
     static let shared = JITController()
+
+    private enum RuntimeState: Equatable {
+        case idle
+        case attaching
+        case failed
+        case jitless
+    }
     
     private let attachQueue = DispatchQueue(label: "com.minh-ton.Reynard.JITController.AttachQueue", qos: .userInitiated)
     private let watchdogQueue = DispatchQueue(label: "com.minh-ton.Reynard.JITController.WatchdogQueue", qos: .userInitiated)
+    private let stateLock = NSLock()
     private var attachedPIDs: Set<Int32> = []
     private var preflightWatchdogs: [Int32: DispatchWorkItem] = [:]
-    private var hasHandledFailure = false
-    private(set) var isJITLessModeActive = false
+    private var runtimeState = RuntimeState.idle
+    private var retryPolicy = JITRetryPolicy()
     private var pendingFailureAction: (() -> Void)?
     private let preflightTimeoutSeconds: Int = 5
     private let failurePresentationRetryLimit = 12
     
     private init() {}
+
+    var isJITLessModeActive: Bool {
+        currentRuntimeState() == .jitless
+    }
+
+    private func currentRuntimeState() -> RuntimeState {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        return runtimeState
+    }
+
+    private func setRuntimeState(_ state: RuntimeState) {
+        stateLock.lock()
+        runtimeState = state
+        stateLock.unlock()
+    }
+
+    private func registerFailure(at date: Date) -> JITRetryDecision? {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+
+        guard runtimeState != .failed, runtimeState != .jitless else {
+            return nil
+        }
+
+        runtimeState = .failed
+        return retryPolicy.decide(at: date)
+    }
+
+    private func registerSuccess() {
+        stateLock.lock()
+        guard runtimeState != .failed, runtimeState != .jitless else {
+            stateLock.unlock()
+            return
+        }
+        runtimeState = .idle
+        retryPolicy.reset()
+        stateLock.unlock()
+    }
     
     // For TrollStore or jailbroken devices
     private func usePtraceJIT() -> Bool {
@@ -31,7 +78,7 @@ final class JITController {
     
     func start() {
         guard usePtraceJIT() || !isDDIMissing() else {
-            hasHandledFailure = true
+            setRuntimeState(.failed)
             presentMissingDDIFailureScreen()
             return
         }
@@ -134,7 +181,8 @@ final class JITController {
             return
         }
         
-        guard !isJITLessModeActive, !hasHandledFailure else {
+        let state = currentRuntimeState()
+        guard state != .jitless, state != .failed else {
             ReportJITStatusForChild(pid, false, newJITRuntimeInfo())
             return
         }
@@ -153,6 +201,7 @@ final class JITController {
             if self.attachedPIDs.contains(pid) {
                 return
             }
+            self.setRuntimeState(.attaching)
             self.attachedPIDs.insert(pid)
             self.schedulePreflightWatchdog(for: pid)
             self.attachToProcess(pid: pid)
@@ -164,6 +213,12 @@ final class JITController {
             try JITEnabler.shared.enableJIT(forPID: pid, hasTXMSupport: hasTXMSupport())
             cancelPreflightWatchdog(for: pid)
             ReportJITStatusForChild(pid, true, newJITRuntimeInfo())
+            registerSuccess()
+            StabilityDiagnostics.shared.record(
+                .jit,
+                name: "jit.attachmentSucceeded",
+                metadata: ["pid": String(pid)]
+            )
         } catch {
             let nsError = error as NSError
             cancelPreflightWatchdog(for: pid)
@@ -207,33 +262,57 @@ final class JITController {
     }
     
     private func handleJITFailure(error: NSError) {
+        guard let retryDecision = registerFailure(at: Date()) else {
+            return
+        }
+
+        StabilityDiagnostics.shared.record(
+            .jit,
+            name: "jit.attachmentFailed",
+            metadata: [
+                "code": String(error.code),
+                "retryAvailable": retryDecision == .retry ? "true" : "false",
+            ]
+        )
+
         DispatchQueue.main.async {
-            guard !self.hasHandledFailure else {
-                return
-            }
-            self.hasHandledFailure = true
             self.presentEnablementFailureScreen(
                 error: error,
-                showsErrorDetails: error.code != Int(ETIMEDOUT)
+                showsErrorDetails: error.code != Int(ETIMEDOUT),
+                retryAvailable: retryDecision == .retry
             )
         }
     }
     
-    private func presentEnablementFailureScreen(error: NSError, showsErrorDetails: Bool, retryCount: Int = 0) {
+    private func presentEnablementFailureScreen(
+        error: NSError,
+        showsErrorDetails: Bool,
+        retryAvailable: Bool,
+        retryCount: Int = 0
+    ) {
         guard retryCount <= failurePresentationRetryLimit else {
             return
         }
         
         guard Self.canPresentFailureUI() else {
             pendingFailureAction = { [weak self] in
-                self?.presentEnablementFailureScreen(error: error, showsErrorDetails: showsErrorDetails)
+                self?.presentEnablementFailureScreen(
+                    error: error,
+                    showsErrorDetails: showsErrorDetails,
+                    retryAvailable: retryAvailable
+                )
             }
             return
         }
         
         guard let presenter = UIApplication.shared.topViewController() else {
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(150)) {
-                self.presentEnablementFailureScreen(error: error, showsErrorDetails: showsErrorDetails, retryCount: retryCount + 1)
+                self.presentEnablementFailureScreen(
+                    error: error,
+                    showsErrorDetails: showsErrorDetails,
+                    retryAvailable: retryAvailable,
+                    retryCount: retryCount + 1
+                )
             }
             return
         }
@@ -252,8 +331,17 @@ final class JITController {
             showsErrorDetails: showsErrorDetails,
             titleText: NSLocalizedString("Failed to enable JIT", comment: ""),
             messageText: messageText,
-            actionButtonTitle: NSLocalizedString("Activate JIT-Less Mode", comment: ""),
+            primaryButtonTitle: retryAvailable
+            ? NSLocalizedString("Retry JIT", comment: "")
+            : NSLocalizedString("Export Diagnostics", comment: ""),
+            secondaryButtonTitle: NSLocalizedString("Activate JIT-Less Mode", comment: ""),
             onPrimaryAction: { [weak self] in
+                guard let self else {
+                    return
+                }
+                retryAvailable ? self.retryJITAfterFailure() : self.exportDiagnostics()
+            },
+            onSecondaryAction: { [weak self] in
                 self?.activateJITLessMode()
             }
         )
@@ -287,7 +375,7 @@ final class JITController {
             showsErrorDetails: false,
             titleText: NSLocalizedString("Failed to enable JIT", comment: ""),
             messageText: NSLocalizedString("The required Developer Disk Image files for enabling JIT were not found.\n\nJIT has been disabled. Quit the app using the button below, then re-enable JIT from the browser settings.", comment: "Paragraph break intentional"),
-            actionButtonTitle: NSLocalizedString("Quit Reynard", comment: ""),
+            primaryButtonTitle: NSLocalizedString("Quit Reynard", comment: ""),
             onPrimaryAction: {
                 self.disableJITAndQuit()
             }
@@ -300,6 +388,28 @@ final class JITController {
     private func disableJITAndQuit() {
         Prefs.JITSettings.isJITEnabled = false
         quitApp()
+    }
+
+    private func retryJITAfterFailure() {
+        attachQueue.async {
+            self.cancelAllPreflightWatchdogs()
+            self.attachedPIDs.removeAll()
+            JITEnabler.shared.detachAllJITSessions()
+            self.setRuntimeState(.idle)
+            StabilityDiagnostics.shared.record(.jit, name: "jit.retryRequested")
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .jitRetryRequested, object: nil)
+            }
+        }
+    }
+
+    private func exportDiagnostics() {
+        DispatchQueue.main.async {
+            guard let presenter = UIApplication.shared.topViewController() else {
+                return
+            }
+            DiagnosticsExportCoordinator.present(from: presenter)
+        }
     }
     
     private func quitApp() {
@@ -314,11 +424,12 @@ final class JITController {
             return
         }
         
-        isJITLessModeActive = true
+        setRuntimeState(.jitless)
         attachQueue.async {
             self.cancelAllPreflightWatchdogs()
             self.attachedPIDs.removeAll()
             JITEnabler.shared.detachAllJITSessions()
+            StabilityDiagnostics.shared.record(.jit, name: "jit.jitlessModeActivated")
         }
         
         DispatchQueue.main.async {
@@ -363,13 +474,12 @@ final class JITController {
             ReportJITStatusForChild(pid, false, newJITRuntimeInfo())
         }
         
-        DispatchQueue.main.async {
-            guard !self.hasHandledFailure else {
-                return
-            }
-            
-            self.hasHandledFailure = true
-            self.presentEnablementFailureScreen(error: NSError(domain: "Reynard.JIT", code: Int(ETIMEDOUT), userInfo: nil), showsErrorDetails: false)
-        }
+        handleJITFailure(
+            error: NSError(
+                domain: "Reynard.JIT",
+                code: Int(ETIMEDOUT),
+                userInfo: nil
+            )
+        )
     }
 }

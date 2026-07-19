@@ -16,12 +16,15 @@ final class JITFailureView: UIView {
     private let errorLabel = UILabel()
     private var symbolHeightConstraint: NSLayoutConstraint?
     private var topContentPreferredWidthConstraint: NSLayoutConstraint?
-    private var quitButtonPreferredWidthConstraint: NSLayoutConstraint?
-    private var quitButtonMaxLandscapeWidthConstraint: NSLayoutConstraint?
+    private var primaryButtonPreferredWidthConstraint: NSLayoutConstraint?
+    private var primaryButtonMaxLandscapeWidthConstraint: NSLayoutConstraint?
+    private var secondaryButtonMinHeightConstraint: NSLayoutConstraint?
     private var topRegionBottomToErrorConstraint: NSLayoutConstraint?
     private var topRegionBottomToButtonConstraint: NSLayoutConstraint?
     private var currentPhoneLandscapeState: Bool?
-    let quitButton = UIButton(type: .system)
+    let primaryButton = UIButton(type: .system)
+    let secondaryButton = UIButton(type: .system)
+    private let buttonStack = UIStackView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -37,10 +40,18 @@ final class JITFailureView: UIView {
         errorScrollView.setContentOffset(.zero, animated: false)
     }
     
-    func updateContent(title: String, message: String, buttonTitle: String) {
+    func updateContent(
+        title: String,
+        message: String,
+        primaryButtonTitle: String,
+        secondaryButtonTitle: String?
+    ) {
         titleLabel.text = title
         messageLabel.text = message
-        quitButton.setTitle(buttonTitle, for: .normal)
+        primaryButton.setTitle(primaryButtonTitle, for: .normal)
+        secondaryButton.setTitle(secondaryButtonTitle, for: .normal)
+        secondaryButton.isHidden = secondaryButtonTitle == nil
+        secondaryButtonMinHeightConstraint?.isActive = secondaryButtonTitle != nil
     }
     
     func setErrorDetailsHidden(_ hidden: Bool) {
@@ -59,7 +70,7 @@ final class JITFailureView: UIView {
         
         currentPhoneLandscapeState = isPhoneLandscape
         setSymbolHidden(isPhoneLandscape)
-        quitButtonMaxLandscapeWidthConstraint?.isActive = isPhoneLandscape
+        primaryButtonMaxLandscapeWidthConstraint?.isActive = isPhoneLandscape
         topRegionBottomToErrorConstraint?.isActive = !isPhoneLandscape
         topRegionBottomToButtonConstraint?.isActive = isPhoneLandscape
     }
@@ -112,15 +123,31 @@ final class JITFailureView: UIView {
             weight: .regular
         )
         
-        quitButton.setTitle(nil, for: .normal)
-        quitButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
-        quitButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        quitButton.backgroundColor = .label
-        quitButton.setTitleColor(.systemBackground, for: .normal)
-        quitButton.layer.cornerRadius = 12
-        quitButton.layer.cornerCurve = .continuous
-        quitButton.contentEdgeInsets = UIEdgeInsets(top: 14, left: 20, bottom: 14, right: 20)
-        quitButton.accessibilityTraits.insert(.button)
+        primaryButton.setTitle(nil, for: .normal)
+        primaryButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+        primaryButton.titleLabel?.adjustsFontForContentSizeCategory = true
+        primaryButton.backgroundColor = .label
+        primaryButton.setTitleColor(.systemBackground, for: .normal)
+        primaryButton.layer.cornerRadius = 12
+        primaryButton.layer.cornerCurve = .continuous
+        primaryButton.contentEdgeInsets = UIEdgeInsets(top: 14, left: 20, bottom: 14, right: 20)
+        primaryButton.accessibilityTraits.insert(.button)
+
+        secondaryButton.setTitle(nil, for: .normal)
+        secondaryButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+        secondaryButton.titleLabel?.adjustsFontForContentSizeCategory = true
+        secondaryButton.backgroundColor = .secondarySystemBackground
+        secondaryButton.setTitleColor(.label, for: .normal)
+        secondaryButton.layer.cornerRadius = 12
+        secondaryButton.layer.cornerCurve = .continuous
+        secondaryButton.contentEdgeInsets = UIEdgeInsets(top: 14, left: 20, bottom: 14, right: 20)
+        secondaryButton.accessibilityTraits.insert(.button)
+
+        buttonStack.axis = .vertical
+        buttonStack.alignment = .fill
+        buttonStack.spacing = 12
+        buttonStack.addArrangedSubview(primaryButton)
+        buttonStack.addArrangedSubview(secondaryButton)
         
         errorScrollView.addSubview(errorLabel)
         errorContainerView.addSubview(errorScrollView)
@@ -136,28 +163,29 @@ final class JITFailureView: UIView {
         topContentStackView.setCustomSpacing(56, after: symbolImageView)
         topContentStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        quitButton.translatesAutoresizingMaskIntoConstraints = false
+        buttonStack.translatesAutoresizingMaskIntoConstraints = false
         
         let topRegionGuide = UILayoutGuide()
         addLayoutGuide(topRegionGuide)
         addSubview(topContentStackView)
         addSubview(errorContainerView)
-        addSubview(quitButton)
+        addSubview(buttonStack)
         
         symbolHeightConstraint = symbolImageView.heightAnchor.constraint(equalToConstant: 96)
         topContentPreferredWidthConstraint = topContentStackView.widthAnchor.constraint(equalTo: topRegionGuide.widthAnchor, constant: -2 * horizontalInset)
         topContentPreferredWidthConstraint?.priority = .defaultHigh
-        quitButtonPreferredWidthConstraint = quitButton.widthAnchor.constraint(equalTo: widthAnchor, constant: -2 * horizontalInset)
-        quitButtonPreferredWidthConstraint?.priority = .defaultHigh
-        quitButtonMaxLandscapeWidthConstraint = quitButton.widthAnchor.constraint(lessThanOrEqualToConstant: 420)
+        primaryButtonPreferredWidthConstraint = buttonStack.widthAnchor.constraint(equalTo: widthAnchor, constant: -2 * horizontalInset)
+        primaryButtonPreferredWidthConstraint?.priority = .defaultHigh
+        primaryButtonMaxLandscapeWidthConstraint = buttonStack.widthAnchor.constraint(lessThanOrEqualToConstant: 420)
+        secondaryButtonMinHeightConstraint = secondaryButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 50)
         topRegionBottomToErrorConstraint = topRegionGuide.bottomAnchor.constraint(equalTo: errorContainerView.topAnchor, constant: -20)
-        topRegionBottomToButtonConstraint = topRegionGuide.bottomAnchor.constraint(equalTo: quitButton.topAnchor, constant: -20)
+        topRegionBottomToButtonConstraint = topRegionGuide.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -20)
         
         guard
             let symbolHeightConstraint,
             let topContentPreferredWidthConstraint,
-            let quitButtonPreferredWidthConstraint,
-            let quitButtonMaxLandscapeWidthConstraint,
+            let primaryButtonPreferredWidthConstraint,
+            let primaryButtonMaxLandscapeWidthConstraint,
             let topRegionBottomToErrorConstraint,
             let topRegionBottomToButtonConstraint
         else {
@@ -180,17 +208,17 @@ final class JITFailureView: UIView {
             
             errorContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalInset),
             errorContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -horizontalInset),
-            errorContainerView.bottomAnchor.constraint(equalTo: quitButton.topAnchor, constant: -16),
+            errorContainerView.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -16),
             
-            quitButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-            quitButton.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: horizontalInset),
-            quitButton.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -horizontalInset),
-            quitButtonPreferredWidthConstraint,
-            quitButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -24),
+            buttonStack.centerXAnchor.constraint(equalTo: centerXAnchor),
+            buttonStack.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: horizontalInset),
+            buttonStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -horizontalInset),
+            primaryButtonPreferredWidthConstraint,
+            buttonStack.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -24),
             
             symbolHeightConstraint,
-            quitButtonMaxLandscapeWidthConstraint,
-            quitButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 50),
+            primaryButtonMaxLandscapeWidthConstraint,
+            primaryButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 50),
             
             errorScrollView.topAnchor.constraint(equalTo: errorContainerView.topAnchor, constant: 14),
             errorScrollView.leadingAnchor.constraint(equalTo: errorContainerView.leadingAnchor, constant: 14),
@@ -206,7 +234,7 @@ final class JITFailureView: UIView {
             errorLabel.widthAnchor.constraint(greaterThanOrEqualTo: errorScrollView.frameLayoutGuide.widthAnchor),
         ])
         
-        quitButtonMaxLandscapeWidthConstraint.isActive = false
+        primaryButtonMaxLandscapeWidthConstraint.isActive = false
         topRegionBottomToButtonConstraint.isActive = false
     }
 }
@@ -217,8 +245,10 @@ final class JITFailureViewController: UIViewController {
     private let showsErrorDetails: Bool
     private let titleText: String
     private let messageText: String
-    private let actionButtonTitle: String
+    private let primaryButtonTitle: String
+    private let secondaryButtonTitle: String?
     private let onPrimaryAction: (() -> Void)?
+    private let onSecondaryAction: (() -> Void)?
     private let contentView = JITFailureView()
     
     init(
@@ -227,16 +257,20 @@ final class JITFailureViewController: UIViewController {
         showsErrorDetails: Bool = true,
         titleText: String,
         messageText: String,
-        actionButtonTitle: String,
-        onPrimaryAction: (() -> Void)? = nil
+        primaryButtonTitle: String,
+        secondaryButtonTitle: String? = nil,
+        onPrimaryAction: (() -> Void)? = nil,
+        onSecondaryAction: (() -> Void)? = nil
     ) {
         self.errorCode = errorCode
         self.errorDescriptionText = errorDescription.isEmpty ? NSLocalizedString("Unknown error.", comment: "") : errorDescription
         self.showsErrorDetails = showsErrorDetails
         self.titleText = titleText
         self.messageText = messageText
-        self.actionButtonTitle = actionButtonTitle
+        self.primaryButtonTitle = primaryButtonTitle
+        self.secondaryButtonTitle = secondaryButtonTitle
         self.onPrimaryAction = onPrimaryAction
+        self.onSecondaryAction = onSecondaryAction
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -251,10 +285,16 @@ final class JITFailureViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         isModalInPresentation = true
-        contentView.updateContent(title: titleText, message: messageText, buttonTitle: actionButtonTitle)
+        contentView.updateContent(
+            title: titleText,
+            message: messageText,
+            primaryButtonTitle: primaryButtonTitle,
+            secondaryButtonTitle: secondaryButtonTitle
+        )
         contentView.updateError(code: errorCode, description: errorDescriptionText)
         contentView.setErrorDetailsHidden(!showsErrorDetails)
-        contentView.quitButton.addTarget(self, action: #selector(handlePrimaryAction), for: .touchUpInside)
+        contentView.primaryButton.addTarget(self, action: #selector(handlePrimaryAction), for: .touchUpInside)
+        contentView.secondaryButton.addTarget(self, action: #selector(handleSecondaryAction), for: .touchUpInside)
     }
     
     override func viewWillLayoutSubviews() {
@@ -266,6 +306,12 @@ final class JITFailureViewController: UIViewController {
     @objc private func handlePrimaryAction() {
         dismiss(animated: true) { [onPrimaryAction] in
             onPrimaryAction?()
+        }
+    }
+
+    @objc private func handleSecondaryAction() {
+        dismiss(animated: true) { [onSecondaryAction] in
+            onSecondaryAction?()
         }
     }
 }

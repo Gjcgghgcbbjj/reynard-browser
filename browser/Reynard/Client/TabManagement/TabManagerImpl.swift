@@ -71,6 +71,17 @@ final class TabManagerImplementation: NSObject, TabManager {
         self.store = store
         self.faviconStore = faviconStore
         self.historyStore = historyStore
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleJITRetryRequested),
+            name: .jitRetryRequested,
+            object: nil
+        )
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: - Persistence And Lookup
@@ -898,6 +909,72 @@ final class TabManagerImplementation: NSObject, TabManager {
         )
     }
 
+    @discardableResult
+    private func replaceSession(
+        for tab: Tab,
+        at location: (mode: TabMode, index: Int),
+        retaining url: String?
+    ) -> GeckoSession {
+        let previousSession = tab.session
+        let replacementSession = createSession(
+            tabID: tab.id,
+            url: url,
+            windowId: nil,
+            isPrivate: tab.isPrivate
+        )
+
+        tab.session = replacementSession
+        tab.state.sessionNavigationAvailability = .unavailable
+        tab.state.loadingState = .idle
+
+        if location.mode == selectedTabMode && location.index == selectedTabIndex {
+            delegate?.tabManager(
+                self,
+                didReplaceSelectedSession: previousSession,
+                with: replacementSession
+            )
+        }
+
+        sessionManager.close(previousSession)
+        return replacementSession
+    }
+
+    @objc private func handleJITRetryRequested() {
+        guard let tab = selectedTab,
+              let location = tabLocation(for: tab.id) else {
+            StabilityDiagnostics.shared.record(
+                .jit,
+                name: "jit.retrySessionUnavailable"
+            )
+            return
+        }
+
+        let retainedURL = displayedURL(for: tab)
+        let replacementSession = replaceSession(
+            for: tab,
+            at: location,
+            retaining: retainedURL
+        )
+
+        tab.state.contentFailureState = .none
+        tab.state.restoreState = .none
+        sessionManager.activate(replacementSession)
+        systemMediaSession.select(session: replacementSession)
+        pictureInPictureCoordinator?.selectedSessionDidChange()
+        notifyUpdate(at: location.index, mode: location.mode, reason: .location)
+
+        StabilityDiagnostics.shared.recordURL(
+            .jit,
+            name: "jit.retrySessionCreated",
+            urlString: retainedURL,
+            metadata: ["mode": location.mode.rawValue]
+        )
+
+        if let retainedURL {
+            loadURL(retainedURL, in: tab)
+        }
+    }
+
     private func handleContentProcessFailure(
         session: GeckoSession,
         kind: ContentProcessFailureKind
@@ -913,25 +990,11 @@ final class TabManagerImplementation: NSObject, TabManager {
         contentRecoveryPolicies[tab.id] = policy
 
         let retainedURL = displayedURL(for: tab)
-        let previousSession = tab.session
-        let replacementSession = createSession(
-            tabID: tab.id,
-            url: retainedURL,
-            windowId: nil,
-            isPrivate: tab.isPrivate
+        let replacementSession = replaceSession(
+            for: tab,
+            at: location,
+            retaining: retainedURL
         )
-        tab.session = replacementSession
-        tab.state.sessionNavigationAvailability = .unavailable
-        tab.state.loadingState = .idle
-
-        if isSelected {
-            delegate?.tabManager(
-                self,
-                didReplaceSelectedSession: previousSession,
-                with: replacementSession
-            )
-        }
-        sessionManager.close(previousSession)
 
         StabilityDiagnostics.shared.recordURL(
             .process,
