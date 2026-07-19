@@ -87,7 +87,7 @@ jobs:
         run: |
           set -euo pipefail
           cd engine/firefox
-          ./mach bootstrap --no-interactive --application-choice browser 2>&1 | tee ../../gecko-bootstrap.log
+          ./mach --no-interactive bootstrap --application-choice browser 2>&1 | tee ../../gecko-bootstrap.log
 
       - name: Apply Reynard Gecko patches
         shell: zsh {0}
