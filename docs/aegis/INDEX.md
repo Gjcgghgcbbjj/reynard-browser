@@ -50,3 +50,4 @@ Entries are workspace records, not authoritative runtime decisions.
 | 2026-07-20 | artifact | docs/aegis/work/2026-07-19-via-translation/resume-state-hint.json | 2026-07-19-via-translation resume state hint |
 | 2026-07-20 | artifact | docs/aegis/work/2026-07-19-via-translation/gate-input-pack.json | 2026-07-19-via-translation gate input pack |
 | 2026-07-20 | work | docs/aegis/work/2026-07-19-via-translation/proof-bundle.md | 2026-07-19-via-translation proof bundle |
+| 2026-07-20 | spec | docs/aegis/specs/2026-07-20-browser-frontend-redesign-design.md | Reynard Browser Frontend Redesign Design |
