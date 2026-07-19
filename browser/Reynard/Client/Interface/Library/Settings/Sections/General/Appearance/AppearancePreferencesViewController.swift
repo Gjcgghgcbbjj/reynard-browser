@@ -33,9 +33,9 @@ final class AppearancePreferencesViewController: SettingsTableViewController {
                 return [.appAppearance]
             case .addressBar:
                 if UIDevice.current.userInterfaceIdiom == .pad {
-                    return [.showFullWebsiteAddress]
+                    return [.toolbar, .showFullWebsiteAddress]
                 }
-                return [.BrowserChromePosition, .showFullWebsiteAddress]
+                return [.BrowserChromePosition, .toolbar, .showFullWebsiteAddress]
             case .tabs:
                 if UIDevice.current.userInterfaceIdiom == .pad {
                     return []
@@ -50,6 +50,7 @@ final class AppearancePreferencesViewController: SettingsTableViewController {
     private enum Row {
         case appAppearance
         case BrowserChromePosition
+        case toolbar
         case showFullWebsiteAddress
         case landscapeTabBar
         case pageZoom
@@ -125,6 +126,13 @@ final class AppearancePreferencesViewController: SettingsTableViewController {
                 Prefs.AppearanceSettings.addressBarPosition = position
             }
             return cell
+        case .toolbar:
+            let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
+            cell.textLabel?.text = NSLocalizedString("Toolbar", comment: "")
+            cell.detailTextLabel?.text = String(Prefs.AppearanceSettings.toolbarActions.count)
+            cell.detailTextLabel?.textColor = .secondaryLabel
+            cell.accessoryType = .disclosureIndicator
+            return cell
         case .showFullWebsiteAddress:
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = NSLocalizedString("Show Full Website Address", comment: "")
@@ -152,8 +160,16 @@ final class AppearancePreferencesViewController: SettingsTableViewController {
             return
         }
         
-        if displayedSections[indexPath.section].rows[indexPath.row] == .pageZoom {
+        switch displayedSections[indexPath.section].rows[indexPath.row] {
+        case .toolbar:
+            navigationController?.pushViewController(
+                ToolbarPreferencesViewController(),
+                animated: true
+            )
+        case .pageZoom:
             navigationController?.pushViewController(PageZoomPreferencesViewController(), animated: true)
+        default:
+            return
         }
     }
     

@@ -10,7 +10,7 @@ import UIKit
 final class TopToolbar: UIView {
     private enum UX {
         static let topToolbarContentHeight: CGFloat = 52
-        static let topToolbarButtonStackHeight: CGFloat = 30
+        static let topToolbarButtonStackHeight = BrowserDesignTokens.Control.compactHeight
         static let topToolbarStandardButtonStackWidth: CGFloat = 126
         static let topToolbarHorizontalInset: CGFloat = 12
         static let topToolbarButtonSpacing: CGFloat = 10
@@ -117,9 +117,10 @@ final class TopToolbar: UIView {
     private var widthLimitedStandardAddressBarConstraints: [NSLayoutConstraint] = []
     
     private var layoutState: LayoutState = .hidden
-    private var layoutInterfaceIdiom: UIUserInterfaceIdiom = .unspecified
-    private var layoutSidebarButtonVisible = false
     private var isUsingStandardAddressBarWidthLimit = false
+    private var configuredActions: [BrowserToolbarAction] = []
+    private var configuredContext: BrowserToolbarContext?
+    private var configuredIncludesSidebar = false
     
     // MARK: - Lifecycle
     
@@ -176,11 +177,15 @@ final class TopToolbar: UIView {
         state: LayoutState,
         topInset: CGFloat,
         interfaceIdiom: UIUserInterfaceIdiom,
-        sidebarButtonVisible: Bool
+        sidebarButtonVisible: Bool,
+        actions: [BrowserToolbarAction]
     ) {
         layoutState = state
-        layoutInterfaceIdiom = interfaceIdiom
-        layoutSidebarButtonVisible = sidebarButtonVisible
+        configureActions(
+            actions,
+            context: state == .compact ? .compactTop : .padTop,
+            includesSidebar: interfaceIdiom == .pad && sidebarButtonVisible
+        )
         
         UIView.performWithoutAnimation {
             contentTopConstraint.constant = topInset
@@ -191,16 +196,11 @@ final class TopToolbar: UIView {
             let isCompact = state == .compact
             leadingButtons.isHidden = isCompact
             trailingButtons.isHidden = isCompact
-            leadingWidthConstraint.constant = isCompact ? 0 : leadingWidth(
-                interfaceIdiom: interfaceIdiom,
-                sidebarButtonVisible: sidebarButtonVisible,
-                showsDownloads: downloadButton.isShowingDownloads
-            )
-            trailingWidthConstraint.constant = isCompact ? 0 : UX.topToolbarStandardButtonStackWidth
             
             sidebarButton.isHidden = interfaceIdiom != .pad || !sidebarButtonVisible
-            libraryButton.isHidden = interfaceIdiom == .pad
             downloadButton.isHidden = isCompact || !downloadButton.isShowingDownloads
+            leadingWidthConstraint.constant = isCompact ? 0 : stackWidth(for: leadingButtons)
+            trailingWidthConstraint.constant = isCompact ? 0 : stackWidth(for: trailingButtons)
             
             NSLayoutConstraint.deactivate(standardAddressBarConstraints + widthLimitedStandardAddressBarConstraints + compactAddressBarConstraints)
             isUsingStandardAddressBarWidthLimit = false
@@ -262,7 +262,7 @@ final class TopToolbar: UIView {
     
     private func configureAppearance() {
         translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = .systemGray6
+        backgroundColor = BrowserDesignTokens.Color.chromeBackground
     }
     
     private func configureHierarchy() {
@@ -296,15 +296,13 @@ final class TopToolbar: UIView {
         ])
     }
     
-    private func leadingWidth(
-        interfaceIdiom: UIUserInterfaceIdiom,
-        sidebarButtonVisible: Bool,
-        showsDownloads: Bool
-    ) -> CGFloat {
-        guard interfaceIdiom == .pad else { return UX.topToolbarStandardButtonStackWidth }
-        let visibleButtonCount = (sidebarButtonVisible ? 3 : 2) + (showsDownloads ? 1 : 0)
+    private func stackWidth(for stack: UIStackView) -> CGFloat {
+        let visibleButtonCount = stack.arrangedSubviews.filter { !$0.isHidden }.count
+        guard visibleButtonCount > 0 else {
+            return 0
+        }
         return (CGFloat(visibleButtonCount) * UX.topToolbarButtonStackHeight)
-        + (CGFloat(max(visibleButtonCount - 1, 0)) * UX.topToolbarButtonSpacing)
+        + (CGFloat(visibleButtonCount - 1) * UX.topToolbarButtonSpacing)
     }
     
     private var shouldLimitStandardAddressBarWidth: Bool {
@@ -357,12 +355,64 @@ final class TopToolbar: UIView {
     private func updateDownloadButtonVisibility() {
         let isCompact = layoutState == .compact
         downloadButton.isHidden = layoutState != .standard || !downloadButton.isShowingDownloads
-        leadingWidthConstraint.constant = isCompact ? 0 : leadingWidth(
-            interfaceIdiom: layoutInterfaceIdiom,
-            sidebarButtonVisible: layoutSidebarButtonVisible,
-            showsDownloads: downloadButton.isShowingDownloads
-        )
+        leadingWidthConstraint.constant = isCompact ? 0 : stackWidth(for: leadingButtons)
+        trailingWidthConstraint.constant = isCompact ? 0 : stackWidth(for: trailingButtons)
         updateStandardAddressBarLayout()
         layoutIfNeeded()
+    }
+
+    private func configureActions(
+        _ requestedActions: [BrowserToolbarAction],
+        context: BrowserToolbarContext,
+        includesSidebar: Bool
+    ) {
+        let actions = ToolbarActionPolicy.sanitize(
+            requestedActions,
+            maximumVisibleActions: 6
+        )
+        guard actions != configuredActions ||
+              context != configuredContext ||
+              includesSidebar != configuredIncludesSidebar ||
+              leadingButtons.arrangedSubviews.isEmpty else {
+            return
+        }
+
+        let layout = ToolbarActionPolicy.layout(
+            actions: actions,
+            context: context,
+            maximumVisibleActions: 6
+        )
+        let leadingViews: [UIView] = (includesSidebar ? [sidebarButton] : [])
+        + layout.leading.map { button(for: $0) }
+        let trailingViews: [UIView] = layout.trailing.map { button(for: $0) }
+
+        replaceArrangedSubviews(in: leadingButtons, with: leadingViews)
+        replaceArrangedSubviews(in: trailingButtons, with: trailingViews)
+        configuredActions = actions
+        configuredContext = context
+        configuredIncludesSidebar = includesSidebar
+    }
+
+    private func replaceArrangedSubviews(
+        in stack: UIStackView,
+        with views: [UIView]
+    ) {
+        for view in stack.arrangedSubviews {
+            stack.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+        views.forEach(stack.addArrangedSubview)
+    }
+
+    private func button(for action: BrowserToolbarAction) -> ToolbarButton {
+        switch action {
+        case .back: return backButton
+        case .forward: return forwardButton
+        case .share: return shareButton
+        case .menu: return libraryButton
+        case .downloads: return downloadButton
+        case .tabs: return tabOverviewButton
+        case .newTab: return newTabButton
+        }
     }
 }

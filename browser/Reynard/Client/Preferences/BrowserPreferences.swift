@@ -83,6 +83,7 @@ final class BrowserPreferences {
             key("AppearanceSettings", "showsFullWebsiteAddress"): false,
             key("AppearanceSettings", "showsLandscapeTabBar"): true,
             key("AppearanceSettings", "defaultPageZoomLevel"): PageZoomLevels.defaultLevel,
+            key("AppearanceSettings", "toolbarActions"): (try? JSONEncoder().encode(BrowserToolbarAction.defaultPhoneActions.map(\.rawValue))) ?? Data(),
             
             // Languages
             key("LanguageSettings", "websiteLanguages"): (try? JSONEncoder().encode(WebsiteLanguageCatalog.defaultLanguageCodes())) ?? Data(),

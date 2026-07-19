@@ -462,7 +462,8 @@ final class BrowserViewController: UIViewController {
             orientation: browserLayout.orientation,
             isTwoThirdSplitScreenOrSmaller: isSidebarOverlayLayout,
             sidebarButtonVisible: sidebarCoordinator.showChromeSidebarButton,
-            animatesChromeStateChanges: animated
+            animatesChromeStateChanges: animated,
+            toolbarActions: Prefs.AppearanceSettings.toolbarActions
         ))
     }
     
@@ -628,6 +629,12 @@ final class BrowserViewController: UIViewController {
         )
         NotificationCenter.default.addObserver(
             self,
+            selector: #selector(toolbarActionsDidChange),
+            name: .toolbarActionsDidChange,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
             selector: #selector(applyUpdateMenuButtonBadge),
             name: .appUpdateAvailable,
             object: nil
@@ -650,6 +657,10 @@ final class BrowserViewController: UIViewController {
     }
     
     @objc func landscapeTabBarDidChange() {
+        updateBrowserLayout(animated: true)
+    }
+
+    @objc private func toolbarActionsDidChange() {
         updateBrowserLayout(animated: true)
     }
     

@@ -14,40 +14,9 @@ final class BrowserChrome: UIView {
         static let actionBarAnimationDuration: TimeInterval = 0.12
     }
     
-    enum PresentationState {
-        case browsing
-        case tabOverview
-        case fullscreenMedia
-    }
-    
-    enum SearchState {
-        case inactive
-        case focused
-        case scrollingEmbeddedSuggestions
-        case scrollingDetachedSuggestions
-        
-        var showsAddressBarDismissButton: Bool {
-            switch self {
-            case .inactive:
-                return false
-            case .focused, .scrollingEmbeddedSuggestions, .scrollingDetachedSuggestions:
-                return true
-            }
-        }
-    }
-    
-    struct State {
-        let position: BrowserChromePosition
-        let mode: BrowserChromeMode
-        let presentation: PresentationState
-        let search: SearchState
-        let topInset: CGFloat
-        let interfaceIdiom: UIUserInterfaceIdiom
-        let orientation: BrowserLayout.ViewportOrientation
-        let isTwoThirdSplitScreenOrSmaller: Bool
-        let sidebarButtonVisible: Bool
-        let animatesChromeStateChanges: Bool
-    }
+    typealias PresentationState = ChromePresentationMode
+    typealias SearchState = ChromeSearchState
+    typealias State = ChromePresentationState
     
     var onSidebar: (() -> Void)?
     var onBack: (() -> Void)?
@@ -171,11 +140,13 @@ final class BrowserChrome: UIView {
             state: topState,
             topInset: state.topInset,
             interfaceIdiom: state.interfaceIdiom,
-            sidebarButtonVisible: state.sidebarButtonVisible
+            sidebarButtonVisible: state.sidebarButtonVisible,
+            actions: state.toolbarActions
         )
         bottomToolbar.apply(
             state: bottomState,
-            hidesButtons: state.search == .scrollingEmbeddedSuggestions
+            hidesButtons: state.search == .scrollingEmbeddedSuggestions,
+            actions: state.toolbarActions
         )
         addressBar.setDismissButtonVisible(
             state.search.showsAddressBarDismissButton && state.presentation == .browsing,
@@ -441,6 +412,7 @@ final class BrowserChrome: UIView {
         bottomToolbar.onLibrary = { [weak self] in self?.onLibrary?() }
         bottomToolbar.onDownloads = { [weak self] in self?.onDownloads?() }
         bottomToolbar.onTabOverview = { [weak self] in self?.onTabOverview?() }
+        bottomToolbar.onNewTab = { [weak self] in self?.onNewTab?() }
         
         actionBar.onPageZoomOut = { [weak self] in self?.onPageZoomOut?() }
         actionBar.onPageZoomIn = { [weak self] in self?.onPageZoomIn?() }

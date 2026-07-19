@@ -12,7 +12,7 @@ final class BottomToolbar: UIView {
         static let bottomToolbarStandardContentHeight: CGFloat = 94
         static let bottomToolbarFocusedContentHeight: CGFloat = 58
         static let bottomToolbarCompactContentHeight: CGFloat = 44
-        static let bottomToolbarButtonStackHeight: CGFloat = 30
+        static let bottomToolbarButtonStackHeight = BrowserDesignTokens.Control.compactHeight
         static let addressBarHorizontalInset: CGFloat = 12
         static let addressBarTopInset: CGFloat = 8
         static let bottomToolbarButtonStackHorizontalInset: CGFloat = 24
@@ -34,6 +34,7 @@ final class BottomToolbar: UIView {
     var onLibrary: (() -> Void)?
     var onDownloads: (() -> Void)?
     var onTabOverview: (() -> Void)?
+    var onNewTab: (() -> Void)?
     
     private let contentView: UIView = {
         let view = UIView()
@@ -48,6 +49,7 @@ final class BottomToolbar: UIView {
     private lazy var libraryButton = ToolbarButton(buttonType: .library, target: self, action: #selector(libraryTapped))
     private lazy var downloadButton = ToolbarButton(buttonType: .download, target: self, action: #selector(downloadsTapped))
     private lazy var tabOverviewButton = ToolbarButton(buttonType: .tabOverview, target: self, action: #selector(tabOverviewTapped))
+    private lazy var newTabButton = ToolbarButton(buttonType: .newTab, target: self, action: #selector(newTabTapped))
     
     private lazy var buttons: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [backButton, forwardButton, shareButton, libraryButton, downloadButton, tabOverviewButton])
@@ -58,6 +60,8 @@ final class BottomToolbar: UIView {
         stack.spacing = UX.bottomToolbarButtonSpacing
         return stack
     }()
+
+    private var configuredActions: [BrowserToolbarAction] = []
     
     private var topConstraint: NSLayoutConstraint!
     private var contentHeightConstraint: NSLayoutConstraint!
@@ -114,7 +118,12 @@ final class BottomToolbar: UIView {
         standardButtonsTopConstraint?.isActive = false
     }
     
-    func apply(state: LayoutState, hidesButtons: Bool) {
+    func apply(
+        state: LayoutState,
+        hidesButtons: Bool,
+        actions: [BrowserToolbarAction]
+    ) {
+        configureActions(actions)
         let contentHeight: CGFloat
         switch state {
         case .hidden:
@@ -133,7 +142,9 @@ final class BottomToolbar: UIView {
             topConstraint.constant = verticalOffset - contentHeight
             contentHeightConstraint.constant = contentHeight
             isHidden = state == .hidden || state == .collapsed
-            backgroundColor = state == .focused ? .clear : .systemGray6
+            backgroundColor = state == .focused
+            ? .clear
+            : BrowserDesignTokens.Color.chromeBackground
             
             let isCompact = state == .compact || state == .collapsed
             standardButtonsTopConstraint?.isActive = !isCompact
@@ -178,12 +189,44 @@ final class BottomToolbar: UIView {
     @objc private func libraryTapped() { onLibrary?() }
     @objc private func downloadsTapped() { onDownloads?() }
     @objc private func tabOverviewTapped() { onTabOverview?() }
+    @objc private func newTabTapped() { onNewTab?() }
+
+    private func configureActions(_ requestedActions: [BrowserToolbarAction]) {
+        let actions = ToolbarActionPolicy.sanitize(
+            requestedActions,
+            maximumVisibleActions: 6
+        )
+        guard actions != configuredActions || buttons.arrangedSubviews.isEmpty else {
+            return
+        }
+
+        for view in buttons.arrangedSubviews {
+            buttons.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+        for action in actions {
+            buttons.addArrangedSubview(button(for: action))
+        }
+        configuredActions = actions
+    }
+
+    private func button(for action: BrowserToolbarAction) -> ToolbarButton {
+        switch action {
+        case .back: return backButton
+        case .forward: return forwardButton
+        case .share: return shareButton
+        case .menu: return libraryButton
+        case .downloads: return downloadButton
+        case .tabs: return tabOverviewButton
+        case .newTab: return newTabButton
+        }
+    }
     
     // MARK: - View Setup
     
     private func configureAppearance() {
         translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = .systemGray6
+        backgroundColor = BrowserDesignTokens.Color.chromeBackground
     }
     
     private func configureHierarchy() {

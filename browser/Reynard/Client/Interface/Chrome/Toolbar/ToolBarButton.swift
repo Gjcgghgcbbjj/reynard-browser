@@ -9,7 +9,7 @@ import UIKit
 
 final class ToolbarButton: UIButton {
     private enum UX {
-        static let toolbarButtonCornerRadius: CGFloat = 10
+        static let toolbarButtonCornerRadius = BrowserDesignTokens.Radius.control
         static let downloadButtonSideLength: CGFloat = 44
         static let downloadIconSize: CGFloat = 24
         static let downloadIconVerticalOffset: CGFloat = -1
@@ -17,7 +17,7 @@ final class ToolbarButton: UIButton {
         static let downloadProgressTrackHeight: CGFloat = 2.5
         static let downloadProgressTrackBottomInset: CGFloat = 1
         static let downloadProgressTrackCornerRadius: CGFloat = 1.25
-        static let standardButtonSideLength: CGFloat = 30
+        static let standardButtonSideLength = BrowserDesignTokens.Control.compactHeight
         static let standardSymbolPointSize: CGFloat = 20
         static let newTabSymbolPointSize: CGFloat = 20
         static let downloadSymbolPointSize: CGFloat = 17
@@ -76,6 +76,18 @@ final class ToolbarButton: UIButton {
         configureImage()
         configureTarget(target, action: action)
         configureDownloadViewsIfNeeded()
+    }
+
+    convenience init(
+        toolbarAction: BrowserToolbarAction,
+        target: AnyObject,
+        action: Selector
+    ) {
+        self.init(
+            buttonType: toolbarAction.buttonType,
+            target: target,
+            action: action
+        )
     }
     
     required init?(coder: NSCoder) {
@@ -194,6 +206,20 @@ final class ToolbarButton: UIButton {
     private func playDownloadBounceAnimation() {
         if #available(iOS 17.0, *) {
             downloadIconView.addSymbolEffect(.bounce)
+        }
+    }
+}
+
+private extension BrowserToolbarAction {
+    var buttonType: ToolbarButton.ButtonType {
+        switch self {
+        case .back: return .back
+        case .forward: return .forward
+        case .share: return .share
+        case .menu: return .library
+        case .downloads: return .download
+        case .tabs: return .tabOverview
+        case .newTab: return .newTab
         }
     }
 }
