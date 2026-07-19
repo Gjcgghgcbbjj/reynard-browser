@@ -5,11 +5,11 @@
   "baselineRefs": [
     "docs/aegis/plans/2026-07-19-ios16-stability-foundation.md"
   ],
-  "scopeStatus": "Task 6 implemented the planned completion-bearing tab transaction and bounded lifecycle flush without changing normal interaction persistence",
-  "compatStatus": "SQLite schema and transaction content remain unchanged; main-thread blocking was not introduced; diagnostics remain observer-only",
-  "retirementStatus": "Fire-and-forget persistence is retired only at resign-active/background boundaries; normal async persistence remains canonical",
+  "scopeStatus": "All seven Gate A source tasks are implemented; only remote macOS CI and physical device evidence remain",
+  "compatStatus": "No WebKit fallback, second tab database, CloudKit change, or persistent schema change was introduced",
+  "retirementStatus": "Crash tab deletion, terminal JIT failure state, migration fatalError paths, and lifecycle fire-and-forget behavior were retired as planned",
   "newRiskSignals": [
-    "UIBackgroundTask and SQLite completion timing require physical forced-termination evidence"
+    "Full Xcode/Gecko compilation, packaging, and device timing remain unverified on this WSL host"
   ],
-  "decision": "continue"
+  "decision": "needs-verification"
 }

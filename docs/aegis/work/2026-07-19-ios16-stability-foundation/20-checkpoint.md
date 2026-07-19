@@ -156,3 +156,32 @@
 - New risk signals:
 - UIBackgroundTask and SQLite completion timing require physical forced-termination evidence
 - Advisory decision: continue
+
+## Checkpoint Update
+
+- Current todo: Gate A source complete; obtain macOS build and iOS 16 arm64/arm64e device evidence
+- Active slice: Approved follow-up: macOS GitHub Actions IPA/TIPA packaging workflow
+- Completed todos:
+- Task 1: portable stability core, commit 511a6cd
+- Task 2: diagnostics/redaction, commit 0a21668
+- Task 3: tab-preserving Gecko process recovery, commit b6ad790
+- Task 4: bounded JIT retry, commit 2ef79a1
+- Task 5: recoverable startup migration, commit 1d47791
+- Task 6: lifecycle tab flush, commit bba9b72
+- Task 7: stability CI and device checklist, commit 5c79130; remote CI/device execution pending
+- Evidence refs:
+- 28 Swift tests passed
+- actionlint 1.7.12 passed stability-core.yml
+- plistlib and shell syntax checks passed locally
+- commit 5c79130
+- Blocked on: Gate A release evidence requires macOS Xcode build and physical arm64 plus arm64e iOS 16 devices
+- Next step: Create and validate a manual macOS packaging workflow that builds dependencies, Gecko, the app archive, and IPA/TIPA artifacts with caching and logs
+
+## DriftCheckDraft
+
+- Scope status: All seven Gate A source tasks are implemented; only remote macOS CI and physical device evidence remain
+- Compatibility status: No WebKit fallback, second tab database, CloudKit change, or persistent schema change was introduced
+- Retirement status: Crash tab deletion, terminal JIT failure state, migration fatalError paths, and lifecycle fire-and-forget behavior were retired as planned
+- New risk signals:
+- Full Xcode/Gecko compilation, packaging, and device timing remain unverified on this WSL host
+- Advisory decision: needs-verification

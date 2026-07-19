@@ -1,23 +1,24 @@
 {
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-19-ios16-stability-foundation",
-  "currentTodo": "Task 7: add repeatable CI and iOS 16 device evidence",
+  "currentTodo": "Gate A source complete; obtain macOS build and iOS 16 arm64/arm64e device evidence",
   "completedTodos": [
     "Task 1: portable stability core, commit 511a6cd",
-    "Task 2: diagnostics/redaction, commit 0a21668; Xcode verification pending",
-    "Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending",
-    "Task 4: bounded JIT retry and selected-session recreation, commit 2ef79a1; device verification pending",
-    "Task 5: verified recoverable startup migration, commit 1d47791; Xcode/manual UI verification pending",
-    "Task 6: bounded lifecycle tab persistence flush, commit bba9b72; device termination verification pending"
+    "Task 2: diagnostics/redaction, commit 0a21668",
+    "Task 3: tab-preserving Gecko process recovery, commit b6ad790",
+    "Task 4: bounded JIT retry, commit 2ef79a1",
+    "Task 5: recoverable startup migration, commit 1d47791",
+    "Task 6: lifecycle tab flush, commit bba9b72",
+    "Task 7: stability CI and device checklist, commit 5c79130; remote CI/device execution pending"
   ],
-  "activeSlice": "Task 7 CI workflow, packaging path, and device checklist",
+  "activeSlice": "Approved follow-up: macOS GitHub Actions IPA/TIPA packaging workflow",
   "evidenceRefs": [
     "28 Swift tests passed",
-    "LifecycleFlushPolicy typechecked and four policy scenarios passed",
-    "Store/TabManager/Scene modified files parsed",
-    "commit bba9b72"
+    "actionlint 1.7.12 passed stability-core.yml",
+    "plistlib and shell syntax checks passed locally",
+    "commit 5c79130"
   ],
-  "blockedOn": "Full Xcode build and ten forced-termination cycles require macOS/iOS",
-  "nextStep": "Add macOS stability-core workflow, iOS 16 evidence checklist, and README build/test instructions; validate shell, plist, YAML, and package commands locally",
+  "blockedOn": "Gate A release evidence requires macOS Xcode build and physical arm64 plus arm64e iOS 16 devices",
+  "nextStep": "Create and validate a manual macOS packaging workflow that builds dependencies, Gecko, the app archive, and IPA/TIPA artifacts with caching and logs",
   "updatedAt": "2026-07-19"
 }

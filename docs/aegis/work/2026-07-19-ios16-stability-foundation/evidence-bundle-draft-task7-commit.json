@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "task7-commit",
+  "type": "commit",
+  "source": "5c79130",
+  "summary": "Added macOS stability CI with 14-day logs, iOS 16 arm64/arm64e evidence checklist, and Windows/macOS build/test/package documentation",
+  "verifier": "git show --stat 5c79130"
+}

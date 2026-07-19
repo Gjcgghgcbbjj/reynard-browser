@@ -97,3 +97,19 @@ No evidence has been recorded yet.
 - Source: bba9b72
 - Summary: Added bounded flush coordination, completion-bearing tab transactions, lifecycle snapshot persistence, background task lease, and persistence diagnostics
 - Verifier: git show --stat bba9b72
+
+## EvidenceBundleDraft
+
+- Artifact key: task7-source-checks
+- Type: test
+- Source: Docker Swift tests, actionlint 1.7.12, PyYAML, plistlib fallback, bash -n, git diff --check, and workflow/checklist assertions
+- Summary: 28 tests passed; stability-core workflow passed actionlint; four plist files parsed locally; all release/development shell scripts passed bash syntax; required device matrix fields are present
+- Verifier: Swift 6.1.3 Linux container, actionlint 1.7.12, Python, Bash
+
+## EvidenceBundleDraft
+
+- Artifact key: task7-commit
+- Type: commit
+- Source: 5c79130
+- Summary: Added macOS stability CI with 14-day logs, iOS 16 arm64/arm64e evidence checklist, and Windows/macOS build/test/package documentation
+- Verifier: git show --stat 5c79130
