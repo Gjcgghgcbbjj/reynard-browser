@@ -17,16 +17,12 @@ protocol HomepageRootViewControllerDelegate: AnyObject {
     func homepageRootViewControllerDidStartScrolling()
 }
 
-protocol HomepageRecommendationViewController: UIViewController {
-    func setContentMode(_ contentMode: HomepageContentMode)
-    func setPrivateBrowsing(_ isPrivateBrowsing: Bool)
-}
 
 final class HomepageRootViewController: UIViewController {
     private enum UX {
         static let topInset: CGFloat = 48
         static let folderTopInset: CGFloat = 20
-        static let horizontalInset: CGFloat = 16
+        static let horizontalInset: CGFloat = BrowserDesignTokens.Spacing.large
         static let bottomInset: CGFloat = 24
         static let embeddedMaximumWidth: CGFloat = 800
         static let detachedMaximumWidth: CGFloat = 700
@@ -107,9 +103,6 @@ final class HomepageRootViewController: UIViewController {
         }
         
         self.contentMode = contentMode
-        recommendationViewControllers.forEach { viewController in
-            viewController.setContentMode(contentMode)
-        }
         privateBrowsingSectionViewController?.setContentMode(contentMode)
         favoritesSectionViewController?.setContentMode(contentMode)
         recentlyClosedTabsSectionViewController?.setContentMode(contentMode)
@@ -131,9 +124,6 @@ final class HomepageRootViewController: UIViewController {
             return
         }
         
-        recommendationViewControllers.forEach { viewController in
-            viewController.setPrivateBrowsing(isPrivateBrowsing)
-        }
         privateBrowsingSectionViewController?.setPrivateBrowsing(isPrivateBrowsing)
     }
     
@@ -152,6 +142,8 @@ final class HomepageRootViewController: UIViewController {
     }
     
     private func configureHierarchy() {
+        view.backgroundColor = BrowserDesignTokens.Color.chromeBackground
+        sectionStackView.spacing = BrowserDesignTokens.Spacing.large
         view.addSubview(scrollView)
         scrollView.addSubview(sectionStackView)
     }
@@ -199,27 +191,6 @@ final class HomepageRootViewController: UIViewController {
     
     private func makeSectionViewController(for section: HomepageSection) -> UIViewController {
         switch section {
-        case .recommendation(.performance):
-            let viewController = PerformanceRecommendationViewController()
-            viewController.delegate = self
-            viewController.setContentMode(contentMode)
-            viewController.setPrivateBrowsing(isPrivateBrowsing)
-            return viewController
-            
-        case .recommendation(.updateAvailable):
-            let viewController = UpdateAvailableViewController()
-            viewController.delegate = self
-            viewController.setContentMode(contentMode)
-            viewController.setPrivateBrowsing(isPrivateBrowsing)
-            return viewController
-            
-        case .recommendation(.donation):
-            let viewController = DonationRecommendationViewController()
-            viewController.delegate = self
-            viewController.setContentMode(contentMode)
-            viewController.setPrivateBrowsing(isPrivateBrowsing)
-            return viewController
-            
         case .privateBrowsing:
             let viewController = PrivateBrowsingSectionViewController()
             viewController.setContentMode(contentMode)
@@ -263,16 +234,6 @@ final class HomepageRootViewController: UIViewController {
     
     // MARK: - Helpers
     
-    private var recommendationViewControllers: [HomepageRecommendationViewController] {
-        return sectionViewControllers.compactMap { section, viewController in
-            guard case .recommendation = section else {
-                return nil
-            }
-            
-            return viewController as? HomepageRecommendationViewController
-        }
-    }
-    
     private var privateBrowsingSectionViewController: PrivateBrowsingSectionViewController? {
         return sectionViewControllers[.privateBrowsing] as? PrivateBrowsingSectionViewController
     }
@@ -289,8 +250,8 @@ final class HomepageRootViewController: UIViewController {
         guard folder == nil else {
             return sections
         }
-        
-        return sections.filter { section in
+
+        return HomepageSection.allCases.filter { section in
             switch section {
             case .privateBrowsing:
                 return isPrivateBrowsing
@@ -302,8 +263,6 @@ final class HomepageRootViewController: UIViewController {
                 (!isPrivateBrowsing || Prefs.HomepageSettings.showsFrequentlyVisitedInPrivateBrowsing)
             case .recentlyClosedTabs:
                 return Prefs.HomepageSettings.showsRecentlyClosedTabs && !isPrivateBrowsing
-            default:
-                return true
             }
         }
     }

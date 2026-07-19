@@ -1,32 +1,25 @@
-//
-//  HomepageSection.swift
-//  Reynard
-//
-//  Created by Minh Ton on 21/6/26.
-//
-
 import UIKit
 
-enum HomepageRecommendation: CaseIterable, Hashable {
-    case performance
-    case updateAvailable
-    case donation
-}
-
 enum HomepageSection: CaseIterable, Hashable {
-    case recommendation(HomepageRecommendation)
     case privateBrowsing
     case favorites
     case frequentlyVisited
     case recentlyClosedTabs
-    
+
     static var allCases: [HomepageSection] {
-        return HomepageRecommendation.allCases.map { .recommendation($0) } + [
-            .privateBrowsing,
-            .favorites,
-            .frequentlyVisited,
-            .recentlyClosedTabs,
-        ]
+        let ordered = Prefs.HomepageSettings.moduleOrder.compactMap { module -> HomepageSection? in
+            switch module {
+            case .search:
+                return nil // Search is owned by the browser chrome.
+            case .favorites:
+                return .favorites
+            case .frequentlyVisited:
+                return .frequentlyVisited
+            case .recentTabs:
+                return .recentlyClosedTabs
+            }
+        }
+        return [.privateBrowsing] + ordered
     }
 }
 

@@ -30,12 +30,6 @@ final class BrowserPreferences {
     }
     
     func registerDefaults() {
-        let donationRecommendationShowTimeKey = key("HomepageSettings", "donationRecommendationShowTime")
-        if UserDefaults.standard.object(forKey: donationRecommendationShowTimeKey) == nil {
-            let delay = TimeInterval.random(in: (3 * 86_400)...(5 * 86_400))
-            UserDefaults.standard.set(Date().addingTimeInterval(delay).timeIntervalSince1970, forKey: donationRecommendationShowTimeKey)
-        }
-        
         UserDefaults.standard.register(defaults: [
             // Search
             key("SearchSettings", "searchEngine"): SearchEngine.google.rawValue,
@@ -75,7 +69,7 @@ final class BrowserPreferences {
             key("HomepageSettings", "frequentlyVisitedSiteCount"): 8,
             key("HomepageSettings", "showsRecentlyClosedTabs"): true,
             key("HomepageSettings", "recentlyClosedTabLimit"): 10,
-            key("HomepageSettings", "donationRecommendationMultiplier"): 1,
+            key("HomepageSettings", "moduleOrder"): (try? JSONEncoder().encode(BrowserHomepageModule.defaultOrder.map(\.rawValue))) ?? Data(),
             
             // Appearance
             key("AppearanceSettings", "appAppearance"): AppAppearance.system.rawValue,
@@ -468,23 +462,6 @@ final class BrowserPreferences {
             }
         }
         
-        static var donationRecommendationShowTime: Date {
-            get {
-                return Date(timeIntervalSince1970: prefs.double(forSetting: "HomepageSettings", key: "donationRecommendationShowTime"))
-            }
-            set {
-                prefs.set(newValue.timeIntervalSince1970, forSetting: "HomepageSettings", key: "donationRecommendationShowTime")
-            }
-        }
-        
-        static var donationRecommendationMultiplier: Int {
-            get {
-                return prefs.integer(forSetting: "HomepageSettings", key: "donationRecommendationMultiplier")
-            }
-            set {
-                prefs.set(newValue, forSetting: "HomepageSettings", key: "donationRecommendationMultiplier")
-            }
-        }
     }
     
     // MARK: - Site Permissions
