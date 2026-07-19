@@ -30,7 +30,7 @@ plutil -replace CFBundleIdentifier -string "com.minh-ton.Reynard" "$APP_PATH/Inf
 plutil -replace CFBundleIdentifier -string "com.minh-ton.Reynard.Helper" "$APP_PATH/PlugIns/Reynard Helper.appex/Info.plist"
 plutil -replace CFBundleIdentifier -string "com.minh-ton.Reynard.OpenIn" "$APP_PATH/PlugIns/OpenIn.appex/Info.plist"
 
-rm -rf "$WORK_DIR" "$ROOT_DIR/dist/Reynard.ipa" "$ROOT_DIR/dist/Reynard-TrollStore.ipa"
+rm -rf "$WORK_DIR" "$ROOT_DIR/dist/Reynard.ipa" "$ROOT_DIR/dist/Reynard-TrollStore.tipa" "$ROOT_DIR/dist/Reynard-Jailbroken.ipa"
 mkdir -p "$WORK_DIR/Payload"
 cp -R "$APP_PATH" "$WORK_DIR/Payload/"
 
@@ -50,7 +50,24 @@ PTRACE_JIT_OUT="Payload/Reynard.app/ptrace_jit"
 
 chmod 0755 "$PTRACE_JIT_OUT"
 ldid -S"$ROOT_DIR/browser/Reynard/JIT/Unsandboxed/ptrace_jit.entitlements" "$PTRACE_JIT_OUT"
-ldid -S"$ROOT_DIR/browser/Reynard/Entitlements/Reynard.private.entitlements" "Payload/Reynard.app/Reynard"
+
+for file in \
+	"Payload/Reynard.app/Frameworks/XUL" \
+	"Payload/Reynard.app/Frameworks/GeckoView.framework/GeckoView" \
+	"Payload/Reynard.app/PlugIns/OpenIn.appex/OpenIn"
+do
+	if [ -f "$file" ]; then
+		ldid -S "$file"
+	fi
+done
+
+for file in Payload/Reynard.app/Frameworks/*.dylib; do
+	if [ -f "$file" ]; then
+		ldid -S "$file"
+	fi
+done
+
 ldid -S"$ROOT_DIR/browser/Helper/Entitlements/Reynard-Helper.private.entitlements" "Payload/Reynard.app/PlugIns/Reynard Helper.appex/Reynard Helper"
+ldid -S"$ROOT_DIR/browser/Reynard/Entitlements/Reynard.private.entitlements" "Payload/Reynard.app/Reynard"
 zip -r ../Reynard-TrollStore.tipa Payload -x "._*" -x ".DS_Store" -x "__MACOSX" # trollstore ipa
 cp ../Reynard-TrollStore.tipa ../Reynard-Jailbroken.ipa # for jailbroken users
