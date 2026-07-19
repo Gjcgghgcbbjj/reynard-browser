@@ -23,7 +23,6 @@ jobs:
     timeout-minutes: 360
 
     env:
-      MOZ_AUTOMATION: "1"
       RUST_BACKTRACE: "1"
       XCODE_APP: ${{ inputs.xcode_version }}
 
@@ -88,7 +87,7 @@ jobs:
         run: |
           set -euo pipefail
           cd engine/firefox
-          ./mach bootstrap --application-choice browser 2>&1 | tee ../../gecko-bootstrap.log
+          ./mach bootstrap --no-interactive --application-choice browser 2>&1 | tee ../../gecko-bootstrap.log
 
       - name: Apply Reynard Gecko patches
         shell: zsh {0}
@@ -152,4 +151,3 @@ jobs:
             dist/Reynard.xcarchive/Info.plist
           if-no-files-found: warn
           retention-days: 14
-
