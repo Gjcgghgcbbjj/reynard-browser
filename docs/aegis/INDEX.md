@@ -74,3 +74,5 @@ Entries are workspace records, not authoritative runtime decisions.
 | 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase7-integrated-source.json | 2026-07-20-browser-frontend-redesign evidence phase7-integrated-source |
 | 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/gate-input-pack.json | 2026-07-20-browser-frontend-redesign gate input pack |
 | 2026-07-20 | work | docs/aegis/work/2026-07-20-browser-frontend-redesign/proof-bundle.md | 2026-07-20-browser-frontend-redesign proof bundle |
+| 2026-07-20 | adr | docs/aegis/adr/ADR-0001-frontend-surfaces-and-gecko-feature-ownership.md | ADR-0001 - Frontend surfaces and Gecko feature execution ownership |
+| 2026-07-20 | baseline | docs/aegis/baseline/2026-07-20-frontend-redesign-baseline.md | Reynard Browser Frontend Redesign Baseline |
