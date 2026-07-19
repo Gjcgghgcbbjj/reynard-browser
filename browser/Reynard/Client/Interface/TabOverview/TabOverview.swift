@@ -164,7 +164,11 @@ final class TabOverview: UIView {
             self.layoutIfNeeded()
             self.collection.applyPresentationTransforms()
         }
-        animated ? UIView.animate(withDuration: UX.layoutAnimationDuration, animations: changes) : changes()
+        if animated {
+            BrowserMotion.animate(.tabGrid, in: self, animations: changes)
+        } else {
+            changes()
+        }
     }
     
     func setActiveToolbarAlpha(_ alpha: CGFloat) {
@@ -250,7 +254,7 @@ final class TabOverview: UIView {
     
     private func configureAppearance() {
         translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = .systemGray6
+        backgroundColor = BrowserDesignTokens.Color.chromeBackground
         alpha = 0
         isHidden = true
     }

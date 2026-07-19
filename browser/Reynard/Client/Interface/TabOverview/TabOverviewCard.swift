@@ -9,7 +9,7 @@ import UIKit
 
 final class TabOverviewCard: UICollectionViewCell {
     private enum UX {
-        static let webpagePreviewCornerRadius: CGFloat = 18
+        static let webpagePreviewCornerRadius: CGFloat = BrowserDesignTokens.Radius.card
         static let webpagePreviewRestingInset: CGFloat = 1
         static let webpagePreviewLiftedInset: CGFloat = -4
         static let webpagePreviewRestingShadowOpacity: Float = 0.12
@@ -114,7 +114,7 @@ final class TabOverviewCard: UICollectionViewCell {
     private let tabTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: UX.tabTitleFontSize, weight: .medium)
+        label.font = BrowserDesignTokens.Typography.cardDetail
         label.textAlignment = .center
         label.textColor = .label
         label.numberOfLines = 1

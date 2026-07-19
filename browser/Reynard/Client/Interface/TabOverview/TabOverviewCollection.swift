@@ -124,7 +124,7 @@ final class TabOverviewCollection: NSObject {
             self.applyPresentationTransforms(width: width)
         }
         if animated && modeChanged {
-            UIView.animate(withDuration: 0.28, delay: 0, options: [.curveEaseInOut, .beginFromCurrentState], animations: animations)
+            BrowserMotion.animate(.tabGrid, in: tabOverview, animations: animations)
         } else {
             animations()
         }

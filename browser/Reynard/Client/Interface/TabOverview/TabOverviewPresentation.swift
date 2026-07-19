@@ -56,6 +56,7 @@ final class TabOverviewPresentation {
     private var pendingSelectionTabMode: TabMode?
     private var pendingSelectionPreviewImage: UIImage?
     private var activePresentationTransition: ActivePresentationTransition?
+    private var transitionAnimator: UIViewPropertyAnimator?
     private var presentationToken = 0
     
     private(set) var state: State = .dismissed
@@ -79,11 +80,8 @@ final class TabOverviewPresentation {
         let availableWidth = collectionView.bounds.width - horizontalInsets
         let tabViewAspectRatio = max(UX.cardMinimumPreviewAspectRatio, tabOverview.previewAspectRatio)
         
-        let targetWidth = context.browserLayout.chromeMode == .phone
-        ? UX.phoneCardTargetWidth
-        : UX.padCardTargetWidth
-        let computedColumns = Int((availableWidth + UX.cardCollectionItemSpacing) / (targetWidth + UX.cardCollectionItemSpacing))
-        let columns = max(UX.minimumTabCardColumnCount, computedColumns)
+        let policyLayout = TabPresentationPolicy.gridLayout(containerWidth: Double(availableWidth))
+        let columns = max(UX.minimumTabCardColumnCount, policyLayout.columns)
         
         let totalSpacing = CGFloat(columns - 1) * UX.cardCollectionItemSpacing
         let itemWidth = floor((availableWidth - totalSpacing) / CGFloat(columns))
@@ -295,7 +293,7 @@ final class TabOverviewPresentation {
         )
         self.activePresentationTransition = activePresentationTransition
         
-        UIView.animate(withDuration: UX.presentationAnimationDuration, delay: 0, usingSpringWithDamping: UX.presentationSpringDamping, initialSpringVelocity: 1, options: [.curveEaseInOut, .allowUserInteraction]) {
+        runTransition {
             transitionView.transform = .identity
             bottomChromeView.alpha = 0
             self.tabOverview.bottomToolbar.alpha = 1
@@ -375,7 +373,7 @@ final class TabOverviewPresentation {
         tabOverview.bottomToolbar.alpha = 0
         bringBrowserChromeToFrontForDismissal()
         
-        UIView.animate(withDuration: UX.dismissalAnimationDuration, delay: 0, usingSpringWithDamping: UX.dismissalSpringDamping, initialSpringVelocity: 1, options: [.curveEaseInOut]) {
+        runTransition {
             pageSnapshot.frame = self.context.contentView.frame
             pageSnapshot.layer.cornerRadius = 0
             bottomChromeView.alpha = 0
@@ -492,7 +490,7 @@ final class TabOverviewPresentation {
         )
         self.activePresentationTransition = activePresentationTransition
         
-        UIView.animate(withDuration: UX.presentationAnimationDuration, delay: 0, usingSpringWithDamping: UX.presentationSpringDamping, initialSpringVelocity: 1, options: [.curveEaseInOut, .allowUserInteraction]) {
+        runTransition {
             transitionView.transform = .identity
             topChromeView?.alpha = 0
             self.tabOverview.setActiveToolbarAlpha(1)
@@ -572,7 +570,7 @@ final class TabOverviewPresentation {
         context.tabBar.setPresentationAlpha(0)
         bringBrowserChromeToFrontForDismissal()
         
-        UIView.animate(withDuration: UX.dismissalAnimationDuration, delay: 0, usingSpringWithDamping: UX.dismissalSpringDamping, initialSpringVelocity: 1, options: [.curveEaseInOut]) {
+        runTransition {
             pageSnapshot.frame = self.context.contentView.frame
             pageSnapshot.layer.cornerRadius = 0
             self.tabOverview.alpha = 0
@@ -627,6 +625,8 @@ final class TabOverviewPresentation {
     
     private func cancelPresentationForImmediateDismissal() {
         presentationToken += 1
+        transitionAnimator?.stopAnimation(true)
+        transitionAnimator = nil
         if let activePresentationTransition {
             finishPresentationTransition(activePresentationTransition)
             self.activePresentationTransition = nil
@@ -653,6 +653,25 @@ final class TabOverviewPresentation {
         state = .presented
     }
     
+    private func runTransition(
+        _ animations: @escaping () -> Void,
+        completion: @escaping (UIViewAnimatingPosition) -> Void
+    ) {
+        transitionAnimator?.stopAnimation(true)
+        let animator = BrowserMotion.animator(
+            for: .tabSelection,
+            in: context.containerView,
+            animations: animations
+        )
+        transitionAnimator = animator
+        animator.addCompletion { [weak self] position in
+            guard let self, self.transitionAnimator === animator else { return }
+            self.transitionAnimator = nil
+            completion(position)
+        }
+        animator.startAnimation()
+    }
+
     private func finishPresentationTransition(_ transition: ActivePresentationTransition) {
         transition.cardSnapshotView?.layer.removeAllAnimations()
         transition.chromeSnapshotView?.layer.removeAllAnimations()
