@@ -61,13 +61,14 @@ final class HistoryViewController: UIViewController, UITableViewDataSource, UITa
     private let headerView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
+        BrowserListStyle.apply(to: view)
         return view
     }()
     
     private lazy var tableView: UITableView = {
         let view = UITableView(frame: .zero, style: .insetGrouped)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemGroupedBackground
+        view.backgroundColor = BrowserDesignTokens.Color.chromeBackground
         view.dataSource = self
         view.delegate = self
         view.rowHeight = UITableView.automaticDimension
@@ -102,7 +103,7 @@ final class HistoryViewController: UIViewController, UITableViewDataSource, UITa
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemGroupedBackground
+        view.backgroundColor = BrowserDesignTokens.Color.chromeBackground
         
         view.addSubview(tableView)
         NSLayoutConstraint.activate([

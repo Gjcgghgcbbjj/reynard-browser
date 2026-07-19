@@ -72,6 +72,7 @@ final class DownloadItemCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        BrowserListStyle.apply(to: self)
         selectionStyle = .none
         
         let labelsStack = UIStackView(arrangedSubviews: [fileNameLabel, statusLabel, progressView])

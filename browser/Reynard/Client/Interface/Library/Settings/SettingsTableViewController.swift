@@ -30,6 +30,11 @@ class SettingsTableViewController: UITableViewController {
     }
     
     private func configureTableView() {
+        BrowserListStyle.apply(to: tableView)
+        view.backgroundColor = BrowserDesignTokens.Color.chromeBackground
+        if let navigationBar = navigationController?.navigationBar {
+            BrowserListStyle.applyNavigation(to: navigationBar)
+        }
         tableView.alwaysBounceVertical = true
         tableView.keyboardDismissMode = .interactive
         if #available(iOS 14.0, *) {

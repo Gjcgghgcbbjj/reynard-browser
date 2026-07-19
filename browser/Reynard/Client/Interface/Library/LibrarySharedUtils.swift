@@ -17,26 +17,9 @@ enum LibrarySharedUtils {
     }
     
     static func makeGroupedSectionHeader(title: String) -> UIView {
-        let container = UIView()
-        container.backgroundColor = .systemGroupedBackground
-        
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: UX.groupedSectionHeaderFontSize, weight: .semibold)
-        label.textColor = .secondaryLabel
-        label.text = title
-        
-        container.addSubview(label)
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: UX.groupedSectionHeaderLeadingInset),
-            label.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -UX.groupedSectionHeaderTrailingInset),
-            label.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -UX.groupedSectionHeaderBottomInset),
-            label.topAnchor.constraint(equalTo: container.topAnchor, constant: UX.groupedSectionHeaderTopInset),
-        ])
-        
-        return container
+        return BrowserSectionHeaderView(title: title)
     }
-    
+
     static func syncTableHeaderWidth(_ headerView: UIView, in tableView: UITableView) {
         let targetWidth = tableView.bounds.width
         guard targetWidth > 0 else {

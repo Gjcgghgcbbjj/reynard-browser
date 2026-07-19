@@ -55,6 +55,7 @@ final class HistoryItemCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        BrowserListStyle.apply(to: self)
         
         clipsToBounds = true
         contentView.clipsToBounds = true

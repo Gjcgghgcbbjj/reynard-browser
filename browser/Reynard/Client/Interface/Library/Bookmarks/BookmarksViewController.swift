@@ -77,6 +77,7 @@ final class BookmarksViewController: UIViewController, UITableViewDataSource, UI
         if #available(iOS 15.0, *) {
             tableView.sectionHeaderTopPadding = UX.sectionHeaderTopPadding
         }
+        BrowserListStyle.apply(to: tableView)
         return tableView
     }()
     private let emptyLabel: UILabel = {
@@ -109,7 +110,7 @@ final class BookmarksViewController: UIViewController, UITableViewDataSource, UI
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemGroupedBackground
+        view.backgroundColor = BrowserDesignTokens.Color.chromeBackground
         installLayout()
         
         tableView.register(BookmarkItemCell.self, forCellReuseIdentifier: BookmarkItemCell.reuseIdentifier)

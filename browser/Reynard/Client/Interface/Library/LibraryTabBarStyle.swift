@@ -15,14 +15,14 @@ enum LibraryTabBarStyle {
     static func apply(to tabBar: UITabBar) {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .systemBackground
+        appearance.backgroundColor = BrowserDesignTokens.Color.chromeBackground
         
         let titleAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: UX.itemTitleFontSize, weight: .regular)]
         
         [appearance.stackedLayoutAppearance, appearance.inlineLayoutAppearance, appearance.compactInlineLayoutAppearance].forEach { itemAppearance in
             itemAppearance.normal.iconColor = .secondaryLabel
             itemAppearance.normal.titleTextAttributes = titleAttributes.merging([.foregroundColor: UIColor.secondaryLabel]) { _, new in new }
-            itemAppearance.selected.iconColor = .label
+            itemAppearance.selected.iconColor = BrowserDesignTokens.Color.accent
             itemAppearance.selected.titleTextAttributes = titleAttributes.merging([.foregroundColor: UIColor.label]) { _, new in new }
         }
         
@@ -30,7 +30,7 @@ enum LibraryTabBarStyle {
         if #available(iOS 15.0, *) {
             tabBar.scrollEdgeAppearance = appearance
         }
-        tabBar.tintColor = .label
+        tabBar.tintColor = BrowserDesignTokens.Color.accent
         tabBar.unselectedItemTintColor = .secondaryLabel
     }
 }

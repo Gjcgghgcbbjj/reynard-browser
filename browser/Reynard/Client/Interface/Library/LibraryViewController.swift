@@ -62,9 +62,12 @@ final class LibraryViewController: UITabBarController, UITabBarControllerDelegat
     // MARK: - View Setup
     
     private func configureAppearance() {
-        view.backgroundColor = .systemGroupedBackground
+        view.backgroundColor = BrowserDesignTokens.Color.chromeBackground
         delegate = self
         LibraryTabBarStyle.apply(to: tabBar)
+        if let navigationBar = navigationController?.navigationBar {
+            BrowserListStyle.applyNavigation(to: navigationBar)
+        }
     }
     
     private func installSections() {

@@ -451,7 +451,8 @@ final class SiteSettingsViewController: UITableViewController {
     // MARK: - Helpers
     
     private func configureView() {
-        view.backgroundColor = .systemGroupedBackground
+        BrowserListStyle.apply(to: tableView)
+        view.backgroundColor = BrowserDesignTokens.Color.chromeBackground
         navigationItem.largeTitleDisplayMode = .never
         navigationItem.rightBarButtonItems = [
             SiteSettingsUtils.makeDismissButton(target: self, action: #selector(dismissModal))
