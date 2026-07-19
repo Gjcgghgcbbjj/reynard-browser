@@ -8288,6 +8288,72 @@
         }
       }
     },
+    "Retry Migration" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry Migration"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer la migration"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重试数据迁移"
+          }
+        }
+      }
+    },
+    "Reynard couldn't safely move your existing browser data. The original data was kept. Retry the migration or export diagnostics." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reynard couldn't safely move your existing browser data. The original data was kept. Retry the migration or export diagnostics."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reynard n’a pas pu déplacer vos données de navigation existantes en toute sécurité. Les données d’origine ont été conservées. Réessayez la migration ou exportez les diagnostics."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reynard 无法安全迁移现有浏览器数据，原始数据已保留。请重试迁移或导出诊断信息。"
+          }
+        }
+      }
+    },
+    "Startup Migration Failed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startup Migration Failed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échec de la migration au démarrage"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动数据迁移失败"
+          }
+        }
+      }
+    },
     "The tab and its address were preserved. Retry the page or export diagnostics if the problem continues." : {
       "localizations" : {
         "en" : {

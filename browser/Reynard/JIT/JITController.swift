@@ -26,6 +26,7 @@ final class JITController {
     private var preflightWatchdogs: [Int32: DispatchWorkItem] = [:]
     private var runtimeState = RuntimeState.idle
     private var retryPolicy = JITRetryPolicy()
+    private var hasStarted = false
     private var pendingFailureAction: (() -> Void)?
     private let preflightTimeoutSeconds: Int = 5
     private let failurePresentationRetryLimit = 12
@@ -70,6 +71,16 @@ final class JITController {
         retryPolicy.reset()
         stateLock.unlock()
     }
+
+    private func beginStartIfNeeded() -> Bool {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        guard !hasStarted else {
+            return false
+        }
+        hasStarted = true
+        return true
+    }
     
     // For TrollStore or jailbroken devices
     private func usePtraceJIT() -> Bool {
@@ -77,9 +88,22 @@ final class JITController {
     }
     
     func start() {
+        guard beginStartIfNeeded() else {
+            return
+        }
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleApplicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+
         guard usePtraceJIT() || !isDDIMissing() else {
             setRuntimeState(.failed)
-            presentMissingDDIFailureScreen()
+            DispatchQueue.main.async {
+                self.presentMissingDDIFailureScreen()
+            }
             return
         }
         
@@ -93,12 +117,6 @@ final class JITController {
             self,
             selector: #selector(handleJITDisconnectNotification(_:)),
             name: .jitEndpointMonitorDidFail,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleApplicationDidBecomeActive),
-            name: UIApplication.didBecomeActiveNotification,
             object: nil
         )
     }

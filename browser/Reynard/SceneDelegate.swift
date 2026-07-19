@@ -17,14 +17,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             metadata: ["activationState": String(scene.activationState.rawValue)]
         )
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
-        let browserViewController = BrowserViewController()
-        browserViewController.sessionManager.setApplicationForeground(scene.activationState != .background)
-        
+
         let window = UIWindow(windowScene: windowScene)
         window.overrideUserInterfaceStyle = AppAppearanceController.userInterfaceStyle(for: Prefs.AppearanceSettings.appAppearance)
         window.backgroundColor = .systemBackground
-        window.rootViewController = browserViewController
+        installInitialRoot(in: window, activationState: scene.activationState)
         window.makeKeyAndVisible()
         self.window = window
         
@@ -102,5 +99,46 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         
         return URL(string: encodedURL)
+    }
+
+    private func installInitialRoot(
+        in window: UIWindow,
+        activationState: UIScene.ActivationState
+    ) {
+        guard let report = UserDataMigration.shared.latestReport,
+              report.requiresBlockingRecovery else {
+            installBrowserRoot(in: window, activationState: activationState)
+            return
+        }
+
+        window.rootViewController = StartupMigrationFailureViewController(
+            report: report,
+            retryMigration: {
+                let retryReport = UserDataMigration.shared.run()
+                StabilityDiagnostics.shared.recordMigrationReport(retryReport)
+                return retryReport
+            },
+            onRecovered: { [weak self, weak window] in
+                guard let self, let window else {
+                    return
+                }
+                JITController.shared.start()
+                self.installBrowserRoot(
+                    in: window,
+                    activationState: window.windowScene?.activationState ?? .foregroundInactive
+                )
+            }
+        )
+    }
+
+    private func installBrowserRoot(
+        in window: UIWindow,
+        activationState: UIScene.ActivationState
+    ) {
+        let browserViewController = BrowserViewController()
+        browserViewController.sessionManager.setApplicationForeground(
+            activationState != .background
+        )
+        window.rootViewController = browserViewController
     }
 }

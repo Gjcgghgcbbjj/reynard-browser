@@ -41,8 +41,10 @@ private func configureUnsandboxedAppDataDirectories() {
     setenv("MOZ_LOCAL_APP_DATA", appDataDirectory.path, 1)
 }
 
-UserDataMigration.shared.run()
-JITController.shared.start()
+let userDataMigrationReport = UserDataMigration.shared.run()
+if !userDataMigrationReport.requiresBlockingRecovery {
+    JITController.shared.start()
+}
 if #unavailable(iOS 14.0),
    getEntitlementValue("com.apple.private.security.no-sandbox") {
     configureUnsandboxedAppDataDirectories()

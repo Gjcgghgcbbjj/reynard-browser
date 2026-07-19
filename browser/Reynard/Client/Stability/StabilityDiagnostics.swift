@@ -33,11 +33,15 @@ final class StabilityDiagnostics {
 
     private init(fileManager: FileManager = .default) {
         self.fileManager = fileManager
-        storageURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-            .first?
-            .appendingPathComponent("AppData", isDirectory: true)
-            .appendingPathComponent("Diagnostics", isDirectory: true)
-            .appendingPathComponent("events.json", isDirectory: false)
+        if UserDataMigration.shared.latestReport?.requiresBlockingRecovery == true {
+            storageURL = nil
+        } else {
+            storageURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)
+                .first?
+                .appendingPathComponent("AppData", isDirectory: true)
+                .appendingPathComponent("Diagnostics", isDirectory: true)
+                .appendingPathComponent("events.json", isDirectory: false)
+        }
         loadPersistedEvents()
     }
 
@@ -79,6 +83,11 @@ final class StabilityDiagnostics {
             ),
             fullURL: normalizedFullURL(urlString)
         )
+    }
+
+    func recordMigrationReport(_ report: UserDataMigrationReport) {
+        recordMigrationResult(report.appData, area: "appData")
+        recordMigrationResult(report.ddi, area: "ddi")
     }
 
     func exportData(includeFullURLs: Bool) throws -> Data {
@@ -204,6 +213,35 @@ final class StabilityDiagnostics {
             return nil
         }
         return String(trimmedValue.prefix(4096))
+    }
+
+    private func recordMigrationResult(
+        _ result: Result<UserDataMigrationReport.Outcome, UserDataMigrationError>,
+        area: String
+    ) {
+        switch result {
+        case let .success(outcome):
+            record(
+                .startup,
+                name: "migration.\(area)",
+                metadata: ["outcome": String(describing: outcome)]
+            )
+
+        case let .failure(error):
+            var metadata = [
+                "outcome": "failed",
+                "error": String(describing: error),
+            ]
+            if case let .fileMigration(_, migrationError) = error {
+                metadata["stage"] = migrationError.stage.rawValue
+                metadata["code"] = String(migrationError.code)
+            }
+            record(
+                .startup,
+                name: "migration.\(area)",
+                metadata: metadata
+            )
+        }
     }
 
     private static func hardwareIdentifier() -> String {
