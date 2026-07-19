@@ -90,14 +90,27 @@ final class TabManagerImplementation: NSObject, TabManager {
         faviconTasks.removeValue(forKey: tabID)?.cancel()
     }
     
-    private func persistState() {
+    private func persistState(completion: ((Bool) -> Void)? = nil) {
         store.persistTabs(
             regularTabs: regularTabs,
             privateTabs: privateTabs,
             selectedRegularTabID: regularTabs[safe: selectedRegularTabIndex]?.id,
             selectedPrivateTabID: privateTabs[safe: selectedPrivateTabIndex]?.id,
-            selectedTabMode: selectedTabMode
+            selectedTabMode: selectedTabMode,
+            completion: completion
         )
+    }
+
+    func persistStateForLifecycleBoundary(completion: @escaping (Bool) -> Void) {
+        persistState { [weak self] didPersist in
+            guard let self else {
+                completion(false)
+                return
+            }
+            self.store.flush { didFlush in
+                completion(didPersist && didFlush)
+            }
+        }
     }
     
     private func tabs(for mode: TabMode) -> [Tab] {

@@ -7,6 +7,27 @@
 
 import UIKit
 
+private final class SceneBackgroundTaskLease {
+    private var identifier = UIBackgroundTaskIdentifier.invalid
+
+    static func begin(named name: String) -> SceneBackgroundTaskLease {
+        let lease = SceneBackgroundTaskLease()
+        lease.identifier = UIApplication.shared.beginBackgroundTask(withName: name) { [weak lease] in
+            lease?.end()
+        }
+        return lease
+    }
+
+    func end() {
+        guard identifier != .invalid else {
+            return
+        }
+        let activeIdentifier = identifier
+        identifier = .invalid
+        UIApplication.shared.endBackgroundTask(activeIdentifier)
+    }
+}
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     
@@ -44,6 +65,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         StabilityDiagnostics.shared.record(.session, name: "scene.willResignActive")
         (window?.rootViewController as? BrowserViewController)?
             .sessionManager.applicationWillResignActive()
+        persistBrowserState(at: "willResignActive")
     }
     
     func sceneWillEnterForeground(_ scene: UIScene) {
@@ -56,6 +78,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         StabilityDiagnostics.shared.record(.session, name: "scene.didEnterBackground")
         (window?.rootViewController as? BrowserViewController)?
             .sessionManager.setApplicationForeground(false)
+        persistBrowserState(at: "didEnterBackground")
     }
     
     private func handleIncomingURLContexts(_ urlContexts: Set<UIOpenURLContext>) {
@@ -140,5 +163,38 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             activationState != .background
         )
         window.rootViewController = browserViewController
+    }
+
+    private func persistBrowserState(at boundary: String) {
+        guard let browserViewController = window?.rootViewController as? BrowserViewController,
+              browserViewController.isViewLoaded else {
+            StabilityDiagnostics.shared.record(
+                .persistence,
+                name: "tabs.lifecycleFlushSkipped",
+                metadata: [
+                    "boundary": boundary,
+                    "reason": "browserViewNotLoaded",
+                ]
+            )
+            return
+        }
+
+        let backgroundTask = boundary == "didEnterBackground"
+        ? SceneBackgroundTaskLease.begin(named: "Reynard.TabStateFlush")
+        : nil
+
+        browserViewController.tabManager.persistStateForLifecycleBoundary { succeeded in
+            DispatchQueue.main.async {
+                StabilityDiagnostics.shared.record(
+                    .persistence,
+                    name: "tabs.lifecycleFlushCompleted",
+                    metadata: [
+                        "boundary": boundary,
+                        "succeeded": succeeded ? "true" : "false",
+                    ]
+                )
+                backgroundTask?.end()
+            }
+        }
     }
 }

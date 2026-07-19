@@ -62,6 +62,7 @@ final class TabManagementStore {
     private let fileManager: FileManager
     private let storage: StorageURLs
     private let stateQueue = DispatchQueue(label: "com.minh-ton.Reynard.TabManagementStore.Queue", qos: .userInitiated)
+    private let flushPolicy = LifecycleFlushPolicy(timeout: 2)
     private var database: OpaquePointer?
     private let sqliteTransient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
     
@@ -143,7 +144,8 @@ final class TabManagementStore {
         privateTabs: [Tab],
         selectedRegularTabID: UUID?,
         selectedPrivateTabID: UUID?,
-        selectedTabMode: TabMode
+        selectedTabMode: TabMode,
+        completion: ((Bool) -> Void)? = nil
     ) {
         let persistedRegularTabs = regularTabs.map {
             PersistedTab(id: $0.id, title: $0.title, url: $0.url)
@@ -153,32 +155,40 @@ final class TabManagementStore {
         }
         
         stateQueue.async {
-            let lastTabOverview = self.persistedStateLocked().lastTabOverview
-            
-            guard self.executeLocked("BEGIN IMMEDIATE TRANSACTION;") else {
-                return
+            let succeeded = self.persistTabsLocked(
+                regularTabs: persistedRegularTabs,
+                privateTabs: persistedPrivateTabs,
+                selectedRegularTabID: selectedRegularTabID,
+                selectedPrivateTabID: selectedPrivateTabID,
+                selectedTabMode: selectedTabMode
+            )
+
+#if DEBUG
+            if let database = self.database {
+                assert(
+                    sqlite3_get_autocommit(database) != 0,
+                    "Tab persistence transaction must be completed before its callback"
+                )
             }
-            
-            guard self.executeLocked("DELETE FROM tabs;"),
-                  self.saveStateLocked(
-                    selectedRegularTabID: selectedRegularTabID,
-                    selectedPrivateTabID: selectedPrivateTabID,
-                    selectedTabMode: selectedTabMode,
-                    lastTabOverview: lastTabOverview
-                  ),
-                  self.insertTabsLocked(persistedRegularTabs, isPrivate: false),
-                  self.insertTabsLocked(persistedPrivateTabs, isPrivate: true) else {
-                _ = self.executeLocked("ROLLBACK TRANSACTION;")
-                return
-            }
-            
-            guard self.executeLocked("COMMIT TRANSACTION;") else {
-                _ = self.executeLocked("ROLLBACK TRANSACTION;")
-                return
-            }
-            
-            self.pruneThumbCacheLocked(validTabIDs: Set((persistedRegularTabs + persistedPrivateTabs).map(\.id)))
+#endif
+
+            completion?(succeeded)
         }
+    }
+
+    func flush(completion: @escaping (Bool) -> Void) {
+        flushPolicy.requestFlush(
+            start: { [weak self] finish in
+                guard let self else {
+                    finish(false)
+                    return
+                }
+                self.stateQueue.async {
+                    finish(true)
+                }
+            },
+            completion: completion
+        )
     }
     
     func persistLastOverview(_ lastTabOverview: LastTabOverview) {
@@ -641,7 +651,44 @@ final class TabManagementStore {
     }
     
     // MARK: - Tab Persistence
-    
+
+    private func persistTabsLocked(
+        regularTabs: [PersistedTab],
+        privateTabs: [PersistedTab],
+        selectedRegularTabID: UUID?,
+        selectedPrivateTabID: UUID?,
+        selectedTabMode: TabMode
+    ) -> Bool {
+        let lastTabOverview = persistedStateLocked().lastTabOverview
+
+        guard executeLocked("BEGIN IMMEDIATE TRANSACTION;") else {
+            return false
+        }
+
+        guard executeLocked("DELETE FROM tabs;"),
+              saveStateLocked(
+                selectedRegularTabID: selectedRegularTabID,
+                selectedPrivateTabID: selectedPrivateTabID,
+                selectedTabMode: selectedTabMode,
+                lastTabOverview: lastTabOverview
+              ),
+              insertTabsLocked(regularTabs, isPrivate: false),
+              insertTabsLocked(privateTabs, isPrivate: true) else {
+            _ = executeLocked("ROLLBACK TRANSACTION;")
+            return false
+        }
+
+        guard executeLocked("COMMIT TRANSACTION;") else {
+            _ = executeLocked("ROLLBACK TRANSACTION;")
+            return false
+        }
+
+        pruneThumbCacheLocked(
+            validTabIDs: Set((regularTabs + privateTabs).map(\.id))
+        )
+        return true
+    }
+
     private func insertTabsLocked(_ tabs: [PersistedTab], isPrivate: Bool) -> Bool {
         guard let statement = prepareStatementLocked(
             """

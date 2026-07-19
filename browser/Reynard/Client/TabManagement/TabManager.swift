@@ -44,6 +44,7 @@ protocol TabManager: AnyObject {
     func updateHistoryThumbnail(_ image: UIImage?, for tab: Tab, url: String)
     func navigationPreviewImages(for tab: Tab) -> NavigationPreviewImages
     func invalidateNavigationThumbnails()
+    func persistStateForLifecycleBoundary(completion: @escaping (Bool) -> Void)
     @discardableResult
     func changeWebsiteModeForSelectedTab() -> Bool
 }
