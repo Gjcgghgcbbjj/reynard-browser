@@ -13,6 +13,10 @@ let package = Package(
             name: "ReynardStabilityCore",
             targets: ["ReynardStabilityCore"]
         ),
+        .library(
+            name: "ReynardBrowserCore",
+            targets: ["ReynardBrowserCore"]
+        ),
     ],
     targets: [
         .target(
@@ -23,6 +27,15 @@ let package = Package(
             name: "ReynardStabilityCoreTests",
             dependencies: ["ReynardStabilityCore"],
             path: "Tests/ReynardStabilityCoreTests"
+        ),
+        .target(
+            name: "ReynardBrowserCore",
+            path: "browser/Reynard/BrowserCore"
+        ),
+        .testTarget(
+            name: "ReynardBrowserCoreTests",
+            dependencies: ["ReynardBrowserCore"],
+            path: "Tests/ReynardBrowserCoreTests"
         ),
     ]
 )
