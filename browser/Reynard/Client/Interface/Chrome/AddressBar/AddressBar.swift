@@ -13,6 +13,10 @@ protocol AddressBarDelegate: AnyObject {
     func addressBar(_ addressBar: AddressBar, didSelectAddon item: AddonMenuItem)
     func addressBarDidRequestPageZoom(_ addressBar: AddressBar)
     func addressBarDidRequestFindInPage(_ addressBar: AddressBar)
+    func addressBarDidRequestNightModeToggle(_ addressBar: AddressBar)
+    func addressBarDidRequestBlockingToggle(_ addressBar: AddressBar)
+    func addressBarIsNightModeEnabled(_ addressBar: AddressBar) -> Bool
+    func addressBarIsBlockingEnabled(_ addressBar: AddressBar) -> Bool
     func addressBarDidRequestTranslation(_ addressBar: AddressBar)
     func addressBarDidRequestWebsiteModeChange(_ addressBar: AddressBar)
     func addressBarDidRequestWebsiteSettings(_ addressBar: AddressBar)
@@ -311,6 +315,16 @@ final class AddressBar: UIView {
             onFindInPage: { [weak self] in
                 guard let self else { return }
                 self.delegate?.addressBarDidRequestFindInPage(self)
+            },
+            isNightModeEnabled: delegate?.addressBarIsNightModeEnabled(self) ?? false,
+            onToggleNightMode: { [weak self] in
+                guard let self else { return }
+                self.delegate?.addressBarDidRequestNightModeToggle(self)
+            },
+            isBlockingEnabled: delegate?.addressBarIsBlockingEnabled(self) ?? false,
+            onToggleBlocking: { [weak self] in
+                guard let self else { return }
+                self.delegate?.addressBarDidRequestBlockingToggle(self)
             },
             onTranslatePage: { [weak self] in
                 guard let self else { return }

@@ -103,6 +103,7 @@ public class GeckoSession {
     }
     public lazy var mediaSession = MediaSession(session: self)
     public lazy var finder = SessionFinder(dispatcher: dispatcher)
+    public lazy var features = SessionFeatureBridge(dispatcher: dispatcher)
     private lazy var autofillHandler = GeckoAutofillHandler(session: self)
     private lazy var pictureInPictureHandler = newPictureInPictureHandler(self)
     public var pictureInPictureDelegate: PictureInPictureDelegate? {

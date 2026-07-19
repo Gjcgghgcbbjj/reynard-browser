@@ -48,6 +48,7 @@ extension BrowserViewController: TabManagerDelegate {
         updateNavigationButtons()
         
         contentView.setSession(selectedTab.session)
+        browserFeatureCoordinator.applyCurrentConfiguration()
         addonCoordinator.handleTabSelectionChange(selectedIndex: index, previousIndex: previousIndex)
         
         if !tabOverview.isPresented && !tabOverview.isTransitionRunning {
@@ -128,6 +129,7 @@ extension BrowserViewController: TabManagerDelegate {
                 refreshAddressBar()
                 browserChrome.updatePageZoomLevel(tab.session.settings.pageZoom.level)
                 updateNavigationButtons()
+                browserFeatureCoordinator.applyCurrentConfiguration()
                 homepageOverlayCoordinator.updatePresentation(animated: true)
             }
             

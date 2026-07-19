@@ -75,6 +75,24 @@ extension BrowserViewController: AddressBarDelegate, AddressBarGestureDelegate {
         findInPageCoordinator.present()
     }
 
+    func addressBarDidRequestNightModeToggle(_ addressBar: AddressBar) {
+        browserFeatureCoordinator.toggleNightModeForCurrentSite()
+        refreshAddressBar()
+    }
+
+    func addressBarDidRequestBlockingToggle(_ addressBar: AddressBar) {
+        browserFeatureCoordinator.toggleBlockingForCurrentSite()
+        refreshAddressBar()
+    }
+
+    func addressBarIsNightModeEnabled(_ addressBar: AddressBar) -> Bool {
+        browserFeatureCoordinator.isNightModeEnabledForCurrentSite
+    }
+
+    func addressBarIsBlockingEnabled(_ addressBar: AddressBar) -> Bool {
+        browserFeatureCoordinator.isBlockingEnabledForCurrentSite
+    }
+
     func addressBarDidRequestTranslation(_ addressBar: AddressBar) {
         guard let selectedTab = tabManager.selectedTab,
               let sourceURL = tabManager.shareableURL(for: selectedTab) else {

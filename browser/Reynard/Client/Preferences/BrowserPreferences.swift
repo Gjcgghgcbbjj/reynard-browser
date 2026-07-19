@@ -54,6 +54,11 @@ final class BrowserPreferences {
             key("BrowsingSettings", "showImagePreviews"): true,
             key("BrowsingSettings", "translationProvider"): TranslationProvider.google.rawValue,
             key("BrowsingSettings", "customTranslationTemplate"): "",
+            key("FeatureSettings", "nightMode"): BrowserNightMode.automatic.rawValue,
+            key("FeatureSettings", "blockingMode"): BrowserBlockingMode.balanced.rawValue,
+            key("FeatureSettings", "thirdPartyCookiePolicy"): ThirdPartyCookiePolicy.blockTrackers.rawValue,
+            key("FeatureSettings", "trackingProtection"): true,
+            key("FeatureSettings", "clearSiteDataOnExit"): false,
             
             // New Tab
             key("NewTabSettings", "newTabDisplayOption"): NewTabDisplayOption.homepage.rawValue,

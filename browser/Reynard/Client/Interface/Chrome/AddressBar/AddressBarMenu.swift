@@ -26,6 +26,10 @@ enum AddressBarMenu {
         onAddonSelected: @escaping (AddonMenuItem) -> Void,
         onPageZoom: @escaping () -> Void,
         onFindInPage: @escaping () -> Void,
+        isNightModeEnabled: Bool,
+        onToggleNightMode: @escaping () -> Void,
+        isBlockingEnabled: Bool,
+        onToggleBlocking: @escaping () -> Void,
         onTranslatePage: @escaping () -> Void,
         onChangeWebsiteMode: @escaping () -> Void,
         onWebsiteSettings: @escaping () -> Void,
@@ -89,6 +93,19 @@ enum AddressBarMenu {
                     onFindInPage()
                 }
             )
+        }
+
+        if url?.host != nil {
+            pageActions.append(UIAction(
+                title: NSLocalizedString("Night Mode", comment: ""),
+                image: UIImage(named: "reynard.moon"),
+                state: isNightModeEnabled ? .on : .off
+            ) { _ in onToggleNightMode() })
+            pageActions.append(UIAction(
+                title: NSLocalizedString("Content Blocking", comment: ""),
+                image: UIImage(named: "reynard.shield"),
+                state: isBlockingEnabled ? .on : .off
+            ) { _ in onToggleBlocking() })
         }
 
         if canTranslatePage {

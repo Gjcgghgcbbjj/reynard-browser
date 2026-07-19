@@ -58,6 +58,14 @@ final class BrowserViewController: UIViewController {
     ) { [weak self] in
         self?.tabManager.selectedTab?.session
     }
+    lazy var browserFeatureCoordinator = BrowserFeatureCoordinator(
+        sessionProvider: { [weak self] in self?.tabManager.selectedTab?.session },
+        urlProvider: { [weak self] in
+            guard let self, let tab = self.tabManager.selectedTab else { return nil }
+            return self.tabManager.shareableURL(for: tab)
+        },
+        interfaceStyleProvider: { [weak self] in self?.traitCollection.userInterfaceStyle ?? .unspecified }
+    )
     lazy var sidebarCoordinator = SidebarCoordinator(
         host: self,
         canHostSidebar: allowsSidebarHosting
@@ -137,6 +145,7 @@ final class BrowserViewController: UIViewController {
         
         tabManager.createInitialTab(openingScreen: Prefs.HomepageSettings.openingScreen)
         refreshAddressBar()
+        browserFeatureCoordinator.applyCurrentConfiguration()
         homepageOverlayCoordinator.updatePresentation(animated: false)
         
         Task { @MainActor [weak self] in
@@ -652,6 +661,12 @@ final class BrowserViewController: UIViewController {
         )
         NotificationCenter.default.addObserver(
             self,
+            selector: #selector(browserFeatureSettingsDidChange),
+            name: .browserFeatureSettingsDidChange,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
             selector: #selector(applyUpdateMenuButtonBadge),
             name: .appUpdateAvailable,
             object: nil
@@ -664,6 +679,11 @@ final class BrowserViewController: UIViewController {
         )
     }
     
+    @objc private func browserFeatureSettingsDidChange() {
+        browserFeatureCoordinator.applyCurrentConfiguration()
+        refreshAddressBar()
+    }
+
     @objc private func newTabDisplayOptionDidChange() {
         homepageOverlayCoordinator.updatePresentation(animated: true)
         captureThumbnail(forTabAt: tabManager.selectedTabIndex, mode: tabManager.selectedTabMode)
