@@ -62,6 +62,7 @@ final class BrowserViewController: UIViewController {
         delegate: self,
         sessionManager: sessionManager
     )
+    var contentRecoveryViewController: ContentRecoveryViewController?
     
     private(set) var isShowingFullscreenMedia = false {
         didSet {

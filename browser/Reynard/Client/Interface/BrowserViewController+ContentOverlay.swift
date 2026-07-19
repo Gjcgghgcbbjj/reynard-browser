@@ -195,3 +195,53 @@ extension BrowserViewController: ContentOverlayCoordinatorHost, SearchOverlayCoo
         homepageOverlayCoordinator.addressBar(addressBar, didChangeText: text, previousText: previousText, isDelete: isDelete)
     }
 }
+
+extension BrowserViewController {
+    func updateContentRecoveryPresentation(animated: Bool) {
+        guard let tab = tabManager.selectedTab else {
+            dismissContentRecovery(animated: animated)
+            return
+        }
+
+        guard case let .failed(kind) = tab.state.contentFailureState else {
+            dismissContentRecovery(animated: animated)
+            return
+        }
+
+        let viewController: ContentRecoveryViewController
+        if let existing = contentRecoveryViewController,
+           existing.failureKind == kind {
+            viewController = existing
+        } else {
+            viewController = ContentRecoveryViewController(
+                failureKind: kind,
+                onRetry: { [weak self] in
+                    self?.tabManager.retrySelectedContentRecovery()
+                },
+                onExportDiagnostics: { [weak self] in
+                    guard let self else {
+                        return
+                    }
+                    DiagnosticsExportCoordinator.present(from: self)
+                }
+            )
+            contentRecoveryViewController = viewController
+        }
+
+        overlayCoordinator.present(
+            viewController,
+            for: .recovery,
+            on: .embedded,
+            animated: animated
+        )
+    }
+
+    private func dismissContentRecovery(animated: Bool) {
+        guard contentRecoveryViewController != nil || overlayCoordinator.contains(.recovery, on: .embedded) else {
+            return
+        }
+
+        contentRecoveryViewController = nil
+        overlayCoordinator.dismiss(.recovery, on: .embedded, animated: animated)
+    }
+}

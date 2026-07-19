@@ -37,6 +37,7 @@ protocol TabManager: AnyObject {
     func goBack()
     func goForward()
     func replaceSelectedSession(with session: GeckoSession, url: String, title: String?)
+    func retrySelectedContentRecovery()
     func tabIndex(for session: GeckoSession) -> Int?
     func shareableURL(for tab: Tab) -> URL?
     func updateThumbnail(_ image: UIImage?, forTabAt index: Int, mode: TabMode)
@@ -54,6 +55,7 @@ enum TabManagerUpdateReason {
     case navigationState
     case loading
     case thumbnail
+    case contentFailure
 }
 
 protocol TabManagerDelegate: AnyObject {

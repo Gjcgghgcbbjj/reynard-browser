@@ -26,6 +26,7 @@ extension BrowserViewController: TabManagerDelegate {
         tabBar.reloadTabs()
         updateBrowserLayout(animated: false)
         homepageOverlayCoordinator.updatePresentation(animated: false)
+        updateContentRecoveryPresentation(animated: false)
         tabBar.updateLayout()
     }
     
@@ -53,6 +54,7 @@ extension BrowserViewController: TabManagerDelegate {
         }
         tabBar.reloadTabs()
         homepageOverlayCoordinator.updatePresentation(animated: false)
+        updateContentRecoveryPresentation(animated: false)
         updateBrowserLayout(animated: false)
         
         if isShowingFullscreenMedia,
@@ -62,6 +64,9 @@ extension BrowserViewController: TabManagerDelegate {
     }
     
     func tabManager(_ tabManager: TabManager, didReplaceSelectedSession previousSession: GeckoSession, with replacementSession: GeckoSession) {
+        if tabManager.selectedTab?.session === replacementSession {
+            contentView.setSession(replacementSession)
+        }
         addonCoordinator.handleSelectedTabSessionReplacement(from: previousSession, to: replacementSession)
     }
     
@@ -157,6 +162,15 @@ extension BrowserViewController: TabManagerDelegate {
             tabOverview.isPresented
             ? tabOverview.refreshTab(at: index, mode: tabManager.selectedTabMode)
             : tabOverview.reloadTabs()
+
+        case .contentFailure:
+            if index == tabManager.selectedTabIndex {
+                let tab = tabManager.activeTabs[index]
+                if !contentView.isDisplaying(session: tab.session) {
+                    contentView.setSession(tab.session)
+                }
+                updateContentRecoveryPresentation(animated: true)
+            }
         }
     }
     

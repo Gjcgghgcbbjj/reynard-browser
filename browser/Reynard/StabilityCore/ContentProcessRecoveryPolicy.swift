@@ -1,6 +1,6 @@
 import Foundation
 
-public enum ContentProcessFailureKind: String, Codable, Sendable {
+public enum ContentProcessFailureKind: String, Codable, Equatable, Sendable {
     case crash
     case killed
 }

@@ -51,6 +51,7 @@ final class TabManagerImplementation: NSObject, TabManager {
     private let historyStore: HistoryStore
     let sessionManager: SessionManager
     private var faviconTasks: [UUID: Task<Void, Never>] = [:]
+    private var contentRecoveryPolicies: [UUID: ContentProcessRecoveryPolicy] = [:]
     private var selectionCounter = 0
     
     private lazy var lenientURLExpression: NSRegularExpression = {
@@ -640,6 +641,7 @@ final class TabManagerImplementation: NSObject, TabManager {
             sessionManager.deactivate(removedTab.session)
         }
         cancelFaviconTask(for: removedTab.id)
+        contentRecoveryPolicies.removeValue(forKey: removedTab.id)
         
         if tabs(for: mode).isEmpty {
             setSelectedIndex(-1, for: mode)
@@ -690,6 +692,7 @@ final class TabManagerImplementation: NSObject, TabManager {
         }
         removedTabs.forEach { saveClosedTabIfNeeded($0, mode: mode) }
         removedTabs.forEach { cancelFaviconTask(for: $0.id) }
+        removedTabs.forEach { contentRecoveryPolicies.removeValue(forKey: $0.id) }
         delegate?.tabManagerDidChangeTabs(self)
         
         if mode == selectedTabMode {
@@ -806,6 +809,36 @@ final class TabManagerImplementation: NSObject, TabManager {
         persistState()
         recordTransferredHistory(for: tab, title: title)
     }
+
+    func retrySelectedContentRecovery() {
+        guard let tab = selectedTab,
+              case let .failed(kind) = tab.state.contentFailureState else {
+            return
+        }
+
+        if var policy = contentRecoveryPolicies[tab.id] {
+            policy.markSuccessfulComposite()
+            contentRecoveryPolicies[tab.id] = policy
+        }
+
+        tab.state.contentFailureState = .recovering(kind)
+        sessionManager.activate(tab.session)
+        notifyUpdate(at: selectedTabIndex, mode: selectedTabMode, reason: .contentFailure)
+        StabilityDiagnostics.shared.recordURL(
+            .recovery,
+            name: "content.manualRetry",
+            urlString: displayedURL(for: tab),
+            metadata: ["failureKind": kind.rawValue]
+        )
+
+        guard let url = displayedURL(for: tab) else {
+            tab.state.contentFailureState = .none
+            notifyUpdate(at: selectedTabIndex, mode: selectedTabMode, reason: .contentFailure)
+            return
+        }
+
+        loadURL(url, in: tab)
+    }
     
     // MARK: - Tab Queries And Updates
     
@@ -863,6 +896,79 @@ final class TabManagerImplementation: NSObject, TabManager {
             opening: .immediate(windowID: windowId),
             delegates: sessionDelegates
         )
+    }
+
+    private func handleContentProcessFailure(
+        session: GeckoSession,
+        kind: ContentProcessFailureKind
+    ) {
+        guard let location = tabLocation(for: session) else {
+            return
+        }
+
+        let tab = tabs(for: location.mode)[location.index]
+        let isSelected = location.mode == selectedTabMode && location.index == selectedTabIndex
+        var policy = contentRecoveryPolicies[tab.id] ?? ContentProcessRecoveryPolicy()
+        let decision = policy.decide(kind: kind, isSelected: isSelected, at: Date())
+        contentRecoveryPolicies[tab.id] = policy
+
+        let retainedURL = displayedURL(for: tab)
+        let previousSession = tab.session
+        let replacementSession = createSession(
+            tabID: tab.id,
+            url: retainedURL,
+            windowId: nil,
+            isPrivate: tab.isPrivate
+        )
+        tab.session = replacementSession
+        tab.state.sessionNavigationAvailability = .unavailable
+        tab.state.loadingState = .idle
+
+        if isSelected {
+            delegate?.tabManager(
+                self,
+                didReplaceSelectedSession: previousSession,
+                with: replacementSession
+            )
+        }
+        sessionManager.close(previousSession)
+
+        StabilityDiagnostics.shared.recordURL(
+            .process,
+            name: kind == .crash ? "content.processCrashed" : "content.processKilled",
+            urlString: retainedURL,
+            metadata: [
+                "decision": String(describing: decision),
+                "isSelected": isSelected ? "true" : "false",
+                "mode": location.mode.rawValue,
+            ]
+        )
+
+        switch decision {
+        case .recreateImmediately:
+            tab.state.contentFailureState = .recovering(kind)
+            sessionManager.activate(replacementSession)
+            if isSelected {
+                systemMediaSession.select(session: replacementSession)
+                pictureInPictureCoordinator?.selectedSessionDidChange()
+            }
+            notifyUpdate(at: location.index, mode: location.mode, reason: .contentFailure)
+            if let retainedURL {
+                loadURL(retainedURL, in: tab)
+            } else {
+                tab.state.contentFailureState = .none
+                notifyUpdate(at: location.index, mode: location.mode, reason: .contentFailure)
+            }
+
+        case .recreateWhenSelected:
+            tab.state.contentFailureState = .recovering(kind)
+            tab.state.restoreState = retainedURL.map(TabRestoreState.pending) ?? .none
+            notifyUpdate(at: location.index, mode: location.mode, reason: .contentFailure)
+
+        case .showStableFailure:
+            tab.state.contentFailureState = .failed(kind)
+            notifyUpdate(at: location.index, mode: location.mode, reason: .contentFailure)
+        }
     }
 }
 
@@ -926,20 +1032,36 @@ extension TabManagerImplementation: ContentDelegate {
     }
     
     func onCrash(session: GeckoSession) {
-        guard let location = tabLocation(for: session) else {
-            return
-        }
-        removeTab(at: location.index, mode: location.mode)
+        handleContentProcessFailure(session: session, kind: .crash)
     }
     
     func onKill(session: GeckoSession) {
+        handleContentProcessFailure(session: session, kind: .killed)
+    }
+
+    func onFirstComposite(session: GeckoSession) {
         guard let location = tabLocation(for: session) else {
             return
         }
-        removeTab(at: location.index, mode: location.mode)
+
+        let tab = tabs(for: location.mode)[location.index]
+        if var policy = contentRecoveryPolicies[tab.id] {
+            policy.markSuccessfulComposite()
+            contentRecoveryPolicies[tab.id] = policy
+        }
+
+        guard tab.state.contentFailureState != .none else {
+            return
+        }
+
+        tab.state.contentFailureState = .none
+        StabilityDiagnostics.shared.recordURL(
+            .recovery,
+            name: "content.firstCompositeAfterRecovery",
+            urlString: displayedURL(for: tab)
+        )
+        notifyUpdate(at: location.index, mode: location.mode, reason: .contentFailure)
     }
-    
-    func onFirstComposite(session: GeckoSession) {}
     
     func onFirstContentfulPaint(session: GeckoSession) {}
     

@@ -8244,6 +8244,94 @@
         }
       }
     },
+    "Retry Page" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry Page"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer la page"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重试网页"
+          }
+        }
+      }
+    },
+    "The tab and its address were preserved. Retry the page or export diagnostics if the problem continues." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The tab and its address were preserved. Retry the page or export diagnostics if the problem continues."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’onglet et son adresse ont été conservés. Réessayez la page ou exportez les diagnostics si le problème persiste."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标签页及其网址已保留。请重试网页；如果问题持续出现，请导出诊断信息。"
+          }
+        }
+      }
+    },
+    "This Page Crashed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Page Crashed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette page a planté"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此网页已崩溃"
+          }
+        }
+      }
+    },
+    "This Page Was Closed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Page Was Closed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette page a été fermée"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此网页已被关闭"
+          }
+        }
+      }
+    },
     "Unable to Export Diagnostics" : {
       "localizations" : {
         "en" : {

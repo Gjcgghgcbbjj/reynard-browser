@@ -15,6 +15,7 @@ final class OverlayContentView: UIView {
     enum Page: Hashable {
         case homepage
         case search
+        case recovery
     }
     
     enum PresentationState: Equatable {
@@ -27,6 +28,7 @@ final class OverlayContentView: UIView {
     
     private let homepageView = UIView()
     private let searchSuggestionView = UIView()
+    private let recoveryView = UIView()
     
     // MARK: - Lifecycle
     
@@ -49,7 +51,7 @@ final class OverlayContentView: UIView {
     }
     
     private func configureHierarchy() {
-        [homepageView, searchSuggestionView].forEach { contentView in
+        [homepageView, searchSuggestionView, recoveryView].forEach { contentView in
             contentView.translatesAutoresizingMaskIntoConstraints = false
             contentView.backgroundColor = .clear
             addSubview(contentView)
@@ -57,7 +59,7 @@ final class OverlayContentView: UIView {
     }
     
     private func configureConstraints() {
-        [homepageView, searchSuggestionView].forEach { contentView in
+        [homepageView, searchSuggestionView, recoveryView].forEach { contentView in
             NSLayoutConstraint.activate([
                 contentView.topAnchor.constraint(equalTo: topAnchor),
                 contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -100,6 +102,7 @@ final class OverlayContentView: UIView {
         layer.removeAllAnimations()
         homepageView.isHidden = presentation != .visible(.homepage)
         searchSuggestionView.isHidden = presentation != .visible(.search)
+        recoveryView.isHidden = presentation != .visible(.recovery)
         
         if isChangingVisiblePage(from: previousPresentation) {
             isHidden = false
@@ -227,6 +230,8 @@ final class OverlayContentView: UIView {
             return homepageView
         case .search:
             return searchSuggestionView
+        case .recovery:
+            return recoveryView
         }
     }
     

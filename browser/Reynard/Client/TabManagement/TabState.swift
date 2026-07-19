@@ -38,6 +38,12 @@ enum TabDisplayState: Equatable {
     case pending(String)
 }
 
+enum TabContentFailureState: Equatable {
+    case none
+    case recovering(ContentProcessFailureKind)
+    case failed(ContentProcessFailureKind)
+}
+
 enum TabInsertionTarget: Equatable {
     case end
     case afterSelected
@@ -54,4 +60,5 @@ final class TabSessionState {
     var sessionNavigationAvailability = SessionNavigationAvailability.unavailable
     var navigationState = NavigationAvailability(canGoBack: false, canGoForward: false)
     var loadingState = TabLoadingState.idle
+    var contentFailureState = TabContentFailureState.none
 }
