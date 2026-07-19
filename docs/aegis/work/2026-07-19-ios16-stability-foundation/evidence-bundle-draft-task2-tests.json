@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "task2-tests",
+  "type": "test",
+  "source": "Docker Swift 6.1 swift test plus swiftc parse/typecheck harnesses",
+  "summary": "18 pure Swift tests passed; URL redaction had observed RED then GREEN; diagnostics typechecked with Gecko stub; UIKit files parsed; localization JSON valid",
+  "verifier": "Swift 6.1.3 Linux container and Python json.tool"
+}

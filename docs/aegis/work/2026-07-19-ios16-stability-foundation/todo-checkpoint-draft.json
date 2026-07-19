@@ -1,16 +1,19 @@
 {
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-19-ios16-stability-foundation",
-  "currentTodo": "Task 2: add privacy-safe runtime diagnostics and startup instrumentation",
+  "currentTodo": "Task 3: preserve tabs and recover Gecko content-process failures",
   "completedTodos": [
-    "Task 1: portable stability core and 14 tests committed as 511a6cd"
+    "Task 1: portable stability core, 14 tests, commit 511a6cd",
+    "Task 2: diagnostics/redaction source, 18 tests, commit 0a21668; Xcode/manual verification pending"
   ],
-  "activeSlice": "Task 2 diagnostics and URL redaction",
+  "activeSlice": "Task 3 content process recovery",
   "evidenceRefs": [
-    "docker swift:6.1-noble swift test: 14 tests, 0 failures",
-    "commit 511a6cd"
+    "Docker Swift tests: 18 tests, 0 failures",
+    "StabilityDiagnostics typechecked with stub GeckoView; modified UIKit files parsed successfully",
+    "Localizable.xcstrings parsed as JSON",
+    "commit 0a21668"
   ],
-  "blockedOn": "Xcode/iOS app compilation and physical device verification remain unavailable on WSL",
-  "nextStep": "Add URL redaction tests and StabilityDiagnostics runtime owner",
+  "blockedOn": "Xcode compile and Settings export manual check require macOS/iOS",
+  "nextStep": "Replace onCrash/onKill tab deletion with canonical session recovery",
   "updatedAt": "2026-07-19"
 }

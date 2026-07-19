@@ -26,3 +26,27 @@
 - New risk signals:
 - Initial RED run was unavailable on host; Docker Swift was added before final GREEN verification
 - Advisory decision: continue
+
+## Checkpoint Update
+
+- Current todo: Task 3: preserve tabs and recover Gecko content-process failures
+- Active slice: Task 3 content process recovery
+- Completed todos:
+- Task 1: portable stability core, 14 tests, commit 511a6cd
+- Task 2: diagnostics/redaction source, 18 tests, commit 0a21668; Xcode/manual verification pending
+- Evidence refs:
+- Docker Swift tests: 18 tests, 0 failures
+- StabilityDiagnostics typechecked with stub GeckoView; modified UIKit files parsed successfully
+- Localizable.xcstrings parsed as JSON
+- commit 0a21668
+- Blocked on: Xcode compile and Settings export manual check require macOS/iOS
+- Next step: Replace onCrash/onKill tab deletion with canonical session recovery
+
+## DriftCheckDraft
+
+- Scope status: Task 2 stayed within diagnostics, redaction, startup instrumentation, and settings export scope
+- Compatibility status: No rendering/session/persistence schema behavior changed; iOS app compile remains unverified
+- Retirement status: No runtime fallback or old owner introduced; diagnostics remains observer-only
+- New risk signals:
+- UIKit and Gecko integration cannot be typechecked fully without Xcode/macOS
+- Advisory decision: continue

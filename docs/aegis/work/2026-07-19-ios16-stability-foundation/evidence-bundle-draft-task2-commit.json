@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "task2-commit",
+  "type": "commit",
+  "source": "0a21668",
+  "summary": "Added bounded diagnostics persistence/export, current-session URL opt-in, startup/scene events, settings export entry, and localization",
+  "verifier": "git show --stat 0a21668"
+}

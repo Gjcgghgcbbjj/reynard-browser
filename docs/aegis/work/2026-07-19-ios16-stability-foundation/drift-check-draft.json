@@ -5,11 +5,11 @@
   "baselineRefs": [
     "docs/aegis/plans/2026-07-19-ios16-stability-foundation.md"
   ],
-  "scopeStatus": "Task 1 stayed inside the planned Foundation-only stability core",
-  "compatStatus": "No UIKit, Gecko, persistence, iOS minimum, or rendering path changed",
-  "retirementStatus": "No retirement action was due in Task 1",
+  "scopeStatus": "Task 2 stayed within diagnostics, redaction, startup instrumentation, and settings export scope",
+  "compatStatus": "No rendering/session/persistence schema behavior changed; iOS app compile remains unverified",
+  "retirementStatus": "No runtime fallback or old owner introduced; diagnostics remains observer-only",
   "newRiskSignals": [
-    "Initial RED run was unavailable on host; Docker Swift was added before final GREEN verification"
+    "UIKit and Gecko integration cannot be typechecked fully without Xcode/macOS"
   ],
   "decision": "continue"
 }

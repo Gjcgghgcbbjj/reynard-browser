@@ -17,3 +17,19 @@ No evidence has been recorded yet.
 - Source: 511a6cd
 - Summary: Added Package.swift, five stability policies/events, four test files, and ignored .build
 - Verifier: git show --stat 511a6cd
+
+## EvidenceBundleDraft
+
+- Artifact key: task2-tests
+- Type: test
+- Source: Docker Swift 6.1 swift test plus swiftc parse/typecheck harnesses
+- Summary: 18 pure Swift tests passed; URL redaction had observed RED then GREEN; diagnostics typechecked with Gecko stub; UIKit files parsed; localization JSON valid
+- Verifier: Swift 6.1.3 Linux container and Python json.tool
+
+## EvidenceBundleDraft
+
+- Artifact key: task2-commit
+- Type: commit
+- Source: 0a21668
+- Summary: Added bounded diagnostics persistence/export, current-session URL opt-in, startup/scene events, settings export entry, and localization
+- Verifier: git show --stat 0a21668
