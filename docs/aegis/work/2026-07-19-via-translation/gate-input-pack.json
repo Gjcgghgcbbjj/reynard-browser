@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "baselineRefs": [
+    "docs/aegis/specs/2026-07-19-ios16-stability-usability-design.md",
+    "docs/aegis/baseline/2026-07-19-initial-baseline.md"
+  ],
+  "impactStatement": "docs/aegis/work/2026-07-19-via-translation/impact-statement-draft.json",
+  "compatPlan": "HTTP(S) only; no credentials; same regular/private mode; no WebKit or proxy",
+  "retirementPlan": "no prior translation path or hidden fallback introduced",
+  "evidenceBundle": [
+    "docs/aegis/work/2026-07-19-via-translation/evidence-bundle-draft-task1-provider-policy.json",
+    "docs/aegis/work/2026-07-19-via-translation/evidence-bundle-draft-task2-translation-settings.json",
+    "docs/aegis/work/2026-07-19-via-translation/evidence-bundle-draft-task3-translate-page-action.json"
+  ]
+}

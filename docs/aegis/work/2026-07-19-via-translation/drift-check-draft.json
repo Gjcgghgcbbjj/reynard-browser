@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "taskId": "2026-07-19-via-translation",
+  "taskIntentRef": "docs/aegis/work/2026-07-19-via-translation/task-intent-draft.json",
+  "baselineRefs": [
+    "docs/aegis/specs/2026-07-19-ios16-stability-usability-design.md",
+    "docs/aegis/baseline/2026-07-19-initial-baseline.md"
+  ],
+  "scopeStatus": "three planned source tasks complete; full platform acceptance pending",
+  "compatStatus": "Gecko-only renderer, HTTP(S)-only provider navigation, credential stripping, same regular/private mode, no proxy/WebKit",
+  "retirementStatus": "no prior translation path or hidden fallback introduced",
+  "newRiskSignals": [
+    "UIKit integration and external provider behavior remain unverified on iOS 16"
+  ],
+  "decision": "needs-verification"
+}

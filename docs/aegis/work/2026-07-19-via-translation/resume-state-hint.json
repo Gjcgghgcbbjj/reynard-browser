@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "taskId": "2026-07-19-via-translation",
+  "lastCheckpointRef": "docs/aegis/work/2026-07-19-via-translation/todo-checkpoint-draft.json",
+  "resumeInstruction": "Do not reopen translation source tasks unless Xcode/device evidence exposes a defect; proceed from the next Via feature plan.",
+  "knownPartialWork": [
+    "Task 1: portable translation URL policy (dcf15d4)",
+    "Task 2: translation provider settings (eae6d8e)",
+    "Task 3: Translate Page action (c6b5003)"
+  ],
+  "mustReadBeforeContinuing": [
+    "docs/aegis/work/2026-07-19-via-translation/10-intent.md",
+    "docs/aegis/work/2026-07-19-via-translation/20-checkpoint.md",
+    "docs/aegis/work/2026-07-19-via-translation/todo-checkpoint-draft.json"
+  ],
+  "unsafeToAssume": [
+    "Swift frontend parsing proves UIKit type correctness or provider availability on a physical iOS 16 device"
+  ]
+}

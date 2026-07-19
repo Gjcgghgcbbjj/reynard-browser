@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "taskId": "2026-07-19-via-translation",
+  "currentTodo": "macOS/Xcode and iOS 16 verification for webpage translation",
+  "completedTodos": [
+    "Task 1: portable translation URL policy (dcf15d4)",
+    "Task 2: translation provider settings (eae6d8e)",
+    "Task 3: Translate Page action (c6b5003)"
+  ],
+  "activeSlice": "Source implementation complete; external platform verification pending",
+  "evidenceRefs": [
+    "docs/aegis/work/2026-07-19-via-translation/evidence-bundle-draft-task1-provider-policy.json",
+    "docs/aegis/work/2026-07-19-via-translation/evidence-bundle-draft-task2-translation-settings.json",
+    "docs/aegis/work/2026-07-19-via-translation/evidence-bundle-draft-task3-translate-page-action.json"
+  ],
+  "blockedOn": "macOS/Xcode and an iOS 16 test device are unavailable on WSL",
+  "nextStep": "Begin the next bounded Via feature while retaining the translation Xcode/device verification backlog",
+  "updatedAt": "2026-07-19"
+}

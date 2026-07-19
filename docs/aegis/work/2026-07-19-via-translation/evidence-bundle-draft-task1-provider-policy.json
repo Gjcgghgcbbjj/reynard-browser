@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "task1-provider-policy",
+  "type": "tests-and-source",
+  "source": "commit dcf15d4 and Docker swift:6.1-noble swift test",
+  "summary": "TranslationProvider policy covers Google/custom destinations, credential stripping, HTTP(S) constraints, placeholders, and language normalization; 6 focused tests pass.",
+  "verifier": "Codex"
+}

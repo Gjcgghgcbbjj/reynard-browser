@@ -34,3 +34,19 @@ Entries are workspace records, not authoritative runtime decisions.
 | 2026-07-19 | artifact | docs/aegis/work/2026-07-19-ios16-stability-foundation/evidence-bundle-draft-task7-source-checks.json | 2026-07-19-ios16-stability-foundation evidence task7-source-checks |
 | 2026-07-19 | artifact | docs/aegis/work/2026-07-19-ios16-stability-foundation/evidence-bundle-draft-task7-commit.json | 2026-07-19-ios16-stability-foundation evidence task7-commit |
 | 2026-07-19 | plan | docs/aegis/plans/2026-07-19-via-translation.md | Via Phase 1 Webpage Translation Implementation Plan |
+| 2026-07-19 | work | docs/aegis/work/2026-07-19-via-translation/10-intent.md | Via Phase 1 Webpage Translation intent |
+| 2026-07-19 | work | docs/aegis/work/2026-07-19-via-translation/20-checkpoint.md | Via Phase 1 Webpage Translation checkpoint |
+| 2026-07-19 | work | docs/aegis/work/2026-07-19-via-translation/90-evidence.md | Via Phase 1 Webpage Translation evidence |
+| 2026-07-19 | work | docs/aegis/work/2026-07-19-via-translation/99-reflection.md | Via Phase 1 Webpage Translation reflection |
+| 2026-07-19 | artifact | docs/aegis/work/2026-07-19-via-translation/task-intent-draft.json | Via Phase 1 Webpage Translation task intent draft |
+| 2026-07-19 | artifact | docs/aegis/work/2026-07-19-via-translation/baseline-read-set-hint.json | Via Phase 1 Webpage Translation baseline read-set hint |
+| 2026-07-19 | artifact | docs/aegis/work/2026-07-19-via-translation/baseline-usage-draft.json | Via Phase 1 Webpage Translation baseline usage draft |
+| 2026-07-19 | artifact | docs/aegis/work/2026-07-19-via-translation/impact-statement-draft.json | Via Phase 1 Webpage Translation impact statement draft |
+| 2026-07-19 | artifact | docs/aegis/work/2026-07-19-via-translation/todo-checkpoint-draft.json | Via Phase 1 Webpage Translation todo checkpoint draft |
+| 2026-07-19 | artifact | docs/aegis/work/2026-07-19-via-translation/drift-check-draft.json | Via Phase 1 Webpage Translation drift check draft |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-19-via-translation/evidence-bundle-draft-task1-provider-policy.json | 2026-07-19-via-translation evidence task1-provider-policy |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-19-via-translation/evidence-bundle-draft-task2-translation-settings.json | 2026-07-19-via-translation evidence task2-translation-settings |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-19-via-translation/evidence-bundle-draft-task3-translate-page-action.json | 2026-07-19-via-translation evidence task3-translate-page-action |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-19-via-translation/resume-state-hint.json | 2026-07-19-via-translation resume state hint |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-19-via-translation/gate-input-pack.json | 2026-07-19-via-translation gate input pack |
+| 2026-07-20 | work | docs/aegis/work/2026-07-19-via-translation/proof-bundle.md | 2026-07-19-via-translation proof bundle |

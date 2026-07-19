@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "task2-translation-settings",
+  "type": "source-and-localization",
+  "source": "commit eae6d8e; docker swiftc -frontend -parse; JSON validation; Docker swift test",
+  "summary": "Existing BrowserPreferences and Browsing settings own Google/custom selection and validated custom templates; syntax parse and 34 portable tests pass.",
+  "verifier": "Codex"
+}

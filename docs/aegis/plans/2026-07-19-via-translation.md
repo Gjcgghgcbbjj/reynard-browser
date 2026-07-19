@@ -133,36 +133,36 @@ tab and keeping private browsing behavior explicit.
 **Interfaces:** `TranslationProvider`, `TranslationRequest`,
 `TranslationRequestError`, and `destination(for:)`.
 
-- [ ] Add tests for Google destination construction, credential stripping,
+- [x] Add tests for Google destination construction, credential stripping,
       non-HTTP rejection, language normalization, custom `{url}`/`{lang}`
       replacement, and invalid templates.
-- [ ] Run tests and observe RED because BrowserCore does not exist.
-- [ ] Add the BrowserCore target and minimal provider implementation.
-- [ ] Run all portable tests and expect GREEN.
-- [ ] Commit `feat: add translation provider policy`.
+- [x] Run tests and observe RED because BrowserCore does not exist.
+- [x] Add the BrowserCore target and minimal provider implementation.
+- [x] Run all portable tests and expect GREEN.
+- [x] Commit `feat: add translation provider policy`.
 
 ## Task 2: Add translation provider preferences
 
 **Files:** modify preferences and Browsing settings; create translation settings
 controller/cell; modify localization.
 
-- [ ] Store provider and custom template through existing preferences.
-- [ ] Add a Browsing row showing the selected provider.
-- [ ] Add Google/custom selection and validate custom templates before selecting
+- [x] Store provider and custom template through existing preferences.
+- [x] Add a Browsing row showing the selected provider.
+- [x] Add Google/custom selection and validate custom templates before selecting
       custom mode.
-- [ ] Parse UIKit files and localization JSON.
-- [ ] Commit `feat: add translation settings`.
+- [x] Parse UIKit files and localization JSON.
+- [x] Commit `feat: add translation settings`.
 
 ## Task 3: Add Translate Page action
 
 **Files:** modify address-bar menu/view/delegate and localization.
 
-- [ ] Add the menu action only for canonical HTTP(S) pages.
-- [ ] Build the configured destination using the preferred language.
-- [ ] Open an adjacent tab in the same mode and navigate to the provider.
-- [ ] Preserve the original tab and show an actionable alert for invalid custom
+- [x] Add the menu action only for canonical HTTP(S) pages.
+- [x] Build the configured destination using the preferred language.
+- [x] Open an adjacent tab in the same mode and navigate to the provider.
+- [x] Preserve the original tab and show an actionable alert for invalid custom
       configuration; record a redacted diagnostic event.
-- [ ] Run portable tests, parse changed Swift, validate localization, and commit
+- [x] Run portable tests, parse changed Swift, validate localization, and commit
       `feat: add translate page action`.
 
 ## Risks

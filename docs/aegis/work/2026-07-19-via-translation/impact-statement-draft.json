@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "affectedLayers": [
+    "BrowserCore translation URL policy, preferences, settings UI, address-bar menu, tab navigation"
+  ],
+  "owners": [
+    "BrowserCore policy plus existing BrowserPreferences, AddressBarMenu, BrowserViewController, and TabManager owners"
+  ],
+  "invariants": [
+    "Gecko remains the renderer and the original tab is preserved"
+  ],
+  "compatBoundary": "HTTP(S) only; no credentials; same regular/private mode; no WebKit or proxy",
+  "nonGoals": [
+    "Find in page, night mode, ad blocking, user scripts, CloudKit, IPA packaging"
+  ]
+}

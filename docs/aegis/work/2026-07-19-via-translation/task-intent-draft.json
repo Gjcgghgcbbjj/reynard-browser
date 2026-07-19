@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "requestedOutcome": "Add configurable webpage translation while preserving the original Gecko tab",
+  "goal": "Add configurable webpage translation while preserving the original Gecko tab",
+  "successEvidence": [
+    "Portable provider tests, valid settings/menu source, macOS app build, and iOS 16 manual translation check"
+  ],
+  "stopCondition": "Three plan tasks complete or execution stops with a documented blocker or needs-verification state",
+  "nonGoals": [
+    "Find in page, night mode, ad blocking, user scripts, CloudKit, IPA packaging"
+  ],
+  "scope": "Execute docs/aegis/plans/2026-07-19-via-translation.md",
+  "changeKinds": [
+    "feature"
+  ],
+  "riskHints": [
+    "Provider contracts are external and UIKit integration cannot compile on WSL"
+  ]
+}
