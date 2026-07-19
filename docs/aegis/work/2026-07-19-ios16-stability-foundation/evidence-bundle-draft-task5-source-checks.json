@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "task5-source-checks",
+  "type": "test",
+  "source": "Docker Swift tests, executable migration retry harness, Gecko-stub diagnostics typecheck, UIKit parse, JSON and fatalError assertions",
+  "summary": "24 tests passed; interrupted UserDataMigration blocked safely then retried to migrated; diagnostics integration typechecked; modified app files parsed; migration fatalError paths removed",
+  "verifier": "Swift 6.1.3 Linux container, Python json.tool, and structural assertions"
+}

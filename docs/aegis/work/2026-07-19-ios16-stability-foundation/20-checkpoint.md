@@ -101,3 +101,30 @@
 - New risk signals:
 - Notification-to-session recreation timing and successful JIT reattachment require physical-device evidence
 - Advisory decision: continue
+
+## Checkpoint Update
+
+- Current todo: Task 6: harden tab persistence and lifecycle flushing
+- Active slice: Task 6 lifecycle persistence flush
+- Completed todos:
+- Task 1: portable stability core, commit 511a6cd
+- Task 2: diagnostics/redaction, commit 0a21668; Xcode verification pending
+- Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending
+- Task 4: bounded JIT retry and selected-session recreation, commit 2ef79a1; device verification pending
+- Task 5: verified recoverable startup migration, commit 1d47791; Xcode/manual UI verification pending
+- Evidence refs:
+- 24 Swift tests passed
+- Interrupted migration retry harness passed
+- Diagnostics migration integration typechecked with Gecko stub
+- commit 1d47791
+- Blocked on: Xcode compile, startup failure UI inspection, and device migration simulation require macOS/iOS
+- Next step: Read TabManagementStore queue/transaction behavior and add pure LifecycleFlushPolicy tests before wiring Scene lifecycle callbacks
+
+## DriftCheckDraft
+
+- Scope status: Task 5 stayed within startup migration reliability and required a dedicated blocking recovery view at the scene root
+- Compatibility status: Destination folder names and store schemas remain unchanged; source data is retained until hashed inventory verification; Gecko and WebKit boundaries unchanged
+- Retirement status: Recoverable migration fatalError paths were removed; no alternate store or migration database was introduced
+- New risk signals:
+- The added SceneDelegate recovery-root path and full directory fingerprint cost require Xcode and device timing verification
+- Advisory decision: continue

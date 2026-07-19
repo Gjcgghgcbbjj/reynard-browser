@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "task5-commit",
+  "type": "commit",
+  "source": "1d47791",
+  "summary": "Added verified staged file migration, typed startup reports, blocking retry/export UI, diagnostics integration, and deferred JIT startup on migration failure",
+  "verifier": "git show --stat 1d47791"
+}

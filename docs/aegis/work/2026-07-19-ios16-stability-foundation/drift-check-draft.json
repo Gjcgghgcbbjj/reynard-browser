@@ -5,11 +5,11 @@
   "baselineRefs": [
     "docs/aegis/plans/2026-07-19-ios16-stability-foundation.md"
   ],
-  "scopeStatus": "Task 4 stayed within bounded JIT recovery and selected GeckoSession recreation",
-  "compatStatus": "Tab identity, Gecko rendering, JIT-less mode, and existing persistence owners remain unchanged; Xcode/device behavior is unverified",
-  "retirementStatus": "Terminal hasHandledFailure state was removed and no parallel retry owner was introduced",
+  "scopeStatus": "Task 5 stayed within startup migration reliability and required a dedicated blocking recovery view at the scene root",
+  "compatStatus": "Destination folder names and store schemas remain unchanged; source data is retained until hashed inventory verification; Gecko and WebKit boundaries unchanged",
+  "retirementStatus": "Recoverable migration fatalError paths were removed; no alternate store or migration database was introduced",
   "newRiskSignals": [
-    "Notification-to-session recreation timing and successful JIT reattachment require physical-device evidence"
+    "The added SceneDelegate recovery-root path and full directory fingerprint cost require Xcode and device timing verification"
   ],
   "decision": "continue"
 }

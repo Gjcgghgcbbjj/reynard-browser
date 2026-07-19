@@ -65,3 +65,19 @@ No evidence has been recorded yet.
 - Source: 2ef79a1
 - Summary: Added bounded JIT retry state, two-action failure UI, diagnostics export on exhaustion, and selected GeckoSession recreation without changing tab identity
 - Verifier: git show --stat 2ef79a1
+
+## EvidenceBundleDraft
+
+- Artifact key: task5-source-checks
+- Type: test
+- Source: Docker Swift tests, executable migration retry harness, Gecko-stub diagnostics typecheck, UIKit parse, JSON and fatalError assertions
+- Summary: 24 tests passed; interrupted UserDataMigration blocked safely then retried to migrated; diagnostics integration typechecked; modified app files parsed; migration fatalError paths removed
+- Verifier: Swift 6.1.3 Linux container, Python json.tool, and structural assertions
+
+## EvidenceBundleDraft
+
+- Artifact key: task5-commit
+- Type: commit
+- Source: 1d47791
+- Summary: Added verified staged file migration, typed startup reports, blocking retry/export UI, diagnostics integration, and deferred JIT startup on migration failure
+- Verifier: git show --stat 1d47791

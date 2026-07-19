@@ -2,12 +2,13 @@
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-19-ios16-stability-foundation",
   "lastCheckpointRef": "docs/aegis/work/2026-07-19-ios16-stability-foundation/todo-checkpoint-draft.json",
-  "resumeInstruction": "Read Task 5, UserDataMigration.swift, FileMigration.swift/tests, and the latest checkpoint",
+  "resumeInstruction": "Read Task 6, TabManagementStore.swift, TabManagerImpl persistence methods, SceneDelegate lifecycle callbacks, and latest checkpoint",
   "knownPartialWork": [
     "Task 1: portable stability core, commit 511a6cd",
     "Task 2: diagnostics/redaction, commit 0a21668; Xcode verification pending",
     "Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending",
-    "Task 4: bounded JIT retry and selected-session recreation, commit 2ef79a1; device verification pending"
+    "Task 4: bounded JIT retry and selected-session recreation, commit 2ef79a1; device verification pending",
+    "Task 5: verified recoverable startup migration, commit 1d47791; Xcode/manual UI verification pending"
   ],
   "mustReadBeforeContinuing": [
     "docs/aegis/work/2026-07-19-ios16-stability-foundation/10-intent.md",
@@ -15,6 +16,6 @@
     "docs/aegis/work/2026-07-19-ios16-stability-foundation/todo-checkpoint-draft.json"
   ],
   "unsafeToAssume": [
-    "Selected-session recreation successfully triggers a usable JIT-attached Gecko child process until macOS/device verification"
+    "UIKit recovery layout and on-device filesystem/JIT timing are correct until Xcode/device verification"
   ]
 }

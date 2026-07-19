@@ -1,21 +1,22 @@
 {
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-19-ios16-stability-foundation",
-  "currentTodo": "Task 5: replace recoverable startup migration crashes with typed outcomes",
+  "currentTodo": "Task 6: harden tab persistence and lifecycle flushing",
   "completedTodos": [
     "Task 1: portable stability core, commit 511a6cd",
     "Task 2: diagnostics/redaction, commit 0a21668; Xcode verification pending",
     "Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending",
-    "Task 4: bounded JIT retry and selected-session recreation, commit 2ef79a1; device verification pending"
+    "Task 4: bounded JIT retry and selected-session recreation, commit 2ef79a1; device verification pending",
+    "Task 5: verified recoverable startup migration, commit 1d47791; Xcode/manual UI verification pending"
   ],
-  "activeSlice": "Task 5 typed startup migration outcomes",
+  "activeSlice": "Task 6 lifecycle persistence flush",
   "evidenceRefs": [
-    "19 Swift tests passed",
-    "Modified app Swift files parsed with Swift 6.1 frontend",
-    "Localization JSON and Retry JIT translations validated",
-    "commit 2ef79a1"
+    "24 Swift tests passed",
+    "Interrupted migration retry harness passed",
+    "Diagnostics migration integration typechecked with Gecko stub",
+    "commit 1d47791"
   ],
-  "blockedOn": "Xcode compile and physical JIT retry simulation require macOS/iOS",
-  "nextStep": "Read UserDataMigration and FileMigration policy, then add temporary-directory tests before replacing migration fatalError paths",
+  "blockedOn": "Xcode compile, startup failure UI inspection, and device migration simulation require macOS/iOS",
+  "nextStep": "Read TabManagementStore queue/transaction behavior and add pure LifecycleFlushPolicy tests before wiring Scene lifecycle callbacks",
   "updatedAt": "2026-07-19"
 }
