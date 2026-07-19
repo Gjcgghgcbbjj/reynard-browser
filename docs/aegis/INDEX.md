@@ -62,3 +62,6 @@ Entries are workspace records, not authoritative runtime decisions.
 | 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/impact-statement-draft.json | Reynard Browser Frontend Redesign impact statement draft |
 | 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/todo-checkpoint-draft.json | Reynard Browser Frontend Redesign todo checkpoint draft |
 | 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/drift-check-draft.json | Reynard Browser Frontend Redesign drift check draft |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-motion-policy.json | 2026-07-20-browser-frontend-redesign evidence phase0-motion-policy |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-design-motion-system.json | 2026-07-20-browser-frontend-redesign evidence phase0-design-motion-system |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/resume-state-hint.json | 2026-07-20-browser-frontend-redesign resume state hint |

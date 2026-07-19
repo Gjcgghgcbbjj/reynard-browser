@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "phase0-design-motion-system",
+  "type": "source-parse-and-structural-checks",
+  "source": "commit 9f1e9cc; Docker swiftc frontend parse; structural assertions; Docker Swift tests",
+  "summary": "Semantic design tokens, interruptible UIKit motion mapping, material policy, and bounded DEBUG-only frame monitoring were added without changing runtime/data owners.",
+  "verifier": "Codex"
+}

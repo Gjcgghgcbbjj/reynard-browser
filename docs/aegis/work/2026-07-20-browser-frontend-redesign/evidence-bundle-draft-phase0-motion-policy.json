@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "phase0-motion-policy",
+  "type": "tests-and-source",
+  "source": "commit ae52c8c; RED compile failure; Docker Swift 6.1 focused and full tests",
+  "summary": "Portable motion profiles select Reduce Motion behavior and 60/120 Hz frame budgets; 5 focused tests and 39 total tests pass.",
+  "verifier": "Codex"
+}

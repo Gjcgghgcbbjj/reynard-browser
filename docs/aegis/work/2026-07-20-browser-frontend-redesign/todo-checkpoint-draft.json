@@ -1,11 +1,18 @@
 {
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-20-browser-frontend-redesign",
-  "currentTodo": "Task 2: Phase 0 portable motion policy",
-  "completedTodos": [],
-  "activeSlice": "Design and motion foundation",
-  "evidenceRefs": [],
-  "blockedOn": "Xcode/device evidence unavailable on WSL but source execution can continue",
-  "nextStep": "Write RED MotionPolicy tests and implement the minimal portable policy",
+  "currentTodo": "Task 4: Phase 1 chrome state and toolbar configuration",
+  "completedTodos": [
+    "Task 1: redesign program plan and checkpoint (e583612)",
+    "Task 2: portable motion policy (ae52c8c)",
+    "Task 3: UIKit design and motion owners (9f1e9cc)"
+  ],
+  "activeSlice": "Phase 1 configurable browser chrome",
+  "evidenceRefs": [
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-motion-policy.json",
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-design-motion-system.json"
+  ],
+  "blockedOn": "Xcode/device evidence unavailable on WSL; source execution continues",
+  "nextStep": "Add RED toolbar validation tests, then implement canonical toolbar actions and layout resolution",
   "updatedAt": "2026-07-20"
 }

@@ -3,16 +3,13 @@
   "taskId": "2026-07-20-browser-frontend-redesign",
   "taskIntentRef": "docs/aegis/work/2026-07-20-browser-frontend-redesign/task-intent-draft.json",
   "baselineRefs": [
-    "docs/aegis/specs/2026-07-20-browser-frontend-redesign-design.md",
-    "docs/aegis/specs/2026-07-19-ios16-stability-usability-design.md",
-    "docs/aegis/baseline/2026-07-19-initial-baseline.md"
+    "docs/aegis/specs/2026-07-20-browser-frontend-redesign-design.md"
   ],
-  "scopeStatus": "not-yet-verified",
-  "compatStatus": "not-yet-verified",
-  "retirementStatus": "not-yet-verified",
+  "scopeStatus": "Phase 0 complete; Phase 1 next",
+  "compatStatus": "UIKit/Gecko/data owners unchanged; no WebKit, SwiftUI, persistence, or dual-UI path added",
+  "retirementStatus": "No old frontend path replaced in Phase 0; new owners are additive prerequisites with consuming phases scheduled",
   "newRiskSignals": [
-    "WSL cannot compile UIKit/Gecko targets or produce physical-device performance evidence",
-    "Oversized current UI owners require delete-after-migration to avoid duplicate responsibility"
+    "UIKit type checking and physical refresh-rate evidence remain unavailable"
   ],
-  "decision": "needs-baseline-readback"
+  "decision": "continue"
 }
