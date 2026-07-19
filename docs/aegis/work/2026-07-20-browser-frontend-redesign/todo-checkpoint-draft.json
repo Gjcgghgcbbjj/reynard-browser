@@ -1,18 +1,22 @@
 {
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-20-browser-frontend-redesign",
-  "currentTodo": "Task 4: Phase 1 chrome state and toolbar configuration",
+  "currentTodo": "Task 16: Phase 7 external Xcode/device verification",
   "completedTodos": [
-    "Task 1: redesign program plan and checkpoint (e583612)",
-    "Task 2: portable motion policy (ae52c8c)",
-    "Task 3: UIKit design and motion owners (9f1e9cc)"
+    "Tasks 1-3: plan and Phase 0 design/motion foundation",
+    "Tasks 4-5: responsive chrome, toolbar, and address-bar decomposition",
+    "Tasks 6-7: Gecko finder bridge and redesigned find surface",
+    "Tasks 8-9: phone tab grid and iPad tab sidebar",
+    "Task 10: modular homepage and promotional owner retirement",
+    "Task 11: unified library, settings, downloads, and site-control styling",
+    "Tasks 12-15: Gecko feature contracts, blocking, user scripts, privacy, and backup",
+    "Task 16 source retirement and portable verification"
   ],
-  "activeSlice": "Phase 1 configurable browser chrome",
+  "activeSlice": "External platform evidence only",
   "evidenceRefs": [
-    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-motion-policy.json",
-    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-design-motion-system.json"
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase7-integrated-source.json"
   ],
-  "blockedOn": "Xcode/device evidence unavailable on WSL; source execution continues",
-  "nextStep": "Add RED toolbar validation tests, then implement canonical toolbar actions and layout resolution",
+  "blockedOn": "macOS/Xcode, pinned Gecko feature implementation response, iOS 16 devices, VoiceOver, and Instruments are unavailable in WSL",
+  "nextStep": "Build on macOS, confirm Reynard:Features capability contract in the pinned Gecko integration, then run iOS 16 phone/iPad 60/120 Hz accessibility and recovery matrix",
   "updatedAt": "2026-07-20"
 }

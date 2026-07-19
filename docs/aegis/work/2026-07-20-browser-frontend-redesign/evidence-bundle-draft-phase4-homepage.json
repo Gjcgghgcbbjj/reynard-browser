@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "phase4-homepage",
+  "type": "tests-source-retirement",
+  "source": "commit cdd7599; HomepageModulePolicyTests; recommendation owner/reference search",
+  "summary": "Homepage modules have validated order, reorder UI, private filtering, semantic presentation, and no promotional recommendation owners.",
+  "verifier": "Codex"
+}

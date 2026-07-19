@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "phase2-find",
+  "type": "tests-parse-structural",
+  "source": "commits 2d90c25,2dfb320; 67-test suite; full Swift source parse",
+  "summary": "Gecko-native finder contract and redesigned action bar provide debounce, stale-result protection, match navigation, keyboard docking, and lifecycle cleanup.",
+  "verifier": "Codex"
+}

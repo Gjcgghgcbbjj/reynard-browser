@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "phase1-chrome",
+  "type": "source-tests-parse",
+  "source": "commits 5965d7f,b18377f,1d9086b; SwiftPM tests; Swift frontend parse",
+  "summary": "Configurable responsive chrome, toolbar policy, address-bar presentation owners, and settings were implemented while retaining BrowserViewController as composition root.",
+  "verifier": "Codex"
+}

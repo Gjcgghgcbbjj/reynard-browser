@@ -2,11 +2,16 @@
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-20-browser-frontend-redesign",
   "lastCheckpointRef": "docs/aegis/work/2026-07-20-browser-frontend-redesign/todo-checkpoint-draft.json",
-  "resumeInstruction": "Resume at Task 4; do not reopen Phase 0 unless Xcode/device evidence exposes a defect",
+  "resumeInstruction": "Do not reopen completed source phases unless Xcode/device evidence exposes a defect; resume with the external verification matrix",
   "knownPartialWork": [
-    "Task 1: redesign program plan and checkpoint (e583612)",
-    "Task 2: portable motion policy (ae52c8c)",
-    "Task 3: UIKit design and motion owners (9f1e9cc)"
+    "Tasks 1-3: plan and Phase 0 design/motion foundation",
+    "Tasks 4-5: responsive chrome, toolbar, and address-bar decomposition",
+    "Tasks 6-7: Gecko finder bridge and redesigned find surface",
+    "Tasks 8-9: phone tab grid and iPad tab sidebar",
+    "Task 10: modular homepage and promotional owner retirement",
+    "Task 11: unified library, settings, downloads, and site-control styling",
+    "Tasks 12-15: Gecko feature contracts, blocking, user scripts, privacy, and backup",
+    "Task 16 source retirement and portable verification"
   ],
   "mustReadBeforeContinuing": [
     "docs/aegis/work/2026-07-20-browser-frontend-redesign/10-intent.md",
@@ -14,6 +19,6 @@
     "docs/aegis/work/2026-07-20-browser-frontend-redesign/todo-checkpoint-draft.json"
   ],
   "unsafeToAssume": [
-    "Swift parsing proves UIKit type correctness or 120 Hz device performance"
+    "Swift frontend parsing proves UIKit type correctness, Gecko event support, or physical-device 120 Hz performance"
   ]
 }

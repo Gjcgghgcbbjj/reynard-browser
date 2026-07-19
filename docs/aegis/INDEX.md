@@ -65,3 +65,12 @@ Entries are workspace records, not authoritative runtime decisions.
 | 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-motion-policy.json | 2026-07-20-browser-frontend-redesign evidence phase0-motion-policy |
 | 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-design-motion-system.json | 2026-07-20-browser-frontend-redesign evidence phase0-design-motion-system |
 | 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/resume-state-hint.json | 2026-07-20-browser-frontend-redesign resume state hint |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase1-chrome.json | 2026-07-20-browser-frontend-redesign evidence phase1-chrome |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase2-find.json | 2026-07-20-browser-frontend-redesign evidence phase2-find |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase3-tabs.json | 2026-07-20-browser-frontend-redesign evidence phase3-tabs |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase4-homepage.json | 2026-07-20-browser-frontend-redesign evidence phase4-homepage |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase5-library-settings.json | 2026-07-20-browser-frontend-redesign evidence phase5-library-settings |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase6-via-features.json | 2026-07-20-browser-frontend-redesign evidence phase6-via-features |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase7-integrated-source.json | 2026-07-20-browser-frontend-redesign evidence phase7-integrated-source |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/gate-input-pack.json | 2026-07-20-browser-frontend-redesign gate input pack |
+| 2026-07-20 | work | docs/aegis/work/2026-07-20-browser-frontend-redesign/proof-bundle.md | 2026-07-20-browser-frontend-redesign proof bundle |

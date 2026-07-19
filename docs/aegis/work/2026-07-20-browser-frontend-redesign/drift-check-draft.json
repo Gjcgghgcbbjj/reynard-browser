@@ -5,11 +5,12 @@
   "baselineRefs": [
     "docs/aegis/specs/2026-07-20-browser-frontend-redesign-design.md"
   ],
-  "scopeStatus": "Phase 0 complete; Phase 1 next",
-  "compatStatus": "UIKit/Gecko/data owners unchanged; no WebKit, SwiftUI, persistence, or dual-UI path added",
-  "retirementStatus": "No old frontend path replaced in Phase 0; new owners are additive prerequisites with consuming phases scheduled",
+  "scopeStatus": "All planned source phases and retirement work are complete; external platform evidence remains",
+  "compatStatus": "UIKit/iOS 16 and Gecko boundaries retained; no WebKit, SwiftUI, CloudKit, IPA, duplicate tab/store owner, or native proxy blocking path added",
+  "retirementStatus": "Promotional homepage owners and obsolete iPad tab-overview animation paths are deleted; current tabs route through TabManager-backed phone grid or iPad sidebar",
   "newRiskSignals": [
-    "UIKit type checking and physical refresh-rate evidence remain unavailable"
+    "Pinned Gecko must implement and report Reynard:Features capabilities; unsupported capabilities are shown explicitly instead of using a hidden fallback",
+    "UIKit type checking, iOS 16 runtime behavior, VoiceOver, and 60/120 Hz performance are not verifiable on WSL"
   ],
-  "decision": "continue"
+  "decision": "needs-verification"
 }

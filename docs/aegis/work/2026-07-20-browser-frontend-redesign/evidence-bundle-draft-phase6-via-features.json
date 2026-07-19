@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "phase6-via-features",
+  "type": "tests-parse-capability-contract",
+  "source": "commits c34eb59,ebb724b,a7e1589,f251a85,ea199a1; ViaFeaturePolicyTests; Gecko capability UI",
+  "summary": "Night mode, content blocking, user scripts, privacy controls, and versioned portable backup have tested policies, canonical preferences, Gecko-only execution contracts, site overrides, visible capability state, and bounded update retry configuration.",
+  "verifier": "Codex"
+}

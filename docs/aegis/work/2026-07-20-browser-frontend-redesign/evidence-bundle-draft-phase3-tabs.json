@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "phase3-tabs",
+  "type": "tests-parse-retirement",
+  "source": "commits dbba829,749a3f9,ea199a1; TabPresentationPolicyTests; retirement searches",
+  "summary": "Phone card-grid policy and interruptible transitions are active; iPad uses a collapsible canonical TabManager-backed sidebar; obsolete pad overview animation owners were deleted.",
+  "verifier": "Codex"
+}

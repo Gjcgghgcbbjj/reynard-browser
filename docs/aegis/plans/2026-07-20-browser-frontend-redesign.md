@@ -262,11 +262,11 @@ background/resume, JIT recovery, and content-process recovery.
 
 **Files:** this plan plus `docs/aegis/work/2026-07-20-browser-frontend-redesign/`.
 
-- [ ] Create the helper-backed work record with all phase todos and non-goals.
-- [ ] Record approved spec and baseline usage.
-- [ ] Record WSL/Xcode/device evidence boundaries.
-- [ ] Run Aegis workspace check.
-- [ ] Commit `docs: plan browser frontend redesign`.
+- [x] Create the helper-backed work record with all phase todos and non-goals.
+- [x] Record approved spec and baseline usage.
+- [x] Record WSL/Xcode/device evidence boundaries.
+- [x] Run Aegis workspace check.
+- [x] Commit `docs: plan browser frontend redesign`.
 
 ## Task 2: Phase 0 — portable motion policy
 
@@ -275,13 +275,13 @@ background/resume, JIT recovery, and content-process recovery.
 **Impact/Compatibility:** add presentation policy only; no runtime/data owner
 changes.
 
-- [ ] Add RED tests for full/reduced motion profiles, 60/120 Hz budgets, and
+- [x] Add RED tests for full/reduced motion profiles, 60/120 Hz budgets, and
   non-ProMotion fallback.
-- [ ] Run focused tests and observe missing policy types.
-- [ ] Implement `MotionPolicy` with immutable profiles selected from Reduce
+- [x] Run focused tests and observe missing policy types.
+- [x] Implement `MotionPolicy` with immutable profiles selected from Reduce
   Motion and maximum refresh-rate inputs.
-- [ ] Run all portable tests and expect GREEN.
-- [ ] Commit `feat: add browser motion policy`.
+- [x] Run all portable tests and expect GREEN.
+- [x] Commit `feat: add browser motion policy`.
 
 ## Task 3: Phase 0 — UIKit design and motion owners
 
@@ -291,14 +291,14 @@ constants.
 **Impact/Compatibility:** new frontend-only owners; existing appearance remains
 until consuming slices migrate.
 
-- [ ] Add semantic colors, typography, spacing, radii, controls, and private-mode
+- [x] Add semantic colors, typography, spacing, radii, controls, and private-mode
   variants.
-- [ ] Add `BrowserMotion` helpers that produce interruptible property animators
+- [x] Add `BrowserMotion` helpers that produce interruptible property animators
   and Reduce Motion substitutions from `MotionPolicy`.
-- [ ] Add material/shadow application helpers and a DEBUG-only signpost/frame
+- [x] Add material/shadow application helpers and a DEBUG-only signpost/frame
   monitor with bounded sampling.
-- [ ] Parse the new UIKit sources and run all portable tests.
-- [ ] Commit `feat: add browser design and motion system`.
+- [x] Parse the new UIKit sources and run all portable tests.
+- [x] Commit `feat: add browser design and motion system`.
 
 ## Task 4: Phase 1 — chrome state and toolbar configuration
 
@@ -309,13 +309,13 @@ presentation contract.
 toolbar actions add allowlisted preference values in the current preferences
 owner.
 
-- [ ] Add portable tests for toolbar validation: back/forward, tab access, menu,
+- [x] Add portable tests for toolbar validation: back/forward, tab access, menu,
   and recovery routes cannot all be removed.
-- [ ] Add `ChromePresentationState`, `ToolbarAction`, and layout resolution.
-- [ ] Update top/bottom toolbars to render validated action arrays and semantic
+- [x] Add `ChromePresentationState`, `ToolbarAction`, and layout resolution.
+- [x] Update top/bottom toolbars to render validated action arrays and semantic
   design tokens.
-- [ ] Add toolbar configuration settings and localization.
-- [ ] Parse, structurally verify owner routing, run tests, and commit
+- [x] Add toolbar configuration settings and localization.
+- [x] Parse, structurally verify owner routing, run tests, and commit
   `feat: add configurable redesigned browser chrome`.
 
 ## Task 5: Phase 1 — decompose address-bar presentation
@@ -327,14 +327,14 @@ menus, and transitions.
 autocomplete, menu actions, URL display, loading progress, and current gesture
 behavior while moving responsibility.
 
-- [ ] Extract text/autocomplete state and pure render-model resolution with
+- [x] Extract text/autocomplete state and pure render-model resolution with
   portable tests.
-- [ ] Extract rendering/application and transition presentation into focused
+- [x] Extract rendering/application and transition presentation into focused
   UIKit owners.
-- [ ] Move menu creation/remapping behind the existing menu builder owner.
-- [ ] Reduce `AddressBar.swift` and `AddressBarGestures.swift`; delete migrated
+- [x] Move menu creation/remapping behind the existing menu builder owner.
+- [x] Reduce `AddressBar.swift` and `AddressBarGestures.swift`; delete migrated
   state/branches and verify no duplicate owner remains.
-- [ ] Parse, run tests, record line/responsibility delta, and commit
+- [x] Parse, run tests, record line/responsibility delta, and commit
   `refactor: decompose redesigned address bar`.
 
 ## Task 6: Phase 2 — Gecko-native finder contract
@@ -345,13 +345,13 @@ without a Swift JavaScript engine.
 **Impact/Compatibility:** mirror pinned Gecko `SessionFinder` events; no Gecko
 patch unless device evidence proves the contract unavailable.
 
-- [ ] Add RED portable tests for `found`, `wrapped`, `current`, `total`, query,
+- [x] Add RED portable tests for `found`, `wrapped`, `current`, `total`, query,
   and malformed payload parsing.
-- [ ] Add the focused Gecko core test target and `FindInPageResult` parser.
-- [ ] Add `SessionFinder` query/display/clear methods and expose one finder from
+- [x] Add the focused Gecko core test target and `FindInPageResult` parser.
+- [x] Add `SessionFinder` query/display/clear methods and expose one finder from
   `GeckoSession`.
-- [ ] Parse GeckoView sources and run all portable tests.
-- [ ] Commit `feat: add Gecko find in page bridge`.
+- [x] Parse GeckoView sources and run all portable tests.
+- [x] Commit `feat: add Gecko find in page bridge`.
 
 ## Task 7: Phase 2 — redesigned find action surface
 
@@ -362,14 +362,14 @@ keyboard and tab/session lifetime.
 highlights clear on close, navigation, tab switch, session replacement, or
 forced chrome dismissal.
 
-- [ ] Add the find action to canonical page menus and the action-bar item enum.
-- [ ] Implement query field, count, previous, next, close, Dynamic Type,
+- [x] Add the find action to canonical page menus and the action-bar item enum.
+- [x] Implement query field, count, previous, next, close, Dynamic Type,
   VoiceOver labels, and semantic design tokens.
-- [ ] Implement coordinator debounce, request generation, stale-result rejection,
+- [x] Implement coordinator debounce, request generation, stale-result rejection,
   selected-session tracking, errors, and diagnostics.
-- [ ] Dock bottom chrome above the keyboard when the find field is focused and
+- [x] Dock bottom chrome above the keyboard when the find field is focused and
   avoid relocating Gecko content as though a webpage input were focused.
-- [ ] Parse, run tests/structural checks, and commit
+- [x] Parse, run tests/structural checks, and commit
   `feat: add redesigned find in page`.
 
 ## Task 8: Phase 3 — shared tab presentation and phone card grid
@@ -380,13 +380,13 @@ presentation model and transition owner.
 **Impact/Compatibility:** `TabManager` remains authoritative; snapshots are
 ephemeral.
 
-- [ ] Add portable layout/state tests for regular/private grouping, selection,
+- [x] Add portable layout/state tests for regular/private grouping, selection,
   insertion, reorder projections, and compact-width columns.
-- [ ] Implement semantic card style and diffable phone grid from canonical tabs.
-- [ ] Implement interruptible open/close/selection/reorder transitions using
+- [x] Implement semantic card style and diffable phone grid from canonical tabs.
+- [x] Implement interruptible open/close/selection/reorder transitions using
   transforms/opacity and bounded snapshots.
-- [ ] Route all actions to `TabManager` and retire migrated phone animation paths.
-- [ ] Parse, run tests, record complexity/retirement evidence, and commit
+- [x] Route all actions to `TabManager` and retire migrated phone animation paths.
+- [x] Parse, run tests, record complexity/retirement evidence, and commit
   `feat: redesign phone tab grid`.
 
 ## Task 9: Phase 3 — iPad collapsible tab sidebar
@@ -396,13 +396,13 @@ ephemeral.
 **Impact/Compatibility:** reuse existing sidebar host and canonical tab arrays;
 no sidebar-specific tab state.
 
-- [ ] Add sidebar presentation state tests for collapsed/expanded widths and
+- [x] Add sidebar presentation state tests for collapsed/expanded widths and
   regular/private grouping.
-- [ ] Implement tab rows/cards, pointer/keyboard actions, reorder, close, and
+- [x] Implement tab rows/cards, pointer/keyboard actions, reorder, close, and
   selection.
-- [ ] Add interruptible sidebar motion and split-view adaptation.
-- [ ] Delete obsolete iPad tab presentation branches.
-- [ ] Parse, run tests, and commit `feat: redesign iPad tab sidebar`.
+- [x] Add interruptible sidebar motion and split-view adaptation.
+- [x] Delete obsolete iPad tab presentation branches.
+- [x] Parse, run tests, and commit `feat: redesign iPad tab sidebar`.
 
 ## Task 10: Phase 4 — modular homepage
 
@@ -412,13 +412,13 @@ content.
 **Impact/Compatibility:** preserve bookmark/history/tab owners; extend current
 homepage preferences with validated module order.
 
-- [ ] Add tests for module-order decoding, unknown-value removal, required
+- [x] Add tests for module-order decoding, unknown-value removal, required
   search/favorites behavior, and private-mode filtering.
-- [ ] Implement semantic module/card layouts and reorder UI.
-- [ ] Migrate favorites, frequent sites, and recent tabs without duplicating
+- [x] Implement semantic module/card layouts and reorder UI.
+- [x] Migrate favorites, frequent sites, and recent tabs without duplicating
   their stores.
-- [ ] Remove recommendation modules and their scheduling preferences/references.
-- [ ] Parse, run tests, validate retirement searches, and commit
+- [x] Remove recommendation modules and their scheduling preferences/references.
+- [x] Parse, run tests, validate retirement searches, and commit
   `feat: redesign modular homepage`.
 
 ## Task 11: Phase 5 — unified library, site settings, and preferences
@@ -429,14 +429,14 @@ presentation outside the browser shell.
 **Impact/Compatibility:** retain all stores and settings keys unless a key is
 explicitly retired with migration-safe default behavior.
 
-- [ ] Add shared semantic list/card/header/empty-state components.
-- [ ] Migrate bookmarks and history, preserving actions, folders, selection,
+- [x] Add shared semantic list/card/header/empty-state components.
+- [x] Migrate bookmarks and history, preserving actions, folders, selection,
   clear flows, and browser navigation.
-- [ ] Migrate downloads, root settings, appearance/browsing/homepage settings,
+- [x] Migrate downloads, root settings, appearance/browsing/homepage settings,
   and site settings.
-- [ ] Split any newly over-budget screen owner and delete superseded local style
+- [x] Split any newly over-budget screen owner and delete superseded local style
   implementations.
-- [ ] Parse all touched screens, validate localization, run tests, and commit
+- [x] Parse all touched screens, validate localization, run tests, and commit
   `refactor: unify browser library and settings UI`.
 
 ## Task 12: Phase 6 — night mode and per-site controls
@@ -446,12 +446,12 @@ explicitly retired with migration-safe default behavior.
 **Impact/Compatibility:** site settings remains the persistent per-site owner;
 Swift does not execute page scripts.
 
-- [ ] Write portable tests for global/site resolution and exception precedence.
-- [ ] Add Gecko/WebExtension darkening configuration and capability diagnostics.
-- [ ] Add toolbar toggle, settings, and per-site exception UI.
-- [ ] Verify navigation/tab changes apply the canonical resolved setting and no
+- [x] Write portable tests for global/site resolution and exception precedence.
+- [x] Add Gecko/WebExtension darkening configuration and capability diagnostics.
+- [x] Add toolbar toggle, settings, and per-site exception UI.
+- [x] Verify navigation/tab changes apply the canonical resolved setting and no
   hidden fallback exists.
-- [ ] Commit `feat: add Gecko-backed night mode`.
+- [x] Commit `feat: add Gecko-backed night mode`.
 
 ## Task 13: Phase 6 — ad/tracker blocking
 
@@ -461,13 +461,13 @@ state and recovery.
 **Impact/Compatibility:** Gecko WebExtension owns request/content blocking;
 Swift owns filter configuration, updates, site exceptions, and diagnostics.
 
-- [ ] Add tested filter subscription/custom-rule models and failure states.
-- [ ] Add built-in extension installation/configuration and blocked-count event
+- [x] Add tested filter subscription/custom-rule models and failure states.
+- [x] Add built-in extension installation/configuration and blocked-count event
   bridge.
-- [ ] Add global/per-site controls, update UI, custom rules, and visible errors.
-- [ ] Add bounded update retry and diagnostics; reject hidden proxy/native
+- [x] Add global/per-site controls, update UI, custom rules, and visible errors.
+- [x] Add bounded update retry and diagnostics; reject hidden proxy/native
   duplicate blocking.
-- [ ] Commit `feat: add Gecko ad and tracker blocking`.
+- [x] Commit `feat: add Gecko ad and tracker blocking`.
 
 ## Task 14: Phase 6 — user scripts
 
@@ -476,12 +476,12 @@ Swift owns filter configuration, updates, site exceptions, and diagnostics.
 **Impact/Compatibility:** execution belongs exclusively to Gecko WebExtension
 `userScripts`; Swift persists validated metadata and source text.
 
-- [ ] Add parser/permission/scope tests and migration-safe script records.
-- [ ] Add Gecko capability bridge and explicit unsupported-state UI.
-- [ ] Add import, permission review, edit, enable/disable, remove, update, and
+- [x] Add parser/permission/scope tests and migration-safe script records.
+- [x] Add Gecko capability bridge and explicit unsupported-state UI.
+- [x] Add import, permission review, edit, enable/disable, remove, update, and
   per-site exception flows.
-- [ ] Add diagnostics and ensure private-mode behavior is explicit.
-- [ ] Commit `feat: add Gecko user script management`.
+- [x] Add diagnostics and ensure private-mode behavior is explicit.
+- [x] Commit `feat: add Gecko user script management`.
 
 ## Task 15: Phase 6 — privacy controls and backup portability
 
@@ -491,12 +491,12 @@ independently signed TrollStore installations.
 **Impact/Compatibility:** approved stores remain authoritative; restore is
 validated and transactional; excluded private/sensitive categories stay out.
 
-- [ ] Add tested privacy-setting resolution and Gecko application paths.
-- [ ] Add third-party cookie/tracker/site-data controls and reset UI.
-- [ ] Define and test a versioned backup manifest for approved categories.
-- [ ] Implement export/import validation, transactional restore, conflict/error
+- [x] Add tested privacy-setting resolution and Gecko application paths.
+- [x] Add third-party cookie/tracker/site-data controls and reset UI.
+- [x] Define and test a versioned backup manifest for approved categories.
+- [x] Implement export/import validation, transactional restore, conflict/error
   reporting, and excluded-category assertions.
-- [ ] Commit `feat: add privacy controls and portable backup`.
+- [x] Commit `feat: add privacy controls and portable backup`.
 
 ## Task 16: Phase 7 — retire old frontend and verify integrated behavior
 
@@ -505,14 +505,14 @@ platform evidence is missing.
 
 **Impact/Compatibility:** source deletion only; no persistent user data deletion.
 
-- [ ] Search old owners, adapters, selectors, notifications, assets,
+- [x] Search old owners, adapters, selectors, notifications, assets,
   localization, and recommendation references.
-- [ ] Delete superseded UI paths and update project/document ownership evidence.
-- [ ] Run full portable tests, parse, JSON validation, structural anti-WebKit and
+- [x] Delete superseded UI paths and update project/document ownership evidence.
+- [x] Run full portable tests, parse, JSON validation, structural anti-WebKit and
   single-owner checks, Aegis bundle/check, and complexity closure.
 - [ ] On macOS/devices, run Xcode build, iOS 16 matrix, 60/120 Hz traces,
   accessibility, lifecycle, JIT, and process-recovery checks.
-- [ ] Commit source retirement and final evidence separately; remain
+- [x] Commit source retirement and final evidence separately; remain
   `needs-verification` where external evidence is unavailable.
 
 ## Risks

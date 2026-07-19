@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "baselineRefs": [
+    "docs/aegis/specs/2026-07-20-browser-frontend-redesign-design.md"
+  ],
+  "impactStatement": "docs/aegis/work/2026-07-20-browser-frontend-redesign/impact-statement-draft.json",
+  "compatPlan": "iOS 16 UIKit and Gecko; preserve existing user data and regular/private tab behavior",
+  "retirementPlan": "Promotional homepage owners and obsolete iPad tab-overview animation paths are deleted; current tabs route through TabManager-backed phone grid or iPad sidebar",
+  "evidenceBundle": [
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-design-motion-system.json",
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-motion-policy.json",
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase1-chrome.json",
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase2-find.json",
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase3-tabs.json",
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase4-homepage.json",
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase5-library-settings.json",
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase6-via-features.json",
+    "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase7-integrated-source.json"
+  ]
+}

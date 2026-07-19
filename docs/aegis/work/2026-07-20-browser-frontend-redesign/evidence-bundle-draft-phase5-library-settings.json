@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "phase5-library-settings",
+  "type": "source-parse",
+  "source": "commit a081399; full Swift frontend parse",
+  "summary": "Shared semantic list, navigation, cell, header, tab-bar, and empty-state styling is applied to library, settings, downloads, and site controls.",
+  "verifier": "Codex"
+}
