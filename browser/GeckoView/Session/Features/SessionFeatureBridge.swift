@@ -1,6 +1,6 @@
 import Foundation
 
-public enum GeckoFeatureCapability: String, CaseIterable, Codable, Sendable {
+public enum GeckoFeatureCapability: String, CaseIterable, Codable, Hashable, Sendable {
     case nightMode
     case contentBlocking
     case userScripts
@@ -40,6 +40,7 @@ public final class SessionFeatureBridge {
             "disabledHosts": disabledHosts,
             "subscriptions": subscriptions,
             "customRules": customRules,
+            "updateRetryLimit": 3,
         ])
     }
 

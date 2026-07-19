@@ -98,12 +98,12 @@ enum AddressBarMenu {
         if url?.host != nil {
             pageActions.append(UIAction(
                 title: NSLocalizedString("Night Mode", comment: ""),
-                image: UIImage(named: "reynard.moon"),
+                image: UIImage(named: "reynard.moon.fill"),
                 state: isNightModeEnabled ? .on : .off
             ) { _ in onToggleNightMode() })
             pageActions.append(UIAction(
                 title: NSLocalizedString("Content Blocking", comment: ""),
-                image: UIImage(named: "reynard.shield"),
+                image: UIImage(named: "reynard.bolt.slash"),
                 state: isBlockingEnabled ? .on : .off
             ) { _ in onToggleBlocking() })
         }

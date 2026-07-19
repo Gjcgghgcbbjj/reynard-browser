@@ -1,3 +1,4 @@
+import GeckoView
 import UIKit
 import UniformTypeIdentifiers
 
@@ -6,6 +7,7 @@ final class ViaFeaturesPreferencesViewController: SettingsTableViewController, U
     private enum Row {
         case nightMode, contentBlocking, cookies, trackingProtection, clearOnExit, userScripts, exportBackup, importBackup
     }
+    private var capabilityMessage: String?
 
     private var rows: [[Row]] {
         [
@@ -26,6 +28,7 @@ final class ViaFeaturesPreferencesViewController: SettingsTableViewController, U
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.reloadData()
+        refreshCapabilities()
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int { rows.count }
@@ -33,7 +36,10 @@ final class ViaFeaturesPreferencesViewController: SettingsTableViewController, U
 
     override func sectionText(for section: Int) -> SettingsSectionText {
         let titles = ["Display", "Blocking", "Privacy", "Portability"]
-        return SettingsSectionText(headerTitle: titles[safe: section].map { NSLocalizedString($0, comment: "") })
+        return SettingsSectionText(
+            headerTitle: titles[safe: section].map { NSLocalizedString($0, comment: "") },
+            footerTitle: section == 0 ? capabilityMessage : nil
+        )
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -77,11 +83,11 @@ final class ViaFeaturesPreferencesViewController: SettingsTableViewController, U
     @objc private func clearOnExitChanged(_ sender: UISwitch) { Prefs.FeatureSettings.clearSiteDataOnExit = sender.isOn }
 
     private func presentNightModePicker() {
-        presentPicker(title: NSLocalizedString("Night Mode", comment: ""), values: BrowserNightMode.allCases, current: Prefs.FeatureSettings.nightMode, title: title(for:)) { Prefs.FeatureSettings.nightMode = $0 }
+        presentPicker(title: NSLocalizedString("Night Mode", comment: ""), values: BrowserNightMode.allCases, current: Prefs.FeatureSettings.nightMode, title: { [weak self] in self?.title(for: $0) ?? $0.rawValue }) { Prefs.FeatureSettings.nightMode = $0 }
     }
 
     private func presentCookiePicker() {
-        presentPicker(title: NSLocalizedString("Third-Party Cookies", comment: ""), values: ThirdPartyCookiePolicy.allCases, current: Prefs.FeatureSettings.thirdPartyCookiePolicy, title: title(for:)) { Prefs.FeatureSettings.thirdPartyCookiePolicy = $0 }
+        presentPicker(title: NSLocalizedString("Third-Party Cookies", comment: ""), values: ThirdPartyCookiePolicy.allCases, current: Prefs.FeatureSettings.thirdPartyCookiePolicy, title: { [weak self] in self?.title(for: $0) ?? $0.rawValue }) { Prefs.FeatureSettings.thirdPartyCookiePolicy = $0 }
     }
 
     private func presentPicker<T: Equatable>(title: String, values: [T], current: T, title valueTitle: @escaping (T) -> String, select: @escaping (T) -> Void) {
@@ -146,6 +152,23 @@ final class ViaFeaturesPreferencesViewController: SettingsTableViewController, U
         let alert = UIAlertController(title: NSLocalizedString("Backup Failed", comment: ""), message: String(describing: error), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default))
         present(alert, animated: true)
+    }
+
+    private func refreshCapabilities() {
+        guard let browser = LibrarySharedUtils.resolvedBrowserViewController(from: self),
+              let session = browser.tabManager.selectedTab?.session else {
+            capabilityMessage = NSLocalizedString("Open a webpage to check Gecko feature support.", comment: "")
+            tableView.reloadSections(IndexSet(integer: 0), with: .none)
+            return
+        }
+        Task { @MainActor [weak self] in
+            let capabilities = await session.features.capabilities()
+            let missing = Set(GeckoFeatureCapability.allCases).subtracting(capabilities.supported)
+            self?.capabilityMessage = missing.isEmpty
+            ? NSLocalizedString("All Gecko web features are available.", comment: "")
+            : String(format: NSLocalizedString("Unavailable in this Gecko build: %@", comment: ""), missing.map(\.rawValue).sorted().joined(separator: ", "))
+            self?.tableView.reloadSections(IndexSet(integer: 0), with: .none)
+        }
     }
 
     private func title(for mode: BrowserNightMode) -> String {

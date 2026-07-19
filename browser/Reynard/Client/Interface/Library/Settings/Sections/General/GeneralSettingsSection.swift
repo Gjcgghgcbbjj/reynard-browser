@@ -59,7 +59,7 @@ struct GeneralSettingsSection {
         let destination: UIViewController
         switch Row.allCases[index] {
         case .webFeatures:
-            return SettingsViewUtils.disclosureCell(title: NSLocalizedString("Web Features", comment: ""))
+            destination = ViaFeaturesPreferencesViewController()
         case .addons:
             destination = AddonsPreferencesViewController()
         case .browsing:

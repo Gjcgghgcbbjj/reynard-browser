@@ -357,12 +357,7 @@ final class TabOverviewCard: UICollectionViewCell {
         }
         
         if animated {
-            UIView.animate(
-                withDuration: UX.reorderLiftAnimationDuration,
-                delay: 0,
-                options: [.curveEaseOut, .beginFromCurrentState],
-                animations: animations
-            )
+            BrowserMotion.animate(.tabGrid, in: self, animations: animations)
         } else {
             animations()
         }

@@ -302,7 +302,7 @@ final class BrowserViewController: UIViewController {
             self?.createNewTab()
         }
         browserChrome.onTabOverview = { [weak self] in
-            self?.setTabOverviewVisible(true, animated: true)
+            self?.presentTabSurface(animated: true)
         }
         browserChrome.onOverlayDismiss = { [weak self] in
             self?.dismissAddressBarEditingAndChromeOverlay()

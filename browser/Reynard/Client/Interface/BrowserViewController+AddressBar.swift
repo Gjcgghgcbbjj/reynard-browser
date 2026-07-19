@@ -218,7 +218,7 @@ extension BrowserViewController: AddressBarDelegate, AddressBarGestureDelegate {
     }
     
     func presentTabOverviewFromGesture(animated: Bool) {
-        setTabOverviewVisible(true, animated: animated)
+        presentTabSurface(animated: animated)
     }
     
     func addressBarGestureWillBegin() {

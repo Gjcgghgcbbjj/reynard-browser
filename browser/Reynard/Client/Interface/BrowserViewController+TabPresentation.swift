@@ -111,6 +111,14 @@ extension BrowserViewController: TabBarDataSource, TabOverviewDataSource, TabOve
         updateBrowserLayout(animated: animated, duration: duration)
     }
     
+    func presentTabSurface(animated: Bool) {
+        if browserLayout.interfaceIdiom == .pad {
+            sidebarCoordinator.toggle(animated: animated)
+            return
+        }
+        setTabOverviewVisible(true, animated: animated)
+    }
+
     func setTabOverviewVisible(_ visible: Bool, animated: Bool) {
         if visible {
             if browserChrome.performAfterTransition({ [weak self] in

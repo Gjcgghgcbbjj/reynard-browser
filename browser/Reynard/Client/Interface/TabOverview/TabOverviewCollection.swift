@@ -222,13 +222,7 @@ final class TabOverviewCollection: NSObject {
                     completion()
                     return
                 }
-                UIView.animate(
-                    withDuration: UX.insertionPlaceholderScrollDuration,
-                    delay: 0,
-                    usingSpringWithDamping: 0.9,
-                    initialSpringVelocity: 1,
-                    options: [.curveEaseInOut, .allowUserInteraction]
-                ) {
+                BrowserMotion.animate(.tabGrid, in: collectionView) {
                     collectionView.contentOffset = targetOffset
                 }
                 self.completeWhenScrollReachesTarget(
@@ -601,14 +595,9 @@ final class TabOverviewCollection: NSObject {
         let shouldClose = !cancelled && projectedOffset < -(cell.bounds.width * 0.425)
         
         if shouldClose {
-            UIView.animate(
-                withDuration: 0.2,
-                delay: 0,
-                options: [.curveEaseOut, .beginFromCurrentState],
-                animations: {
+            BrowserMotion.animate(.tabSelection, in: collectionView, animations: {
                     cell.setSwipeOffset(-max(collectionView.bounds.width, cell.bounds.width), progress: 1)
-                },
-                completion: { [weak self, weak cell] _ in
+                }, completion: { [weak self, weak cell] _ in
                     guard let self, let cell else { return }
                     cell.layer.zPosition = 0
                     cell.isHidden = true
@@ -616,16 +605,9 @@ final class TabOverviewCollection: NSObject {
                 }
             )
         } else {
-            UIView.animate(
-                withDuration: 0.3,
-                delay: 0,
-                usingSpringWithDamping: 0.82,
-                initialSpringVelocity: 0,
-                options: [.curveEaseOut, .beginFromCurrentState],
-                animations: {
+            BrowserMotion.animate(.tabSelection, in: collectionView, animations: {
                     cell.setSwipeOffset(0, progress: 0)
-                },
-                completion: { _ in
+                }, completion: { _ in
                     cell.layer.zPosition = 0
                 }
             )
