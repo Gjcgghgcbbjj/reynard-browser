@@ -17,7 +17,7 @@ final class SidebarViewController: UISplitViewController, UISplitViewControllerD
     }
     
     private let contentController: SidebarContentController
-    private var sidebarVisible = false
+    private var sidebarVisible = true
     
     var contentBrowser: SidebarContentController {
         return contentController
@@ -38,7 +38,7 @@ final class SidebarViewController: UISplitViewController, UISplitViewControllerD
         return false
     }
     
-    private lazy var menuController = SidebarMenuViewController()
+    private lazy var menuController = SidebarMenuViewController(tabsDataSource: contentController.sidebarTabDataSource)
     
     private lazy var browserNavigationController: UINavigationController = {
         let navigationController = UINavigationController(rootViewController: contentController.sidebarContentViewController)
@@ -125,7 +125,7 @@ final class SidebarViewController: UISplitViewController, UISplitViewControllerD
         let destinationFrame = contentController.sidebarContentChrome.sidebarButtonFrame(in: containerView)
         contentController.sidebarContentChrome.setSidebarButtonTransition(alpha: 0, hidden: false)
         
-        UIView.animate(withDuration: UX.collapseAnimationDuration, delay: 0, options: [.curveEaseOut]) {
+        BrowserMotion.animate(.sidebar, in: containerView) {
             snapshot.frame = destinationFrame
             self.contentController.sidebarContentChrome.setSidebarButtonTransition(alpha: 1, hidden: false)
         } completion: { _ in
@@ -140,6 +140,10 @@ final class SidebarViewController: UISplitViewController, UISplitViewControllerD
         updateBrowserLayoutIfNeeded()
     }
     
+    func refreshTabs(animated: Bool = true) {
+        menuController.refreshTabs(animated: animated)
+    }
+
     // MARK: - Sections
     
     func showSection(_ section: LibrarySection) {
@@ -171,7 +175,7 @@ final class SidebarViewController: UISplitViewController, UISplitViewControllerD
         delegate = self
         presentsWithGesture = false
         if #available(iOS 14.0, *) {
-            preferredDisplayMode = .secondaryOnly
+            preferredDisplayMode = .oneBesideSecondary
             preferredSplitBehavior = .tile
             preferredPrimaryColumnWidth = UX.preferredPrimaryWidth
             minimumPrimaryColumnWidth = UX.minimumPrimaryWidth
@@ -184,7 +188,7 @@ final class SidebarViewController: UISplitViewController, UISplitViewControllerD
             setViewController(browserNavigationController, for: .secondary)
             menuNavigationController.loadViewIfNeeded()
         } else {
-            preferredDisplayMode = .primaryHidden
+            preferredDisplayMode = .allVisible
             viewControllers = [menuNavigationController, browserNavigationController]
         }
     }
@@ -212,6 +216,11 @@ final class SidebarViewController: UISplitViewController, UISplitViewControllerD
         }
         
         let browserLayout = contentController.sidebarContentLayout
+        let presentation = TabPresentationPolicy.sidebar(
+            collapsed: false,
+            availableWidth: Double(max(view.bounds.width, UIScreen.main.bounds.width))
+        )
+        preferredPrimaryColumnWidth = CGFloat(presentation.width)
         let shouldOverlay = browserLayout.orientation == .portrait
         || (contentController.isSidebarOverlayLayout && browserLayout.chromeMode != .compact)
         let splitBehavior: UISplitViewController.SplitBehavior = shouldOverlay ? .overlay : .tile

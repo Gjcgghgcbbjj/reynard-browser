@@ -15,7 +15,12 @@ final class SidebarMenuViewController: UIViewController, UICollectionViewDelegat
     private let mainSection = "main"
     private let cellReuseIdentifier = "SidebarActionCell"
     private let childSidebarButtonTag = 9101
+    private weak var tabsDataSource: TabOverviewDataSource?
     private var dataSource: UICollectionViewDiffableDataSource<String, LibrarySection>!
+    private lazy var tabListController: SidebarTabListViewController? = {
+        guard let tabsDataSource else { return nil }
+        return SidebarTabListViewController(dataSource: tabsDataSource)
+    }()
     
     private lazy var sidebarButton: UIButton = {
         let button = ToolbarButton(buttonType: .sidebar, target: self, action: #selector(collapseFromRoot))
@@ -50,7 +55,8 @@ final class SidebarMenuViewController: UIViewController, UICollectionViewDelegat
     
     // MARK: - Lifecycle
     
-    init() {
+    init(tabsDataSource: TabOverviewDataSource?) {
+        self.tabsDataSource = tabsDataSource
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -98,6 +104,10 @@ final class SidebarMenuViewController: UIViewController, UICollectionViewDelegat
         showSection(section, animated: true)
     }
     
+    func refreshTabs(animated: Bool = true) {
+        tabListController?.refresh(animated: animated)
+    }
+
     // MARK: - Sections
     
     func showSection(_ section: LibrarySection, animated: Bool) {
@@ -236,16 +246,34 @@ final class SidebarMenuViewController: UIViewController, UICollectionViewDelegat
     }
     
     private func configureCollectionView() {
-        collectionView.contentInset.top = UX.topContentInset
-        collectionView.verticalScrollIndicatorInsets.top = UX.topContentInset
         collectionView.register(SidebarActionCell.self, forCellWithReuseIdentifier: cellReuseIdentifier)
-        view.addSubview(collectionView)
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
+        if let tabListController {
+            addChild(tabListController)
+            tabListController.view.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(tabListController.view)
+            tabListController.didMove(toParent: self)
+            view.addSubview(collectionView)
+            NSLayoutConstraint.activate([
+                tabListController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                tabListController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                tabListController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                tabListController.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.62),
+                collectionView.topAnchor.constraint(equalTo: tabListController.view.bottomAnchor),
+                collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            ])
+        } else {
+            collectionView.contentInset.top = UX.topContentInset
+            collectionView.verticalScrollIndicatorInsets.top = UX.topContentInset
+            view.addSubview(collectionView)
+            NSLayoutConstraint.activate([
+                collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            ])
+        }
     }
     
     private func configureDataSource() {

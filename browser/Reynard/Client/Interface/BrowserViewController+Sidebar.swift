@@ -19,6 +19,10 @@ extension BrowserViewController: SidebarContentController, SidebarCoordinatorHos
     var sidebarContentLayout: BrowserLayout {
         return browserLayout
     }
+
+    var sidebarTabDataSource: TabOverviewDataSource {
+        return self
+    }
     
     func openExternalURL(_ url: URL) {
         tabManager.openExternalURL(url)

@@ -13,6 +13,7 @@ protocol SidebarContentController: AnyObject {
     var sidebarContentLayout: BrowserLayout { get }
     var isCompactPadLayout: Bool { get }
     var isSidebarOverlayLayout: Bool { get }
+    var sidebarTabDataSource: TabOverviewDataSource { get }
     
     func updateBrowserLayout(animated: Bool, duration: TimeInterval)
     func updateBrowserLayoutIfNeeded(animated: Bool, duration: TimeInterval)
@@ -153,6 +154,10 @@ final class SidebarCoordinator {
         return true
     }
     
+    func refreshTabs(animated: Bool = true) {
+        sidebar?.refreshTabs(animated: animated)
+    }
+
     // MARK: - Sections
     
     func showSection(_ section: LibrarySection) {

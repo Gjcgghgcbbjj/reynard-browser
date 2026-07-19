@@ -24,6 +24,7 @@ extension BrowserViewController: TabManagerDelegate {
         }
         tabOverview.applyPendingTabChanges()
         tabBar.reloadTabs()
+        sidebarCoordinator.refreshTabs(animated: true)
         updateBrowserLayout(animated: false)
         homepageOverlayCoordinator.updatePresentation(animated: false)
         updateContentRecoveryPresentation(animated: false)
@@ -54,6 +55,7 @@ extension BrowserViewController: TabManagerDelegate {
             tabOverview.reloadTabs()
         }
         tabBar.reloadTabs()
+        sidebarCoordinator.refreshTabs(animated: true)
         homepageOverlayCoordinator.updatePresentation(animated: false)
         updateContentRecoveryPresentation(animated: false)
         updateBrowserLayout(animated: false)
@@ -175,6 +177,7 @@ extension BrowserViewController: TabManagerDelegate {
                 updateContentRecoveryPresentation(animated: true)
             }
         }
+        sidebarCoordinator.refreshTabs(animated: false)
     }
     
     func tabManager(_ tabManager: TabManager, animateNewTabSelectionAt index: Int, completion: @escaping () -> Void) {
