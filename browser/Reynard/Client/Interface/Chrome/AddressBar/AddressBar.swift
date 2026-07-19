@@ -48,6 +48,13 @@ final class AddressBar: UIView {
     enum LoadingState {
         case idle
         case loading(progress: Float)
+
+        var isLoading: Bool {
+            if case .loading = self {
+                return true
+            }
+            return false
+        }
     }
     
     private enum AutocompleteState {
@@ -60,25 +67,20 @@ final class AddressBar: UIView {
         case placeholder
         case page(NSAttributedString)
         case typedText
-    }
-    
-    private enum LeadingButtonState: Equatable {
-        case hidden
-        case search
-        case menu
-        case loading
-    }
-    
-    private enum TrailingButtonState: Equatable {
-        case hidden
-        case reload
-        case stop
+
+        var kind: AddressBarContentKind {
+            switch self {
+            case .placeholder: return .placeholder
+            case .page: return .page
+            case .typedText: return .typedText
+            }
+        }
     }
     
     private struct RenderModel {
         let content: ContentState
-        let leadingButton: LeadingButtonState
-        let trailingButton: TrailingButtonState
+        let leadingButton: AddressBarLeadingButtonState
+        let trailingButton: AddressBarTrailingButtonState
     }
     
     static let placeholderText = NSLocalizedString("Search or enter address", comment: "")
@@ -608,10 +610,18 @@ final class AddressBar: UIView {
     
     private func resolveRenderModel() -> RenderModel {
         let content = resolveContentState()
+        let presentation = AddressBarPresentationPolicy.resolve(
+            editing: editingState != .inactive,
+            hasTypedText: content.kind == .typedText,
+            hasPageContent: content.kind == .page,
+            isLoading: loadingState.isLoading,
+            isPhoneBottomChrome: chromeMode == .phone && position == .bottom,
+            canShowMenu: canShowBarMenu
+        )
         return RenderModel(
             content: content,
-            leadingButton: resolveLeadingButtonState(for: content),
-            trailingButton: resolveTrailingButtonState(for: content)
+            leadingButton: presentation.leadingButton,
+            trailingButton: presentation.trailingButton
         )
     }
     
@@ -621,30 +631,16 @@ final class AddressBar: UIView {
             return typedText.isEmpty ? .placeholder : .typedText
         }
         
-        guard let displayText = displayAttributedText() else {
+        guard let displayText = AddressBarDisplayFormatter.attributedText(
+            currentText: currentText,
+            locationText: currentLocationText,
+            locationTitle: currentLocationTitle,
+            showsFullAddress: Prefs.AppearanceSettings.showsFullWebsiteAddress,
+            canShowMenu: canShowBarMenu
+        ) else {
             return .placeholder
         }
         return .page(displayText)
-    }
-    
-    private func resolveLeadingButtonState(for content: ContentState) -> LeadingButtonState {
-        guard editingState == .inactive else { return .hidden }
-        if case .loading = loadingState { return .loading }
-        switch content {
-        case .placeholder:
-            return chromeMode == .phone && position == .bottom ? .search : .hidden
-        case .page:
-            return canShowBarMenu ? .menu : .hidden
-        case .typedText:
-            return .hidden
-        }
-    }
-    
-    private func resolveTrailingButtonState(for content: ContentState) -> TrailingButtonState {
-        guard editingState == .inactive else { return .hidden }
-        if case .loading = loadingState { return .stop }
-        if case .page = content { return .reload }
-        return .hidden
     }
     
     private func applyRenderModel(_ model: RenderModel) {
@@ -687,7 +683,7 @@ final class AddressBar: UIView {
         textField.textAlignment = .left
     }
     
-    private func applyLeadingButtonState(_ state: LeadingButtonState) {
+    private func applyLeadingButtonState(_ state: AddressBarLeadingButtonState) {
         guard state != .hidden else {
             leadingButton.isHidden = true
             leadingButton.setImage(nil, for: .normal)
@@ -719,7 +715,7 @@ final class AddressBar: UIView {
         leadingButton.isUserInteractionEnabled = addonsMenu != nil
     }
     
-    private func applyTrailingButtonState(_ state: TrailingButtonState) {
+    private func applyTrailingButtonState(_ state: AddressBarTrailingButtonState) {
         let visible = state != .hidden
         trailingButton.isHidden = !visible
         trailingButton.isUserInteractionEnabled = visible
@@ -735,54 +731,6 @@ final class AddressBar: UIView {
         case .compact: return UX.compactAddressBarHeight
         case .pad: return UX.padAddressBarHeight
         }
-    }
-    
-    // MARK: - Display Content
-    
-    private func displayAttributedText() -> NSAttributedString? {
-        guard let currentText, !currentText.isEmpty else {
-            return nil
-        }
-        
-        guard !Prefs.AppearanceSettings.showsFullWebsiteAddress,
-              canShowBarMenu,
-              let host = locationHost() else {
-            return NSAttributedString(
-                string: currentText,
-                attributes: [.foregroundColor: UIColor.label]
-            )
-        }
-        
-        let attributedText = NSMutableAttributedString(
-            string: host,
-            attributes: [.foregroundColor: UIColor.label]
-        )
-        attributedText.append(
-            NSAttributedString(
-                string: " / ",
-                attributes: [.foregroundColor: UIColor.secondaryLabel]
-            )
-        )
-        if let title = currentLocationTitle,
-           !title.isEmpty {
-            attributedText.append(
-                NSAttributedString(
-                    string: title,
-                    attributes: [.foregroundColor: UIColor.secondaryLabel]
-                )
-            )
-        }
-        return attributedText
-    }
-    
-    private func locationHost() -> String? {
-        let sourceText = currentLocationText ?? currentText
-        guard let sourceText,
-              let host = URL(string: sourceText)?.host,
-              !host.isEmpty else {
-            return nil
-        }
-        return host
     }
     
     @objc
@@ -886,56 +834,7 @@ final class AddressBar: UIView {
         for result: UserDataSearchResult,
         query: String
     ) -> (displayText: NSAttributedString, committedText: String, submissionText: String)? {
-        let title = result.title.trimmingCharacters(in: .whitespacesAndNewlines)
-        let strippedURL = URLUtils.strippedURLString(result.url.absoluteString, trimsTrailingSlash: true)
-        let queryAttributes: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.label]
-        let completionAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.label,
-            .backgroundColor: UIColor.systemGray4
-        ]
-        let suffixAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.systemBlue,
-            .backgroundColor: UIColor.systemGray4
-        ]
-        
-        if title.hasPrefix(query) {
-            let attributed = NSMutableAttributedString(
-                string: String(title.prefix(query.count)),
-                attributes: queryAttributes
-            )
-            let completion = String(title.dropFirst(query.count))
-            if !completion.isEmpty {
-                attributed.append(NSAttributedString(string: completion, attributes: completionAttributes))
-            }
-            attributed.append(NSAttributedString(string: " — \(strippedURL)", attributes: suffixAttributes))
-            return (attributed, strippedURL, result.url.absoluteString)
-        }
-        
-        let strippedQuery = URLUtils.normalizedURLMatchString(from: query)
-        let strippedURLMatchValue = URLUtils.normalizedURLMatchString(from: result.url.absoluteString)
-        guard !strippedQuery.isEmpty else {
-            return nil
-        }
-        
-        let completedURL: String
-        if strippedURLMatchValue.hasPrefix(strippedQuery) {
-            completedURL = URLUtils.autocompleteURLString(for: query, url: result.url) ?? strippedURL
-        } else if let matchedDomain = URLUtils.domainCompletion(for: strippedQuery, url: result.url) {
-            completedURL = matchedDomain
-        } else {
-            return nil
-        }
-        
-        let attributed = NSMutableAttributedString(
-            string: query,
-            attributes: queryAttributes
-        )
-        let completion = String(completedURL.dropFirst(query.count))
-        if !completion.isEmpty {
-            attributed.append(NSAttributedString(string: completion, attributes: completionAttributes))
-        }
-        attributed.append(NSAttributedString(string: " — \(title)", attributes: suffixAttributes))
-        return (attributed, completedURL, result.url.absoluteString)
+        AddressBarAutocompleteFormatter.presentation(for: result, query: query)
     }
     
     private func clearFocusPreview() {
