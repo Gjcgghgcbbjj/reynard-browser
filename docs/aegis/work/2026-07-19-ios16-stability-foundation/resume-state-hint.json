@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "taskId": "2026-07-19-ios16-stability-foundation",
+  "lastCheckpointRef": "docs/aegis/work/2026-07-19-ios16-stability-foundation/todo-checkpoint-draft.json",
+  "resumeInstruction": "Read plan Task 2, current checkpoint, and commit 511a6cd; run docker Swift tests before editing",
+  "knownPartialWork": [
+    "Task 1: portable stability core and 14 tests committed as 511a6cd"
+  ],
+  "mustReadBeforeContinuing": [
+    "docs/aegis/work/2026-07-19-ios16-stability-foundation/10-intent.md",
+    "docs/aegis/work/2026-07-19-ios16-stability-foundation/20-checkpoint.md",
+    "docs/aegis/work/2026-07-19-ios16-stability-foundation/todo-checkpoint-draft.json"
+  ],
+  "unsafeToAssume": [
+    "Pure Swift success proves UIKit or Gecko integration compiles"
+  ]
+}

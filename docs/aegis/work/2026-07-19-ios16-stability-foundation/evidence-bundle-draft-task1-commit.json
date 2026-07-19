@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "artifactKey": "task1-commit",
+  "type": "commit",
+  "source": "511a6cd",
+  "summary": "Added Package.swift, five stability policies/events, four test files, and ignored .build",
+  "verifier": "git show --stat 511a6cd"
+}

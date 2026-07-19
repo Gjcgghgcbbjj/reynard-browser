@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "taskId": "2026-07-19-ios16-stability-foundation",
+  "taskIntentRef": "docs/aegis/work/2026-07-19-ios16-stability-foundation/task-intent-draft.json",
+  "baselineRefs": [
+    "docs/aegis/plans/2026-07-19-ios16-stability-foundation.md"
+  ],
+  "scopeStatus": "Task 1 stayed inside the planned Foundation-only stability core",
+  "compatStatus": "No UIKit, Gecko, persistence, iOS minimum, or rendering path changed",
+  "retirementStatus": "No retirement action was due in Task 1",
+  "newRiskSignals": [
+    "Initial RED run was unavailable on host; Docker Swift was added before final GREEN verification"
+  ],
+  "decision": "continue"
+}

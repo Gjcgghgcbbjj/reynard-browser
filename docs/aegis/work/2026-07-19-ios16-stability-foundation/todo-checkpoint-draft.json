@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "taskId": "2026-07-19-ios16-stability-foundation",
+  "currentTodo": "Task 2: add privacy-safe runtime diagnostics and startup instrumentation",
+  "completedTodos": [
+    "Task 1: portable stability core and 14 tests committed as 511a6cd"
+  ],
+  "activeSlice": "Task 2 diagnostics and URL redaction",
+  "evidenceRefs": [
+    "docker swift:6.1-noble swift test: 14 tests, 0 failures",
+    "commit 511a6cd"
+  ],
+  "blockedOn": "Xcode/iOS app compilation and physical device verification remain unavailable on WSL",
+  "nextStep": "Add URL redaction tests and StabilityDiagnostics runtime owner",
+  "updatedAt": "2026-07-19"
+}

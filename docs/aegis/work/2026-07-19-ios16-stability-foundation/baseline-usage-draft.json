@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "taskId": "2026-07-19-ios16-stability-foundation",
+  "requiredBaselineRefs": [
+    "docs/aegis/specs/2026-07-19-ios16-stability-usability-design.md",
+    "docs/aegis/plans/2026-07-19-ios16-stability-foundation.md"
+  ],
+  "deliveredContextRefs": [],
+  "acknowledgedBeforePlanRefs": [
+    "browser/Reynard/Client/TabManagement/TabManagerImpl.swift"
+  ],
+  "citedInPlanRefs": [
+    "docs/aegis/plans/2026-07-19-ios16-stability-foundation.md"
+  ],
+  "missingRefs": [
+    "macOS Xcode build and iOS device evidence"
+  ],
+  "decision": "continue"
+}

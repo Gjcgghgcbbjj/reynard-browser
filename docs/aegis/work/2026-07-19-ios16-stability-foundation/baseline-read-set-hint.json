@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "candidateDocs": [
+    "docs/aegis/specs/2026-07-19-ios16-stability-usability-design.md",
+    "docs/aegis/baseline/2026-07-19-initial-baseline.md"
+  ],
+  "whyRelevant": "These refs define Gate A behavior, owners, compatibility, and acceptance",
+  "missingAuthority": []
+}
