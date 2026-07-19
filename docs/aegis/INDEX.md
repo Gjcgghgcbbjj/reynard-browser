@@ -76,3 +76,5 @@ Entries are workspace records, not authoritative runtime decisions.
 | 2026-07-20 | work | docs/aegis/work/2026-07-20-browser-frontend-redesign/proof-bundle.md | 2026-07-20-browser-frontend-redesign proof bundle |
 | 2026-07-20 | adr | docs/aegis/adr/ADR-0001-frontend-surfaces-and-gecko-feature-ownership.md | ADR-0001 - Frontend surfaces and Gecko feature execution ownership |
 | 2026-07-20 | baseline | docs/aegis/baseline/2026-07-20-frontend-redesign-baseline.md | Reynard Browser Frontend Redesign Baseline |
+| 2026-07-20 | spec | docs/aegis/specs/2026-07-20-gecko-artifact-pipeline-brief.md | Gecko iOS Prebuilt Artifact Pipeline Brief |
+| 2026-07-20 | plan | docs/aegis/plans/2026-07-20-gecko-artifact-pipeline.md | Gecko iOS Prebuilt Artifact Pipeline Implementation Plan |

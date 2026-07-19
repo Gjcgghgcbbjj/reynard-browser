@@ -175,6 +175,31 @@ Windows and WSL can be used for source development and the portable Swift tests
 requires Apple's iOS SDK and Xcode on macOS; this can be provided by a local Mac
 or a macOS GitHub Actions runner.
 
+### Reusable Gecko CI artifact
+
+GitHub Actions separates the expensive Gecko compilation from normal IPA
+packaging:
+
+1. Run **Build Gecko iOS Artifact** after changing `engine/release.txt`, files
+   under `patches/`, the Gecko build script, or the selected Xcode version.
+2. After that workflow uploads the reusable artifact, run **Build IPA and
+   TrollStore TIPA** for application and frontend changes.
+
+The artifact name is derived from the pinned Firefox release, all Gecko patch
+contents, the artifact/build scripts, and Xcode. The IPA workflow downloads only
+an exact, unexpired match and verifies its SHA-256 checksum, manifest, XUL,
+headers, and default theme before invoking Xcode. If no matching artifact exists,
+the workflow exits with instructions to run the Gecko workflow instead of
+silently starting another full Gecko build.
+
+Reusable Gecko artifacts are retained for 90 days. Regenerate the artifact when
+its key changes or after it expires. The helper contract can be checked locally:
+
+```bash
+./tools/development/test-gecko-artifact.sh
+./tools/development/gecko-artifact.sh key Xcode_26.4.1.app
+```
+
 ### Release packaging
 
 After the Gecko framework and idevice dependency have been built, create the
