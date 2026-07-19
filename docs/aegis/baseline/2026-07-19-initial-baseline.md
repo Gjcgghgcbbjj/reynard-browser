@@ -43,6 +43,9 @@ requirements from the existing Gecko/iOS ownership boundaries.
 - The selected phase goal is to make existing browsing behavior dependable:
   predictable startup, recoverable JIT failures, resilient tab/session state,
   controlled memory behavior, and actionable error reporting.
+- After the stability gate, the product should functionally align with the
+  publicly documented Via Browser feature set while retaining Gecko as the
+  rendering and extension runtime.
 - Existing browser capabilities should be preserved unless a capability is
   proven to be the direct cause of instability.
 
@@ -57,6 +60,8 @@ requirements from the existing Gecko/iOS ownership boundaries.
 4. Stability fixes take priority over new user-facing features.
 5. Failure must produce a recoverable state or an actionable diagnostic rather
    than an unexplained crash, blank page, or lost regular browsing session.
+6. Via parity is functional rather than visual or brand parity; no Via source,
+   assets, service credentials, or trademarks are reused.
 
 ### 4.3 Product Non-goals
 
@@ -65,6 +70,7 @@ requirements from the existing Gecko/iOS ownership boundaries.
 - Cloud rendering or a proxy service.
 - Account sync, password sync, or a new extension ecosystem.
 - A visual redesign unrelated to stability or recovery.
+- Features outside the documented Via parity matrix unless separately approved.
 
 ## 5. Architecture / Runtime Boundary Baseline
 

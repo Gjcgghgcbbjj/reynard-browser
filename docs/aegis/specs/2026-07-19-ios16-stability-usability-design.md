@@ -1,24 +1,26 @@
 # Reynard iOS 16 Stability and Usability Design
 
 Date: `2026-07-19`
-Status: `proposed for user review`
+Status: `proposed for user review; amended for Via functional parity`
 ArchitectureReviewRequired: `yes`
 
 ## 1. TaskIntentDraft
 
 - **Outcome:** produce an open-source Gecko browser track that is dependable on
-  TrollStore-capable iOS 16 devices.
+  TrollStore-capable iOS 16 devices and functionally aligns with Via Browser's
+  publicly documented browser features.
 - **Goal:** improve startup reliability, JIT recovery, process/session
   resilience, tab persistence, memory behavior, and failure usability before
   adding new features.
 - **Success evidence:** repeatable device test runs, preserved regular sessions
   after backgrounding or termination, actionable JIT/error recovery, and an
-  exportable privacy-conscious diagnostic bundle.
+  exportable privacy-conscious diagnostic bundle, followed by a passing Via
+  functional-parity matrix.
 - **Stop condition:** the release acceptance matrix in section 8 passes on at
   least one arm64 and one arm64e iOS 16 device, with all remaining known issues
   documented and no unresolved data-loss or launch-blocking defect.
 - **Non-goals:** App Store support, BrowserEngineKit, Blink, cloud browsing,
-  unrelated visual redesign, sync services, or feature expansion.
+  copying Via's visual identity/assets, or proprietary account services.
 
 ## 2. BaselineReadSetHint
 
@@ -31,12 +33,16 @@ ArchitectureReviewRequired: `yes`
 - `browser/GeckoView/`, `browser/Helper/`, and `patches/`
 - Upstream issues concerning JIT retry, background tab loss, crashes, and
   device-specific regressions.
+- Via official feature description: `https://viayoo.com/en/`.
+- Via iOS public App Store description and version history:
+  `https://apps.apple.com/cn/app/id1639085829`.
 
 ## 3. BaselineUsageDraft
 
 - **Required baseline refs:** initial baseline and current runtime owner files.
 - **Delivered context refs:** user requirement for iOS 16, open-source
-  TrollStore distribution, stability and usability priority.
+  TrollStore distribution, stability and usability priority, and functional
+  alignment with Via Browser.
 - **Acknowledged before plan refs:** upstream README, current source inventory,
   current open issue list, pinned engine/support submodules.
 - **Cited in design refs:** initial baseline and the owner files listed above.
@@ -51,8 +57,8 @@ ArchitectureReviewRequired: `yes`
 - **Goals and scope refs:** sections 1, 7, and 8 of this design.
 - **User / scenario refs:** iOS 16 users whose system WebKit no longer loads
   modern sites reliably, installing through TrollStore.
-- **Requirement item refs:** sections 6 through 8.
-- **Acceptance / verification criteria refs:** section 8.
+- **Requirement item refs:** sections 6 through 9.
+- **Acceptance / verification criteria refs:** sections 8 and 9.
 - **Open blocker questions:** none for planning; exact test devices and the
   user's highest-priority failing sites are evidence inputs during execution.
 - **Decision:** `ready`.
@@ -62,11 +68,14 @@ ArchitectureReviewRequired: `yes`
 ### First-principles invariants
 
 - **Non-negotiable goal:** browsing must remain available and recoverable when
-  WebKit is not suitable on iOS 16.
+  WebKit is not suitable on iOS 16, without losing the compact power-user
+  capabilities expected from Via Browser.
 - **Non-negotiable constraints:** real Gecko, iOS 16, TrollStore, no Apple
   entitlement, open-source licensing, and no silent WebKit fallback.
 - **Historical assumptions to delete:** adding more browser features does not
-  make an alpha engine integration usable; reliability evidence comes first.
+  make an alpha engine integration usable; reliability evidence comes first,
+  and parity should reuse Gecko capabilities rather than duplicate them in
+  UIKit.
 
 ### Owner / retirement matrix
 
@@ -100,12 +109,14 @@ ArchitectureReviewRequired: `yes`
 ## 6. Product Risk Lens
 
 - **Value:** old iPhones gain a modern browser engine that behaves predictably
-  enough for daily browsing.
-- **Non-goals:** feature parity with desktop Firefox or Safari.
+  enough for daily browsing and provides Via-style lightweight customization.
+- **Non-goals:** feature parity with desktop Firefox or Safari, Via branding,
+  or compatibility with Via's private sync services.
 - **Trade-offs:** some performance depends on JIT/private entitlement behavior;
-  supporting old OS versions increases device-specific testing cost.
-- **Decision needed:** approve reliability-first release gates before feature
-  work. The user has approved this direction; this document pins its meaning.
+  supporting old OS versions increases device-specific testing cost; direct
+  feature parity increases scope and must be delivered in gated phases.
+- **Decision needed:** approve reliability-first release gates followed by the
+  Via parity phases defined below.
 
 ## 7. Design
 
@@ -198,7 +209,85 @@ ArchitectureReviewRequired: `yes`
   memory pressure, downloads, and representative websites.
 - Full engine/device verification remains separate from fast client/store tests.
 
-## 8. Release Acceptance Matrix
+### 7.5 Via functional-parity strategy
+
+Functional parity uses Via's official public feature descriptions rather than
+attempting to clone undocumented internals. The comparison baseline is the
+public Via iOS `1.9.0` description/version history plus the official website's
+feature list as observed on `2026-07-19`. Existing Reynard functionality is
+retained where it already satisfies the behavior.
+
+#### Existing or near-existing capabilities to preserve
+
+- Address/search bar, multiple search engines, suggestions, back/forward,
+  reload, desktop/mobile user-agent modes, page zoom, tabs, private browsing,
+  bookmarks, history, downloads, homepage favorites, site permissions, and
+  Gecko add-ons.
+- These capabilities first pass the stability gates; they are not rewritten
+  solely to resemble Via's implementation.
+
+#### Parity Phase 1: daily-use core
+
+1. **Minimal configurable chrome:** compact one-hand layout, configurable
+   address-bar position, configurable toolbar actions, and no promoted content.
+2. **Ad and tracker blocking:** a built-in, user-controllable Gecko WebExtension
+   integration with default filter lists, per-site disable, subscription
+   updates, custom rules, and visible blocked-request count.
+3. **User scripts:** install, enable/disable, edit, remove, update, and scope
+   Greasemonkey-compatible scripts using Gecko's `userScripts`/WebExtension
+   boundary. Swift must not become a second JavaScript execution engine.
+4. **Night mode:** app theme plus optional per-site page darkening, with site
+   exceptions and an immediate toolbar toggle.
+5. **Find in page:** query, previous/next match, match count, and close action.
+6. **Webpage translation:** a configurable translation provider opened from the
+   current page, with the original URL retained and no mandatory project-owned
+   proxy.
+7. **Custom homepage:** reorderable favorites, blank/custom URL options, and
+   optional sections without news or advertisements.
+8. **Per-site settings:** desktop mode, zoom, permissions, blocking, dark mode,
+   and script exceptions owned by the existing site-settings boundary.
+9. **Privacy controls:** third-party cookie blocking, tracker blocking,
+   clear-site-data controls, and explicit private-mode behavior.
+10. **Local backup portability:** import/export bookmarks, settings, filter
+    subscriptions, site settings, and user-script metadata in a documented,
+    versioned archive.
+
+#### Parity Phase 2: extended tools
+
+1. **Save webpage:** export a self-contained offline archive through a Gecko
+   engine/extension-owned capture path; saving only a screenshot does not count.
+2. **Reader mode:** extract readable content with adjustable typography and
+   theme while retaining a return-to-original action.
+3. **QR scanner:** scan a URL/text QR code, preview the result, and require user
+   confirmation before navigation or external actions.
+4. **Manual ad marking:** select and persist page-specific cosmetic blocking
+   rules, with undo and site rule management.
+5. **Bookmark interchange:** HTML import/export compatible with common desktop
+   browsers in addition to the full local backup archive.
+6. **Settings portability:** human-readable export/import suitable for moving
+   between TrollStore installations.
+
+#### Explicit parity substitutions and exclusions
+
+- Via's iCloud sync is substituted with local import/export in the unsigned
+  TrollStore build because a project-owned Apple CloudKit container and
+  provisioning entitlement are not available. Cloud/WebDAV sync requires a
+  separate approved design.
+- Via branding, icons, screenshots, copy, proprietary services, and internal
+  rule sources are not copied.
+- Gecko WebExtensions are the preferred implementation boundary for blocking,
+  user scripts, cosmetic page changes, and other web-content modification.
+  Native duplicate engines are prohibited.
+
+### 7.6 Delivery gates
+
+- **Gate A — Reliability foundation:** section 8 passes before parity features
+  are considered release-ready.
+- **Gate B — Daily-use core:** all Phase 1 items pass section 9 acceptance.
+- **Gate C — Extended tools:** Phase 2 ships incrementally without reopening
+  Gate A regressions.
+
+## 8. Stability Release Acceptance Matrix
 
 ### 8.1 Required device coverage
 
@@ -246,30 +335,70 @@ ArchitectureReviewRequired: `yes`
 3. Store mutations used in recovery remain transactional.
 4. Diagnostic export omits secrets and full URLs by default.
 
-## 9. ImpactStatementDraft
+## 9. Via Functional-Parity Acceptance Matrix
+
+### 9.1 Phase 1
+
+1. Users can customize the primary toolbar without making navigation, tab
+   access, or recovery actions unreachable.
+2. Blocking can be enabled globally and disabled per site; filter updates and
+   custom-rule failures are visible and recoverable.
+3. A valid Greasemonkey-compatible script can be imported, scoped to matching
+   sites, toggled, edited, and removed; permissions are shown before activation.
+4. Night mode, desktop mode, zoom, blocking, and script exceptions persist per
+   site without creating parallel settings stores.
+5. Find-in-page reports match count and navigates between matches on a long page.
+6. Translation opens the configured provider for the current canonical URL and
+   can return to the original page.
+7. Homepage favorites can be added, removed, reordered, and backed up.
+8. Third-party cookie and tracker controls produce observable behavior and can
+   be reset per site.
+9. A backup created on one clean installation can restore the documented data
+   categories on another installation of the same or newer schema version.
+10. All Phase 1 features remain usable after the background, termination, and
+    JIT-recovery scenarios in section 8.
+
+### 9.2 Phase 2
+
+1. Saved pages reopen offline with text, structure, and local resources needed
+   for meaningful reading.
+2. Reader mode succeeds on representative article pages and exits without
+   losing the original tab URL.
+3. QR navigation requires confirmation and rejects unsupported or unsafe action
+   schemes by default.
+4. A manually marked cosmetic rule survives reload, can be inspected, and can
+   be undone.
+5. Bookmark HTML round-trips retain titles, URLs, and folder hierarchy.
+6. Settings/backup import validates schema and reports unsupported records
+   without corrupting existing data.
+
+## 10. ImpactStatementDraft
 
 - **Affected layers:** startup, JIT, Gecko helper/process bridge, session
   lifecycle, tab orchestration, SQLite persistence, failure UI, diagnostics,
-  packaging, and tests.
+  Gecko add-ons/WebExtensions, site settings, backup/import/export, packaging,
+  and tests.
 - **Owners:** existing owners remain authoritative; one diagnostics owner is
-  added to remove ad-hoc observability.
+  added to remove ad-hoc observability; web-content modification remains owned
+  by Gecko/WebExtensions rather than UIKit.
 - **Invariants:** real Gecko rendering, explicit JIT degradation, transactional
   user data, upstream patch isolation, no silent WebKit fallback.
 - **Compatibility:** iOS 16 TrollStore, arm64/arm64e, existing user data and
   upstream updateability.
-- **Non-goals:** App Store, Blink, cloud proxying, broad redesign, sync, and
-  unrelated features.
+- **Non-goals:** App Store, Blink, cloud proxying, Via branding/private services,
+  and unrelated features.
 
-## 10. Architecture Integrity Lens
+## 11. Architecture Integrity Lens
 
 - **Invariant:** recovery behavior must be owned where the failing lifecycle or
   data contract is defined.
 - **Canonical owner / contract:** JIT in `JITController`, sessions in
   `SessionManager`, live tabs in `TabManagerImpl`, persisted snapshots in
-  `TabManagementStore`, engine behavior in Gecko patches.
+  `TabManagementStore`, engine behavior in Gecko patches, and content
+  modification in Gecko WebExtensions.
 - **Responsibility overlap:** UI-level reload loops, duplicate tab snapshots,
-  and scattered diagnostic flags would create competing owners and are
-  prohibited.
+  scattered diagnostic flags, or native reimplementations of blocking/script
+  engines would create competing owners and are prohibited.
 - **Higher-level simplification:** add typed lifecycle outcomes at owner
   boundaries instead of adding more controller-specific boolean guards.
 - **Retirement / falsifier:** any temporary compatibility branch must name the
@@ -277,29 +406,30 @@ ArchitectureReviewRequired: `yes`
   Gecko moves the fix out of the Swift client.
 - **Verdict:** `proceed`, with architecture review during verification.
 
-## 11. Complexity Budget
+## 12. Complexity Budget
 
 - **Artifact class:** high-risk cross-boundary reliability work.
 - **Target files / artifacts:** JIT controller/support, session manager, tab
-  manager/store, Gecko bridge/patches when proven necessary, a new diagnostics
-  owner, tests, and release scripts.
+  manager/store, Gecko bridge/patches when proven necessary, diagnostics,
+  WebExtension integrations, site settings, backup/import/export, tests, and
+  release scripts.
 - **Current pressure:** several owner files exceed 800–1,500 lines and no test
   target is checked in.
-- **Projected post-change pressure:** at risk if recovery logic is added directly
-  to large controllers.
+- **Projected post-change pressure:** at risk if recovery logic or Via-parity
+  content features are added directly to large controllers.
 - **Budget result:** `at-risk`.
 - **Planned governance:** extract focused state machines/diagnostics helpers only
   when they establish a single owner and are independently testable.
 
 ### Plan-Time Complexity Check
 
-- **Better file boundary:** diagnostics and deterministic startup/retry state
-  transitions should have dedicated small files; existing behavior owners stay
-  in place.
+- **Better file boundary:** diagnostics, deterministic startup/retry state
+  transitions, backup codecs, and bundled WebExtension coordination should have
+  dedicated small owners; existing behavior owners stay in place.
 - **Recommendation:** `extract helper` for new cross-cutting diagnostics/state
   logic; otherwise `edit-in-place` at the canonical owner.
 
-## 12. ADR Signal
+## 13. ADR Signal
 
 - A durable ADR will be warranted only if implementation introduces a new
   startup state machine contract, changes the Gecko helper/process topology, or
