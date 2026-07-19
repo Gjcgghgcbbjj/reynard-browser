@@ -149,6 +149,76 @@ Build dependencies and the Gecko engine.
 
 To run Reynard, open `Reynard.xcodeproj` in Xcode and build/run it from there.
 
+### Stability tests
+
+The Foundation-only stability policies can be built and tested without Gecko
+or UIKit:
+
+```bash
+swift test --package-path .
+git diff --check
+find tools -name '*.sh' -print0 | xargs -0 -n1 bash -n
+```
+
+On macOS, also validate the Xcode project and property lists:
+
+```bash
+xcodebuild -list -project browser/Reynard.xcodeproj
+find browser -name '*.plist' -print0 | xargs -0 -n1 plutil -lint
+```
+
+The `Stability Core` GitHub Actions workflow runs these checks on macOS and
+retains its environment and test logs for 14 days.
+
+Windows and WSL can be used for source development and the portable Swift tests
+(for example with the `swift:6.1-noble` Docker image). A full iOS build still
+requires Apple's iOS SDK and Xcode on macOS; this can be provided by a local Mac
+or a macOS GitHub Actions runner.
+
+### Reusable Gecko CI artifact
+
+GitHub Actions separates the expensive Gecko compilation from normal IPA
+packaging:
+
+1. Run **Build Gecko iOS Artifact** after changing `engine/release.txt`, files
+   under `patches/`, the Gecko build script, or the selected Xcode version.
+2. After that workflow uploads the reusable artifact, run **Build IPA and
+   TrollStore TIPA** for application and frontend changes.
+
+The artifact name is derived from the pinned Firefox release, all Gecko patch
+contents, the artifact/build scripts, and Xcode. The IPA workflow downloads only
+an exact, unexpired match and verifies its SHA-256 checksum, manifest, XUL,
+headers, and default theme before invoking Xcode. If no matching artifact exists,
+the workflow exits with instructions to run the Gecko workflow instead of
+silently starting another full Gecko build.
+
+Reusable Gecko artifacts are retained for 90 days. Regenerate the artifact when
+its key changes or after it expires. The helper contract can be checked locally:
+
+```bash
+./tools/development/test-gecko-artifact.sh
+./tools/development/gecko-artifact.sh key Xcode_26.4.1.app
+```
+
+### Release packaging
+
+After the Gecko framework and idevice dependency have been built, create the
+archive and installable packages on macOS:
+
+```bash
+./tools/release/build-app.sh
+./tools/release/create-ipa.sh
+```
+
+The outputs are written under `dist/`, including `Reynard.ipa`,
+`Reynard-TrollStore.tipa`, and `Reynard-Jailbroken.ipa`. Packaging requires
+`ldid` in addition to the build dependencies listed above.
+
+Before calling an iOS 16 build stable, complete
+[`docs/testing/ios16-stability-checklist.md`](docs/testing/ios16-stability-checklist.md)
+on both arm64 and arm64e hardware. Diagnostic evidence committed or attached to
+a shared test run must exclude full website URLs.
+
 ## Notes
 
 This project initially started out of curiosity. I wanted to see if I could get Gecko to run without the [BrowserEngineKit](https://developer.apple.com/documentation/browserenginekit) framework, so it could be further modified to run on iOS versions as far back as possible. I got it working, and since then, I’ve been focusing on developing engine patches for better UIKit integration, fixing bugs, and turning this into a full, usable browser.

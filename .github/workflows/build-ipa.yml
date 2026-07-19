@@ -10,6 +10,7 @@ on:
         type: string
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
@@ -23,6 +24,7 @@ jobs:
     timeout-minutes: 360
 
     env:
+      GH_TOKEN: ${{ github.token }}
       RUST_BACKTRACE: "1"
       XCODE_APP: ${{ inputs.xcode_version }}
 
@@ -58,7 +60,7 @@ jobs:
         run: |
           set -euo pipefail
           brew update
-          brew install ldid nasm yasm ccache
+          brew install ldid
           rustup target add aarch64-apple-ios
           python3 --version
           rustc --version
@@ -76,46 +78,54 @@ jobs:
           restore-keys: |
             ios-rust-${{ runner.os }}-
 
-      - name: Fetch pinned Gecko source
-        shell: zsh {0}
-        run: |
-          set -euo pipefail
-          ./tools/development/update-gecko.sh 2>&1 | tee update-gecko.log
-
-      - name: Bootstrap Gecko build dependencies
+      - name: Download and restore matching Gecko artifact
         shell: bash
         run: |
           set -euo pipefail
-          cd engine/firefox
-          MACOS_SDK_DIR="$(xcrun --sdk macosx --show-sdk-path)"
-          env -u MOZ_AUTOMATION \
-            MACOS_SDK_DIR="$MACOS_SDK_DIR" \
-            ./mach --no-interactive bootstrap --application-choice browser \
-            2>&1 | tee ../../gecko-bootstrap.log
+          artifact_name="$(./tools/development/gecko-artifact.sh key "$XCODE_APP")"
+          artifact_id="$({
+            gh api --paginate \
+              "repos/$GITHUB_REPOSITORY/actions/artifacts?per_page=100" \
+              --jq '.artifacts[] | select(.expired == false) | [.created_at, .id, .name] | @tsv'
+          } | awk -F $'\t' -v name="$artifact_name" '$3 == name { print }' \
+            | LC_ALL=C sort -r \
+            | sed -n '1p' \
+            | cut -f 2)"
 
-      - name: Apply Reynard Gecko patches
-        shell: zsh {0}
-        run: |
-          set -euo pipefail
-          ./tools/development/apply-patches.sh </dev/null 2>&1 | tee apply-patches.log
+          if [[ -z "$artifact_id" ]]; then
+            echo "::error::No unexpired Gecko artifact named $artifact_name was found."
+            echo "Run the Build Gecko iOS Artifact workflow with Xcode $XCODE_APP, then retry this workflow."
+            exit 1
+          fi
+
+          download_dir="$(mktemp -d)"
+          trap 'rm -rf "$download_dir"' EXIT
+          gh api \
+            "repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact_id/zip" \
+            > "$download_dir/artifact.zip"
+          unzip -q "$download_dir/artifact.zip" -d "$download_dir/payload"
+
+          archive="$download_dir/payload/$artifact_name.tar.gz"
+          checksum="$download_dir/payload/$artifact_name.tar.gz.sha256"
+          test -s "$archive"
+          test -s "$checksum"
+          expected="$(awk 'NR == 1 { print $1 }' "$checksum")"
+          actual="$(shasum -a 256 "$archive" | awk '{ print $1 }')"
+          test "$actual" = "$expected"
+
+          ./tools/development/gecko-artifact.sh restore "$archive" "$XCODE_APP"
+          ./tools/development/gecko-artifact.sh verify "$XCODE_APP"
+          {
+            echo "artifact_name=$artifact_name"
+            echo "artifact_id=$artifact_id"
+            echo "sha256=$actual"
+          } | tee gecko-artifact-download.log
 
       - name: Build idevice dependency
         shell: zsh {0}
         run: |
           set -euo pipefail
           ./tools/development/build-idevice.sh 2>&1 | tee build-idevice.log
-
-      - name: Build Gecko for iOS arm64
-        shell: bash
-        run: |
-          set -euo pipefail
-          MACOS_SDK_DIR="$(xcrun --sdk macosx --show-sdk-path)"
-          IPHONEOS_SDK_DIR="$(xcrun --sdk iphoneos --show-sdk-path)"
-          env -u MOZ_AUTOMATION \
-            MACOS_SDK_DIR="$MACOS_SDK_DIR" \
-            IPHONEOS_SDK_DIR="$IPHONEOS_SDK_DIR" \
-            ./tools/development/build-gecko.sh \
-            2>&1 | tee build-gecko.log
 
       - name: Validate Xcode project
         shell: bash

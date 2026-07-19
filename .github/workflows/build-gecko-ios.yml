@@ -1,0 +1,160 @@
+name: Build Gecko iOS Artifact
+
+on:
+  workflow_dispatch:
+    inputs:
+      xcode_version:
+        description: Xcode application name installed on the runner
+        required: true
+        default: Xcode_26.4.1.app
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-gecko-ios-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build reusable Gecko for iOS arm64
+    runs-on: macos-26
+    timeout-minutes: 360
+
+    env:
+      RUST_BACKTRACE: "1"
+      SCCACHE_DIR: ${{ github.workspace }}/.cache/sccache
+      XCODE_APP: ${{ inputs.xcode_version }}
+
+    steps:
+      - name: Checkout application source
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 0
+
+      - name: Resolve Gecko artifact identity
+        id: artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          name="$(./tools/development/gecko-artifact.sh key "$XCODE_APP")"
+          {
+            echo "name=$name"
+            echo "archive=dist/$name.tar.gz"
+            echo "checksum=dist/$name.tar.gz.sha256"
+          } >> "$GITHUB_OUTPUT"
+          echo "Gecko artifact: $name"
+
+      - name: Select Xcode and reclaim disk space
+        shell: bash
+        run: |
+          set -euo pipefail
+          XCODE_PATH="/Applications/${XCODE_APP}"
+          test -d "$XCODE_PATH"
+          sudo xcode-select --switch "$XCODE_PATH/Contents/Developer"
+          for candidate in /Applications/Xcode*.app; do
+            if [[ "$candidate" != "$XCODE_PATH" ]]; then
+              sudo rm -rf "$candidate"
+            fi
+          done
+          sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/* || true
+          {
+            sw_vers
+            xcodebuild -version
+            xcrun --sdk macosx --show-sdk-version
+            xcrun --sdk iphoneos --show-sdk-version
+            df -h /
+          } | tee build-environment.log
+
+      - name: Install Gecko build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew update
+          brew install nasm yasm ccache
+          rustup target add aarch64-apple-ios
+          python3 --version
+          rustc --version
+          cargo --version
+
+      - name: Restore Gecko build caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.mozbuild/toolchains
+            .cache/sccache
+          key: gecko-ios-${{ runner.os }}-${{ inputs.xcode_version }}-${{ hashFiles('engine/release.txt', 'patches/**/*.patch', 'tools/development/build-gecko.sh', 'tools/development/gecko-artifact.sh') }}
+          restore-keys: |
+            gecko-ios-${{ runner.os }}-${{ inputs.xcode_version }}-
+
+      - name: Fetch pinned Gecko source
+        shell: zsh {0}
+        run: |
+          set -euo pipefail
+          ./tools/development/update-gecko.sh 2>&1 | tee update-gecko.log
+
+      - name: Bootstrap Gecko build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd engine/firefox
+          MACOS_SDK_DIR="$(xcrun --sdk macosx --show-sdk-path)"
+          env -u MOZ_AUTOMATION \
+            MACOS_SDK_DIR="$MACOS_SDK_DIR" \
+            ./mach --no-interactive bootstrap --application-choice browser \
+            2>&1 | tee ../../gecko-bootstrap.log
+
+      - name: Apply Reynard Gecko patches
+        shell: zsh {0}
+        run: |
+          set -euo pipefail
+          ./tools/development/apply-patches.sh </dev/null 2>&1 | tee apply-patches.log
+
+      - name: Build Gecko for iOS arm64
+        shell: bash
+        run: |
+          set -euo pipefail
+          MACOS_SDK_DIR="$(xcrun --sdk macosx --show-sdk-path)"
+          IPHONEOS_SDK_DIR="$(xcrun --sdk iphoneos --show-sdk-path)"
+          env -u MOZ_AUTOMATION \
+            MACOS_SDK_DIR="$MACOS_SDK_DIR" \
+            IPHONEOS_SDK_DIR="$IPHONEOS_SDK_DIR" \
+            ./tools/development/build-gecko.sh \
+            2>&1 | tee build-gecko.log
+
+      - name: Package and verify Gecko artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="${{ steps.artifact.outputs.archive }}"
+          checksum="${{ steps.artifact.outputs.checksum }}"
+          ./tools/development/gecko-artifact.sh pack "$archive" "$XCODE_APP"
+          ./tools/development/gecko-artifact.sh restore "$archive" "$XCODE_APP"
+          ./tools/development/gecko-artifact.sh verify "$XCODE_APP"
+          shasum -a 256 "$archive" > "$checksum"
+          ls -lh "$archive" "$checksum"
+
+      - name: Upload reusable Gecko artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: |
+            ${{ steps.artifact.outputs.archive }}
+            ${{ steps.artifact.outputs.checksum }}
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+
+      - name: Upload Gecko build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reynard-gecko-build-logs-${{ github.run_id }}
+          path: |
+            *.log
+          if-no-files-found: warn
+          retention-days: 14
