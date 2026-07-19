@@ -29,7 +29,7 @@ This proof bundle is an advisory Aegis Method Pack record. It does not determine
 
 ## Drift Check
 
-- Scope status: All planned source phases and retirement work are complete; external platform evidence remains
-- Compatibility status: UIKit/iOS 16 and Gecko boundaries retained; no WebKit, SwiftUI, CloudKit, IPA, duplicate tab/store owner, or native proxy blocking path added
-- Retirement status: Promotional homepage owners and obsolete iPad tab-overview animation paths are deleted; current tabs route through TabManager-backed phone grid or iPad sidebar
+- Scope status: Client/frontend phases are complete; Task 13 built-in Gecko/WebExtension runtime and Task 16 external evidence remain
+- Compatibility status: UIKit/iOS 16 and Gecko boundaries retained; unsupported engine capabilities are visible and no hidden fallback was added
+- Retirement status: Promotional homepage and obsolete iPad overview owners are deleted; no pending client UI retirement remains
 - Advisory decision: needs-verification

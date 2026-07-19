@@ -462,7 +462,7 @@ state and recovery.
 Swift owns filter configuration, updates, site exceptions, and diagnostics.
 
 - [x] Add tested filter subscription/custom-rule models and failure states.
-- [x] Add built-in extension installation/configuration and blocked-count event
+- [ ] Add built-in extension installation/configuration and blocked-count event
   bridge.
 - [x] Add global/per-site controls, update UI, custom rules, and visible errors.
 - [x] Add bounded update retry and diagnostics; reject hidden proxy/native

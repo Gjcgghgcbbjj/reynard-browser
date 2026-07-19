@@ -71,5 +71,5 @@ No evidence has been recorded yet.
 - Artifact key: phase7-integrated-source
 - Type: full-portable-verification
 - Source: 67 SwiftPM tests; parse of 330 Swift files; all JSON/xcstrings validation; anti-WebKit/SwiftUI and retirement searches
-- Summary: All source phases are integrated and portable verification passes; macOS Xcode, pinned Gecko capability response, iOS 16 devices, accessibility, and 60/120 Hz traces remain external evidence.
+- Summary: All client/frontend source phases are integrated and portable verification passes; macOS Xcode, pinned Gecko capability response, iOS 16 devices, accessibility, and 60/120 Hz traces remain external evidence.
 - Verifier: Codex

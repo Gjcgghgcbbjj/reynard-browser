@@ -2,16 +2,11 @@
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-20-browser-frontend-redesign",
   "lastCheckpointRef": "docs/aegis/work/2026-07-20-browser-frontend-redesign/todo-checkpoint-draft.json",
-  "resumeInstruction": "Do not reopen completed source phases unless Xcode/device evidence exposes a defect; resume with the external verification matrix",
+  "resumeInstruction": "Resume at the pinned Gecko/WebExtension runtime implementation; do not reopen verified client owners unless integration evidence exposes a defect",
   "knownPartialWork": [
-    "Tasks 1-3: plan and Phase 0 design/motion foundation",
-    "Tasks 4-5: responsive chrome, toolbar, and address-bar decomposition",
-    "Tasks 6-7: Gecko finder bridge and redesigned find surface",
-    "Tasks 8-9: phone tab grid and iPad tab sidebar",
-    "Task 10: modular homepage and promotional owner retirement",
-    "Task 11: unified library, settings, downloads, and site-control styling",
-    "Tasks 12-15: Gecko feature contracts, blocking, user scripts, privacy, and backup",
-    "Task 16 source retirement and portable verification"
+    "Tasks 1-12 and 14-15 client/frontend implementation",
+    "Task 13 policies, settings, site controls, Gecko capability contract, bounded retry configuration, and visible failure state",
+    "Task 16 client source retirement and portable verification"
   ],
   "mustReadBeforeContinuing": [
     "docs/aegis/work/2026-07-20-browser-frontend-redesign/10-intent.md",
@@ -19,6 +14,6 @@
     "docs/aegis/work/2026-07-20-browser-frontend-redesign/todo-checkpoint-draft.json"
   ],
   "unsafeToAssume": [
-    "Swift frontend parsing proves UIKit type correctness, Gecko event support, or physical-device 120 Hz performance"
+    "The client Reynard:Features contract means the pinned Gecko runtime implements night mode, blocking, userScripts, or privacy events"
   ]
 }

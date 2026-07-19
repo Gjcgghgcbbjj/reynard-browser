@@ -1,7 +1,7 @@
 # Reynard Browser Frontend Redesign Baseline
 
 Date: `2026-07-20`
-Status: `source-complete, external-verification-pending`
+Status: `client-source-complete, gecko-runtime-and-external-verification-pending`
 Decision record: `docs/aegis/adr/ADR-0001-frontend-surfaces-and-gecko-feature-ownership.md`
 
 ## Current frontend owners

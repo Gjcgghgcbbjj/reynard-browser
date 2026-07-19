@@ -49,10 +49,33 @@
 
 ## DriftCheckDraft
 
-- Scope status: All planned source phases and retirement work are complete; external platform evidence remains
+- Scope status: All client/frontend source phases and retirement work are complete; the built-in Gecko/WebExtension blocking runtime and external platform evidence remain
 - Compatibility status: UIKit/iOS 16 and Gecko boundaries retained; no WebKit, SwiftUI, CloudKit, IPA, duplicate tab/store owner, or native proxy blocking path added
 - Retirement status: Promotional homepage owners and obsolete iPad tab-overview animation paths are deleted; current tabs route through TabManager-backed phone grid or iPad sidebar
 - New risk signals:
 - Pinned Gecko must implement and report Reynard:Features capabilities; unsupported capabilities are shown explicitly instead of using a hidden fallback
 - UIKit type checking, iOS 16 runtime behavior, VoiceOver, and 60/120 Hz performance are not verifiable on WSL
+- Advisory decision: needs-verification
+
+## Checkpoint Update
+
+- Current todo: Task 13 Gecko built-in blocking runtime; Task 16 external verification
+- Active slice: Gecko submodule implementation and external platform evidence
+- Completed todos:
+- Tasks 1-12 and 14-15 client/frontend implementation
+- Task 13 policies, settings, site controls, Gecko capability contract, bounded retry configuration, and visible failure state
+- Task 16 client source retirement and portable verification
+- Evidence refs:
+- docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase7-integrated-source.json
+- Blocked on: engine/firefox and support/idevice submodules are not initialized in this workspace; macOS/Xcode and iOS 16 devices are unavailable
+- Next step: Initialize the pinned Firefox submodule in a full engine workspace, implement/install the built-in WebExtension plus blocked-count event, then run Xcode and device verification
+
+## DriftCheckDraft
+
+- Scope status: Client/frontend phases are complete; Task 13 built-in Gecko/WebExtension runtime and Task 16 external evidence remain
+- Compatibility status: UIKit/iOS 16 and Gecko boundaries retained; unsupported engine capabilities are visible and no hidden fallback was added
+- Retirement status: Promotional homepage and obsolete iPad overview owners are deleted; no pending client UI retirement remains
+- New risk signals:
+- Pinned engine submodule is absent, so built-in extension installation, blocked-count events, and runtime feature execution are not implemented or verified here
+- Xcode, iOS 16 device, accessibility, and 60/120 Hz evidence remain unavailable
 - Advisory decision: needs-verification

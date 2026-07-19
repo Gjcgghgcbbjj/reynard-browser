@@ -1,22 +1,17 @@
 {
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-20-browser-frontend-redesign",
-  "currentTodo": "Task 16: Phase 7 external Xcode/device verification",
+  "currentTodo": "Task 13 Gecko built-in blocking runtime; Task 16 external verification",
   "completedTodos": [
-    "Tasks 1-3: plan and Phase 0 design/motion foundation",
-    "Tasks 4-5: responsive chrome, toolbar, and address-bar decomposition",
-    "Tasks 6-7: Gecko finder bridge and redesigned find surface",
-    "Tasks 8-9: phone tab grid and iPad tab sidebar",
-    "Task 10: modular homepage and promotional owner retirement",
-    "Task 11: unified library, settings, downloads, and site-control styling",
-    "Tasks 12-15: Gecko feature contracts, blocking, user scripts, privacy, and backup",
-    "Task 16 source retirement and portable verification"
+    "Tasks 1-12 and 14-15 client/frontend implementation",
+    "Task 13 policies, settings, site controls, Gecko capability contract, bounded retry configuration, and visible failure state",
+    "Task 16 client source retirement and portable verification"
   ],
-  "activeSlice": "External platform evidence only",
+  "activeSlice": "Gecko submodule implementation and external platform evidence",
   "evidenceRefs": [
     "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase7-integrated-source.json"
   ],
-  "blockedOn": "macOS/Xcode, pinned Gecko feature implementation response, iOS 16 devices, VoiceOver, and Instruments are unavailable in WSL",
-  "nextStep": "Build on macOS, confirm Reynard:Features capability contract in the pinned Gecko integration, then run iOS 16 phone/iPad 60/120 Hz accessibility and recovery matrix",
+  "blockedOn": "engine/firefox and support/idevice submodules are not initialized in this workspace; macOS/Xcode and iOS 16 devices are unavailable",
+  "nextStep": "Initialize the pinned Firefox submodule in a full engine workspace, implement/install the built-in WebExtension plus blocked-count event, then run Xcode and device verification",
   "updatedAt": "2026-07-20"
 }

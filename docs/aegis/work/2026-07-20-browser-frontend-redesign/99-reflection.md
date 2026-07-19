@@ -2,7 +2,7 @@
 
 ## Completion candidate
 
-- Source outcome: Phase 0-7 source implementation is complete on `codex/via-phase1a`.
+- Source outcome: Phase 0-7 client/frontend source implementation is complete on `codex/via-phase1a`.
 - Delivered owners: design/motion system, configurable browser chrome, Gecko finder, phone tab grid, iPad tab sidebar, modular homepage, shared library/settings styling, Gecko feature coordinator, user-script management, privacy controls, and portable backup.
 - Retirement: promotional homepage controllers and their scheduling preferences were removed; the iPad tab button now owns sidebar visibility and the obsolete pad tab-overview animation branch was deleted.
 - Evidence: 67 portable tests pass, 330 Swift files parse, JSON/string catalogs validate, and structural searches find no WebKit, SwiftUI, promotional homepage owner, obsolete pad transition, or remaining tab/sidebar `UIView.animate` path.
@@ -20,4 +20,4 @@
 - New feature UI was split into focused owners rather than added to `BrowserViewController` or `AddressBar`.
 - `BrowserViewController.swift` and `AddressBar.swift` remain over 800 lines and should be monitored; this phase did not create a second source of truth or new compatibility fallback inside them.
 
-Method Pack evidence supports a source-complete, external-verification-pending judgment; it does not grant release authority.
+Method Pack evidence supports a client-source-complete, gecko-runtime-and-external-verification-pending judgment; it does not grant release authority.

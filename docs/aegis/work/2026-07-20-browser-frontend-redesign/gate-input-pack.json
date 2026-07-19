@@ -1,11 +1,11 @@
 {
   "schemaVersion": "aegis.schema.v0",
   "baselineRefs": [
-    "docs/aegis/specs/2026-07-20-browser-frontend-redesign-design.md"
+    "docs/aegis/baseline/2026-07-20-frontend-redesign-baseline.md"
   ],
   "impactStatement": "docs/aegis/work/2026-07-20-browser-frontend-redesign/impact-statement-draft.json",
   "compatPlan": "iOS 16 UIKit and Gecko; preserve existing user data and regular/private tab behavior",
-  "retirementPlan": "Promotional homepage owners and obsolete iPad tab-overview animation paths are deleted; current tabs route through TabManager-backed phone grid or iPad sidebar",
+  "retirementPlan": "Promotional homepage and obsolete iPad overview owners are deleted; no pending client UI retirement remains",
   "evidenceBundle": [
     "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-design-motion-system.json",
     "docs/aegis/work/2026-07-20-browser-frontend-redesign/evidence-bundle-draft-phase0-motion-policy.json",
