@@ -33,3 +33,19 @@ No evidence has been recorded yet.
 - Source: 0a21668
 - Summary: Added bounded diagnostics persistence/export, current-session URL opt-in, startup/scene events, settings export entry, and localization
 - Verifier: git show --stat 0a21668
+
+## EvidenceBundleDraft
+
+- Artifact key: task3-source-checks
+- Type: test
+- Source: Docker Swift tests, swiftc frontend parse, JSON validation, structural crash-handler assertion
+- Summary: 18 tests passed; recovery-related Swift syntax parsed; localization valid; crash and kill handlers route to recovery instead of tab deletion
+- Verifier: Swift 6.1.3 Linux container plus repository structural script
+
+## EvidenceBundleDraft
+
+- Artifact key: task3-commit
+- Type: commit
+- Source: b6ad790
+- Summary: Added per-tab recovery policy, replacement sessions, manual retry, native failure overlay, and retired crash-driven tab deletion
+- Verifier: git show --stat b6ad790

@@ -5,11 +5,11 @@
   "baselineRefs": [
     "docs/aegis/plans/2026-07-19-ios16-stability-foundation.md"
   ],
-  "scopeStatus": "Task 2 stayed within diagnostics, redaction, startup instrumentation, and settings export scope",
-  "compatStatus": "No rendering/session/persistence schema behavior changed; iOS app compile remains unverified",
-  "retirementStatus": "No runtime fallback or old owner introduced; diagnostics remains observer-only",
+  "scopeStatus": "Task 3 implemented the planned tab-preserving crash/kill recovery and native stable failure state",
+  "compatStatus": "Tab identity/data owners preserved; no schema change or WebKit fallback; Xcode/device behavior unverified",
+  "retirementStatus": "removeTab retired from onCrash and onKill with no deletion fallback retained",
   "newRiskSignals": [
-    "UIKit and Gecko integration cannot be typechecked fully without Xcode/macOS"
+    "Replacement session behavior and overlay interaction require physical-device evidence"
   ],
   "decision": "continue"
 }

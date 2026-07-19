@@ -50,3 +50,28 @@
 - New risk signals:
 - UIKit and Gecko integration cannot be typechecked fully without Xcode/macOS
 - Advisory decision: continue
+
+## Checkpoint Update
+
+- Current todo: Task 4: add bounded JIT retry and two-action failure UI
+- Active slice: Task 4 JIT retry state and UI
+- Completed todos:
+- Task 1: portable stability core, commit 511a6cd
+- Task 2: diagnostics/redaction, commit 0a21668; Xcode verification pending
+- Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending
+- Evidence refs:
+- 18 Swift tests passed
+- All modified Swift files parsed with Swift 6.1 frontend
+- Structural assertion confirms onCrash/onKill contain no removeTab call
+- commit b6ad790
+- Blocked on: Xcode compile and physical Gecko crash/kill injection require macOS/iOS
+- Next step: Replace terminal JIT failure flag with explicit retry policy and two-action UI
+
+## DriftCheckDraft
+
+- Scope status: Task 3 implemented the planned tab-preserving crash/kill recovery and native stable failure state
+- Compatibility status: Tab identity/data owners preserved; no schema change or WebKit fallback; Xcode/device behavior unverified
+- Retirement status: removeTab retired from onCrash and onKill with no deletion fallback retained
+- New risk signals:
+- Replacement session behavior and overlay interaction require physical-device evidence
+- Advisory decision: continue

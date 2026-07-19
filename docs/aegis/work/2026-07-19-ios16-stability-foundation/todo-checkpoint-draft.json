@@ -1,19 +1,20 @@
 {
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-19-ios16-stability-foundation",
-  "currentTodo": "Task 3: preserve tabs and recover Gecko content-process failures",
+  "currentTodo": "Task 4: add bounded JIT retry and two-action failure UI",
   "completedTodos": [
-    "Task 1: portable stability core, 14 tests, commit 511a6cd",
-    "Task 2: diagnostics/redaction source, 18 tests, commit 0a21668; Xcode/manual verification pending"
+    "Task 1: portable stability core, commit 511a6cd",
+    "Task 2: diagnostics/redaction, commit 0a21668; Xcode verification pending",
+    "Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending"
   ],
-  "activeSlice": "Task 3 content process recovery",
+  "activeSlice": "Task 4 JIT retry state and UI",
   "evidenceRefs": [
-    "Docker Swift tests: 18 tests, 0 failures",
-    "StabilityDiagnostics typechecked with stub GeckoView; modified UIKit files parsed successfully",
-    "Localizable.xcstrings parsed as JSON",
-    "commit 0a21668"
+    "18 Swift tests passed",
+    "All modified Swift files parsed with Swift 6.1 frontend",
+    "Structural assertion confirms onCrash/onKill contain no removeTab call",
+    "commit b6ad790"
   ],
-  "blockedOn": "Xcode compile and Settings export manual check require macOS/iOS",
-  "nextStep": "Replace onCrash/onKill tab deletion with canonical session recovery",
+  "blockedOn": "Xcode compile and physical Gecko crash/kill injection require macOS/iOS",
+  "nextStep": "Replace terminal JIT failure flag with explicit retry policy and two-action UI",
   "updatedAt": "2026-07-19"
 }

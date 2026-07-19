@@ -2,10 +2,11 @@
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-19-ios16-stability-foundation",
   "lastCheckpointRef": "docs/aegis/work/2026-07-19-ios16-stability-foundation/todo-checkpoint-draft.json",
-  "resumeInstruction": "Read Task 3, TabManagerImpl crash handlers, SessionManager, current checkpoint, and commits 511a6cd/0a21668",
+  "resumeInstruction": "Read Task 4, JITController.swift, JITFailure.swift, Notifications.swift, and current checkpoint",
   "knownPartialWork": [
-    "Task 1: portable stability core, 14 tests, commit 511a6cd",
-    "Task 2: diagnostics/redaction source, 18 tests, commit 0a21668; Xcode/manual verification pending"
+    "Task 1: portable stability core, commit 511a6cd",
+    "Task 2: diagnostics/redaction, commit 0a21668; Xcode verification pending",
+    "Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending"
   ],
   "mustReadBeforeContinuing": [
     "docs/aegis/work/2026-07-19-ios16-stability-foundation/10-intent.md",
@@ -13,6 +14,6 @@
     "docs/aegis/work/2026-07-19-ios16-stability-foundation/todo-checkpoint-draft.json"
   ],
   "unsafeToAssume": [
-    "Swift parsing proves UIKit API signatures or target membership compile"
+    "Session recreation source passes real Gecko process lifecycle without device verification"
   ]
 }
