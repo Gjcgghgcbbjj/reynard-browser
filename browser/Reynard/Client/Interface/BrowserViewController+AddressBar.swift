@@ -70,6 +70,41 @@ extension BrowserViewController: AddressBarDelegate, AddressBarGestureDelegate {
         browserChrome.setPageZoomLevel(selectedTab.session.settings.pageZoom.level)
         browserChrome.showActionBar(.pageZoom, animated: true)
     }
+
+    func addressBarDidRequestTranslation(_ addressBar: AddressBar) {
+        guard let selectedTab = tabManager.selectedTab,
+              let sourceURL = tabManager.shareableURL(for: selectedTab) else {
+            return
+        }
+
+        let provider = Prefs.BrowsingSettings.translationProvider
+        let request = TranslationRequest(
+            sourceURL: sourceURL,
+            targetLanguage: Locale.preferredLanguages.first ?? "en",
+            customTemplate: Prefs.BrowsingSettings.customTranslationTemplate
+        )
+
+        switch provider.destination(for: request) {
+        case let .success(destination):
+            openTranslation(
+                destination,
+                sourceURL: sourceURL,
+                provider: provider
+            )
+        case let .failure(error):
+            StabilityDiagnostics.shared.recordURL(
+                .session,
+                name: "translation.destinationRejected",
+                urlString: sourceURL.absoluteString,
+                metadata: [
+                    "error": String(describing: error),
+                    "mode": tabManager.selectedTabMode.rawValue,
+                    "provider": provider.rawValue,
+                ]
+            )
+            presentTranslationError(error)
+        }
+    }
     
     func addressBarDidRequestWebsiteModeChange(_ addressBar: AddressBar) {
         guard tabManager.changeWebsiteModeForSelectedTab() else {
@@ -220,6 +255,94 @@ extension BrowserViewController: AddressBarDelegate, AddressBarGestureDelegate {
         }
         
         let navigationController = UINavigationController(rootViewController: settingsController)
+        navigationController.modalPresentationStyle = .pageSheet
+        present(navigationController, animated: true)
+    }
+
+    private func openTranslation(
+        _ destination: URL,
+        sourceURL: URL,
+        provider: TranslationProvider
+    ) {
+        let mode = tabManager.selectedTabMode
+        let index = tabManager.createTab(
+            selecting: true,
+            target: .afterSelected,
+            mode: mode
+        )
+        let tabs = mode == .private ? tabManager.privateTabs : tabManager.regularTabs
+        guard let tab = tabs[safe: index] else {
+            StabilityDiagnostics.shared.recordURL(
+                .session,
+                name: "translation.tabCreationFailed",
+                urlString: sourceURL.absoluteString,
+                metadata: [
+                    "mode": mode.rawValue,
+                    "provider": provider.rawValue,
+                ]
+            )
+            presentTranslationError(.invalidDestination)
+            return
+        }
+
+        tabManager.browse(to: destination.absoluteString, in: tab)
+        StabilityDiagnostics.shared.recordURL(
+            .session,
+            name: "translation.opened",
+            urlString: sourceURL.absoluteString,
+            metadata: [
+                "mode": mode.rawValue,
+                "provider": provider.rawValue,
+            ]
+        )
+    }
+
+    private func presentTranslationError(_ error: TranslationRequestError) {
+        guard presentedViewController == nil else {
+            return
+        }
+
+        let message: String
+        switch error {
+        case .unsupportedSourceURL:
+            message = NSLocalizedString(
+                "Only HTTP and HTTPS pages can be translated.",
+                comment: ""
+            )
+        case .missingCustomTemplate, .invalidCustomTemplate:
+            message = NSLocalizedString(
+                "The custom translation service is not configured. Open Webpage Translation settings and enter a valid URL containing {url}.",
+                comment: "Literal {url} placeholder"
+            )
+        case .invalidDestination:
+            message = NSLocalizedString(
+                "The translation service could not create a valid page. Choose another provider in Webpage Translation settings.",
+                comment: ""
+            )
+        }
+
+        let alert = UIAlertController(
+            title: NSLocalizedString("Unable to Translate Page", comment: ""),
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(
+            UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
+        )
+        alert.addAction(
+            UIAlertAction(
+                title: NSLocalizedString("Open Settings", comment: ""),
+                style: .default
+            ) { [weak self] _ in
+                self?.presentTranslationSettings()
+            }
+        )
+        present(alert, animated: true)
+    }
+
+    private func presentTranslationSettings() {
+        let controller = TranslationPreferencesViewController()
+        let navigationController = UINavigationController(rootViewController: controller)
         navigationController.modalPresentationStyle = .pageSheet
         present(navigationController, animated: true)
     }

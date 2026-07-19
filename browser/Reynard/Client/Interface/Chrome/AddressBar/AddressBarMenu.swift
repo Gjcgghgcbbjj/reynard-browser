@@ -20,10 +20,12 @@ enum AddressBarMenu {
     
     static func makeMenu(
         selectedURL: String?,
+        canTranslatePage: Bool,
         usesDesktopWebsite: Bool?,
         addonItems: [AddonItem],
         onAddonSelected: @escaping (AddonMenuItem) -> Void,
         onPageZoom: @escaping () -> Void,
+        onTranslatePage: @escaping () -> Void,
         onChangeWebsiteMode: @escaping () -> Void,
         onWebsiteSettings: @escaping () -> Void,
         onBookmark: @escaping (Bool) -> Void
@@ -74,6 +76,17 @@ enum AddressBarMenu {
             pageActions.append(UIAction(title: NSLocalizedString("Page Zoom", comment: ""), image: UIImage(named: "reynard.textformat.size")) { _ in
                 onPageZoom()
             })
+        }
+
+        if canTranslatePage {
+            pageActions.append(
+                UIAction(
+                    title: NSLocalizedString("Translate Page", comment: ""),
+                    image: UIImage(named: "reynard.globe")
+                ) { _ in
+                    onTranslatePage()
+                }
+            )
         }
         
         if let isDesktop = usesDesktopWebsite {

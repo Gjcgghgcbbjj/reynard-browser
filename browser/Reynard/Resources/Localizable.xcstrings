@@ -8420,6 +8420,116 @@
         }
       }
     },
+    "Only HTTP and HTTPS pages can be translated." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only HTTP and HTTPS pages can be translated."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seules les pages HTTP et HTTPS peuvent être traduites."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只能翻译 HTTP 和 HTTPS 网页。"
+          }
+        }
+      }
+    },
+    "The custom translation service is not configured. Open Webpage Translation settings and enter a valid URL containing {url}." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The custom translation service is not configured. Open Webpage Translation settings and enter a valid URL containing {url}."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le service de traduction personnalisé n’est pas configuré. Ouvrez les réglages Traduction de pages web et saisissez une URL valide contenant {url}."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义翻译服务尚未正确配置。请打开“网页翻译”设置，并输入包含 {url} 的有效网址。"
+          }
+        }
+      }
+    },
+    "The translation service could not create a valid page. Choose another provider in Webpage Translation settings." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The translation service could not create a valid page. Choose another provider in Webpage Translation settings."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le service de traduction n’a pas pu créer une page valide. Choisissez un autre service dans les réglages Traduction de pages web."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "翻译服务无法创建有效网页。请在“网页翻译”设置中选择其他服务。"
+          }
+        }
+      }
+    },
+    "Translate Page" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Translate Page"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traduire la page"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "翻译网页"
+          }
+        }
+      }
+    },
+    "Unable to Translate Page" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to Translate Page"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de traduire la page"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法翻译网页"
+          }
+        }
+      }
+    },
     "Retry Migration" : {
       "localizations" : {
         "en" : {

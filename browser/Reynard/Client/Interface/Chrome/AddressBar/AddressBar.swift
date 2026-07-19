@@ -12,6 +12,7 @@ protocol AddressBarDelegate: AnyObject {
     func addressBarAddonItems(_ addressBar: AddressBar) -> [AddressBarMenu.AddonItem]
     func addressBar(_ addressBar: AddressBar, didSelectAddon item: AddonMenuItem)
     func addressBarDidRequestPageZoom(_ addressBar: AddressBar)
+    func addressBarDidRequestTranslation(_ addressBar: AddressBar)
     func addressBarDidRequestWebsiteModeChange(_ addressBar: AddressBar)
     func addressBarDidRequestWebsiteSettings(_ addressBar: AddressBar)
     func addressBar(_ addressBar: AddressBar, didRequestBookmarkInFavorites favorites: Bool)
@@ -290,8 +291,10 @@ final class AddressBar: UIView {
     }
     
     func updateMenu(url: String?, usesDesktopWebsite: Bool?) {
+        let shareableURL = delegate?.addressBarShareableURL(self)
         addonsMenu = AddressBarMenu.makeMenu(
             selectedURL: url,
+            canTranslatePage: shareableURL.map(Self.isHTTPPageURL) ?? false,
             usesDesktopWebsite: usesDesktopWebsite,
             addonItems: delegate?.addressBarAddonItems(self) ?? [],
             onAddonSelected: { [weak self] item in
@@ -301,6 +304,10 @@ final class AddressBar: UIView {
             onPageZoom: { [weak self] in
                 guard let self else { return }
                 self.delegate?.addressBarDidRequestPageZoom(self)
+            },
+            onTranslatePage: { [weak self] in
+                guard let self else { return }
+                self.delegate?.addressBarDidRequestTranslation(self)
             },
             onChangeWebsiteMode: { [weak self] in
                 guard let self else { return }
@@ -316,6 +323,15 @@ final class AddressBar: UIView {
             }
         )
         applyState()
+    }
+
+    private static func isHTTPPageURL(_ url: URL) -> Bool {
+        guard let scheme = url.scheme?.lowercased(),
+              scheme == "http" || scheme == "https",
+              url.host?.isEmpty == false else {
+            return false
+        }
+        return true
     }
     
     func setEditingState(_ state: EditingState) {
