@@ -6,7 +6,7 @@ on:
       xcode_version:
         description: Xcode application name installed on the runner
         required: true
-        default: Xcode_16.4.app
+        default: Xcode_26.4.1.app
         type: string
 
 permissions:
@@ -19,7 +19,7 @@ concurrency:
 jobs:
   build:
     name: Build iOS archive and packages
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 360
 
     env:
@@ -87,7 +87,9 @@ jobs:
         run: |
           set -euo pipefail
           cd engine/firefox
+          MACOS_SDK_DIR="$(xcrun --sdk macosx --show-sdk-path)"
           env -u MOZ_AUTOMATION \
+            MACOS_SDK_DIR="$MACOS_SDK_DIR" \
             ./mach --no-interactive bootstrap --application-choice browser \
             2>&1 | tee ../../gecko-bootstrap.log
 
@@ -107,8 +109,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          MACOS_SDK_DIR="$(xcrun --sdk macosx --show-sdk-path)"
           IPHONEOS_SDK_DIR="$(xcrun --sdk iphoneos --show-sdk-path)"
           env -u MOZ_AUTOMATION \
+            MACOS_SDK_DIR="$MACOS_SDK_DIR" \
             IPHONEOS_SDK_DIR="$IPHONEOS_SDK_DIR" \
             ./tools/development/build-gecko.sh \
             2>&1 | tee build-gecko.log
