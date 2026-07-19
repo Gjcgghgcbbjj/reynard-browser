@@ -87,7 +87,9 @@ jobs:
         run: |
           set -euo pipefail
           cd engine/firefox
-          ./mach --no-interactive bootstrap --application-choice browser 2>&1 | tee ../../gecko-bootstrap.log
+          env -u MOZ_AUTOMATION \
+            ./mach --no-interactive bootstrap --application-choice browser \
+            2>&1 | tee ../../gecko-bootstrap.log
 
       - name: Apply Reynard Gecko patches
         shell: zsh {0}
@@ -105,7 +107,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ./tools/development/build-gecko.sh 2>&1 | tee build-gecko.log
+          IPHONEOS_SDK_DIR="$(xcrun --sdk iphoneos --show-sdk-path)"
+          env -u MOZ_AUTOMATION \
+            IPHONEOS_SDK_DIR="$IPHONEOS_SDK_DIR" \
+            ./tools/development/build-gecko.sh \
+            2>&1 | tee build-gecko.log
 
       - name: Validate Xcode project
         shell: bash
