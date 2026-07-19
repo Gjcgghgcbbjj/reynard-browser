@@ -58,6 +58,8 @@ final class BrowserPreferences {
             key("BrowsingSettings", "requestDesktopWebsite"): UIDevice.current.userInterfaceIdiom == .pad,
             key("BrowsingSettings", "showLinkPreviews"): true,
             key("BrowsingSettings", "showImagePreviews"): true,
+            key("BrowsingSettings", "translationProvider"): TranslationProvider.google.rawValue,
+            key("BrowsingSettings", "customTranslationTemplate"): "",
             
             // New Tab
             key("NewTabSettings", "newTabDisplayOption"): NewTabDisplayOption.homepage.rawValue,
@@ -256,6 +258,39 @@ final class BrowserPreferences {
             }
             set {
                 prefs.set(newValue, forSetting: "BrowsingSettings", key: "showImagePreviews")
+            }
+        }
+
+        static var translationProvider: TranslationProvider {
+            get {
+                let rawValue = prefs.string(
+                    forSetting: "BrowsingSettings",
+                    key: "translationProvider"
+                ) ?? TranslationProvider.google.rawValue
+                return TranslationProvider(rawValue: rawValue) ?? .google
+            }
+            set {
+                prefs.set(
+                    newValue.rawValue,
+                    forSetting: "BrowsingSettings",
+                    key: "translationProvider"
+                )
+            }
+        }
+
+        static var customTranslationTemplate: String {
+            get {
+                prefs.string(
+                    forSetting: "BrowsingSettings",
+                    key: "customTranslationTemplate"
+                ) ?? ""
+            }
+            set {
+                prefs.set(
+                    newValue.trimmingCharacters(in: .whitespacesAndNewlines),
+                    forSetting: "BrowsingSettings",
+                    key: "customTranslationTemplate"
+                )
             }
         }
     }

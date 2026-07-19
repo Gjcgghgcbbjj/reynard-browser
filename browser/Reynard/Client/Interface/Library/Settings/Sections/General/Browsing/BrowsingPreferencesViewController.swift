@@ -10,6 +10,7 @@ import UIKit
 final class BrowsingPreferencesViewController: SettingsTableViewController {
     private enum Section: CaseIterable {
         case links
+        case translation
         case media
         case desktopWebsite
         
@@ -17,6 +18,8 @@ final class BrowsingPreferencesViewController: SettingsTableViewController {
             switch self {
             case .links:
                 return SettingsSectionText(headerTitle: NSLocalizedString("Links", comment: ""))
+            case .translation:
+                return SettingsSectionText(headerTitle: NSLocalizedString("Webpage Translation", comment: ""))
             case .media:
                 return SettingsSectionText(headerTitle: NSLocalizedString("Media", comment: ""))
             case .desktopWebsite:
@@ -75,6 +78,8 @@ final class BrowsingPreferencesViewController: SettingsTableViewController {
         switch Section.allCases[section] {
         case .links:
             return LinksRow.allCases.count
+        case .translation:
+            return 1
         case .media:
             return MediaRow.allCases.count
         case .desktopWebsite:
@@ -104,6 +109,16 @@ final class BrowsingPreferencesViewController: SettingsTableViewController {
             cell.textLabel?.text = NSLocalizedString("Show Link Previews", comment: "")
             cell.detailTextLabel?.textColor = .secondaryLabel
             cell.accessoryView = showLinkPreviewsSwitch
+            return cell
+        case .translation:
+            guard indexPath.row == 0 else {
+                return UITableViewCell()
+            }
+            let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
+            cell.textLabel?.text = NSLocalizedString("Translation Provider", comment: "")
+            cell.detailTextLabel?.text = Prefs.BrowsingSettings.translationProvider.displayName
+            cell.detailTextLabel?.textColor = .secondaryLabel
+            cell.accessoryType = .disclosureIndicator
             return cell
         case .media:
             guard MediaRow.allCases.indices.contains(indexPath.row) else {
@@ -148,6 +163,14 @@ final class BrowsingPreferencesViewController: SettingsTableViewController {
         switch Section.allCases[indexPath.section] {
         case .links:
             return
+        case .translation:
+            guard indexPath.row == 0 else {
+                return
+            }
+            navigationController?.pushViewController(
+                TranslationPreferencesViewController(),
+                animated: true
+            )
         case .media:
             guard MediaRow.allCases.indices.contains(indexPath.row) else {
                 return

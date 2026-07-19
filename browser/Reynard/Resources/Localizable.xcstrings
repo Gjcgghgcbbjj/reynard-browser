@@ -8288,6 +8288,138 @@
         }
       }
     },
+    "Custom Translation URL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom Translation URL"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL de traduction personnalisée"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义翻译网址"
+          }
+        }
+      }
+    },
+    "Custom translation URLs must use HTTP or HTTPS and include {url}. The optional {lang} placeholder uses your preferred language." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom translation URLs must use HTTP or HTTPS and include {url}. The optional {lang} placeholder uses your preferred language."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les URL de traduction personnalisées doivent utiliser HTTP ou HTTPS et inclure {url}. Le paramètre facultatif {lang} utilise votre langue préférée."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义翻译网址必须使用 HTTP 或 HTTPS，并包含 {url}。可选的 {lang} 占位符会使用你的首选语言。"
+          }
+        }
+      }
+    },
+    "Invalid Translation Template" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid Translation Template"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modèle de traduction non valide"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "翻译模板无效"
+          }
+        }
+      }
+    },
+    "The custom translation URL must use HTTP or HTTPS and include {url}." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The custom translation URL must use HTTP or HTTPS and include {url}."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’URL de traduction personnalisée doit utiliser HTTP ou HTTPS et inclure {url}."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义翻译网址必须使用 HTTP 或 HTTPS，并包含 {url}。"
+          }
+        }
+      }
+    },
+    "Translation Provider" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Translation Provider"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service de traduction"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "翻译服务"
+          }
+        }
+      }
+    },
+    "Webpage Translation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Webpage Translation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traduction de pages web"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网页翻译"
+          }
+        }
+      }
+    },
     "Retry Migration" : {
       "localizations" : {
         "en" : {
