@@ -25,3 +25,5 @@ Entries are workspace records, not authoritative runtime decisions.
 | 2026-07-19 | artifact | docs/aegis/work/2026-07-19-ios16-stability-foundation/evidence-bundle-draft-task2-commit.json | 2026-07-19-ios16-stability-foundation evidence task2-commit |
 | 2026-07-19 | artifact | docs/aegis/work/2026-07-19-ios16-stability-foundation/evidence-bundle-draft-task3-source-checks.json | 2026-07-19-ios16-stability-foundation evidence task3-source-checks |
 | 2026-07-19 | artifact | docs/aegis/work/2026-07-19-ios16-stability-foundation/evidence-bundle-draft-task3-commit.json | 2026-07-19-ios16-stability-foundation evidence task3-commit |
+| 2026-07-19 | artifact | docs/aegis/work/2026-07-19-ios16-stability-foundation/evidence-bundle-draft-task4-source-checks.json | 2026-07-19-ios16-stability-foundation evidence task4-source-checks |
+| 2026-07-19 | artifact | docs/aegis/work/2026-07-19-ios16-stability-foundation/evidence-bundle-draft-task4-commit.json | 2026-07-19-ios16-stability-foundation evidence task4-commit |

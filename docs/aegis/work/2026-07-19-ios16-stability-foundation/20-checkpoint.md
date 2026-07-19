@@ -75,3 +75,29 @@
 - New risk signals:
 - Replacement session behavior and overlay interaction require physical-device evidence
 - Advisory decision: continue
+
+## Checkpoint Update
+
+- Current todo: Task 5: replace recoverable startup migration crashes with typed outcomes
+- Active slice: Task 5 typed startup migration outcomes
+- Completed todos:
+- Task 1: portable stability core, commit 511a6cd
+- Task 2: diagnostics/redaction, commit 0a21668; Xcode verification pending
+- Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending
+- Task 4: bounded JIT retry and selected-session recreation, commit 2ef79a1; device verification pending
+- Evidence refs:
+- 19 Swift tests passed
+- Modified app Swift files parsed with Swift 6.1 frontend
+- Localization JSON and Retry JIT translations validated
+- commit 2ef79a1
+- Blocked on: Xcode compile and physical JIT retry simulation require macOS/iOS
+- Next step: Read UserDataMigration and FileMigration policy, then add temporary-directory tests before replacing migration fatalError paths
+
+## DriftCheckDraft
+
+- Scope status: Task 4 stayed within bounded JIT recovery and selected GeckoSession recreation
+- Compatibility status: Tab identity, Gecko rendering, JIT-less mode, and existing persistence owners remain unchanged; Xcode/device behavior is unverified
+- Retirement status: Terminal hasHandledFailure state was removed and no parallel retry owner was introduced
+- New risk signals:
+- Notification-to-session recreation timing and successful JIT reattachment require physical-device evidence
+- Advisory decision: continue

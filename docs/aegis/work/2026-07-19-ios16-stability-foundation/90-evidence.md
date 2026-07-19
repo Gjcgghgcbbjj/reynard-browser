@@ -49,3 +49,19 @@ No evidence has been recorded yet.
 - Source: b6ad790
 - Summary: Added per-tab recovery policy, replacement sessions, manual retry, native failure overlay, and retired crash-driven tab deletion
 - Verifier: git show --stat b6ad790
+
+## EvidenceBundleDraft
+
+- Artifact key: task4-source-checks
+- Type: test
+- Source: Docker Swift tests, swiftc frontend parse, JSON validation, and structural JIT retry assertions
+- Summary: 19 tests passed; four modified app Swift files parsed; localization JSON and en/fr/zh-Hans Retry JIT values validated; JIT retry notification and shared session replacement structurally confirmed
+- Verifier: Swift 6.1.3 Linux container plus Python and git diff checks
+
+## EvidenceBundleDraft
+
+- Artifact key: task4-commit
+- Type: commit
+- Source: 2ef79a1
+- Summary: Added bounded JIT retry state, two-action failure UI, diagnostics export on exhaustion, and selected GeckoSession recreation without changing tab identity
+- Verifier: git show --stat 2ef79a1

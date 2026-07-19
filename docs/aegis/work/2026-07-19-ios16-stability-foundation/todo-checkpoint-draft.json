@@ -1,20 +1,21 @@
 {
   "schemaVersion": "aegis.schema.v0",
   "taskId": "2026-07-19-ios16-stability-foundation",
-  "currentTodo": "Task 4: add bounded JIT retry and two-action failure UI",
+  "currentTodo": "Task 5: replace recoverable startup migration crashes with typed outcomes",
   "completedTodos": [
     "Task 1: portable stability core, commit 511a6cd",
     "Task 2: diagnostics/redaction, commit 0a21668; Xcode verification pending",
-    "Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending"
+    "Task 3: crash/kill session recovery preserves tabs, commit b6ad790; device verification pending",
+    "Task 4: bounded JIT retry and selected-session recreation, commit 2ef79a1; device verification pending"
   ],
-  "activeSlice": "Task 4 JIT retry state and UI",
+  "activeSlice": "Task 5 typed startup migration outcomes",
   "evidenceRefs": [
-    "18 Swift tests passed",
-    "All modified Swift files parsed with Swift 6.1 frontend",
-    "Structural assertion confirms onCrash/onKill contain no removeTab call",
-    "commit b6ad790"
+    "19 Swift tests passed",
+    "Modified app Swift files parsed with Swift 6.1 frontend",
+    "Localization JSON and Retry JIT translations validated",
+    "commit 2ef79a1"
   ],
-  "blockedOn": "Xcode compile and physical Gecko crash/kill injection require macOS/iOS",
-  "nextStep": "Replace terminal JIT failure flag with explicit retry policy and two-action UI",
+  "blockedOn": "Xcode compile and physical JIT retry simulation require macOS/iOS",
+  "nextStep": "Read UserDataMigration and FileMigration policy, then add temporary-directory tests before replacing migration fatalError paths",
   "updatedAt": "2026-07-19"
 }
