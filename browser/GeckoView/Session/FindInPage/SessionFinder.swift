@@ -1,6 +1,6 @@
 import Foundation
 
-public enum FindInPageDirection: Sendable {
+public enum FindInPageDirection: Equatable, Sendable {
     case forward
     case backward
 }

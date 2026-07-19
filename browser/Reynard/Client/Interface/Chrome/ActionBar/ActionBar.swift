@@ -5,6 +5,7 @@
 //  Created by Minh Ton on 28/6/26.
 //
 
+import GeckoView
 import UIKit
 
 final class ActionBar: UIView {
@@ -12,6 +13,7 @@ final class ActionBar: UIView {
     
     enum Item: Equatable {
         case pageZoom
+        case findInPage
     }
     
     var onPageZoomOut: (() -> Void)? {
@@ -31,12 +33,31 @@ final class ActionBar: UIView {
     
     var onClose: (() -> Void)? {
         get { return pageZoomActionBar.onClose }
-        set { pageZoomActionBar.onClose = newValue }
+        set {
+            pageZoomActionBar.onClose = newValue
+            findInPageActionBar.onClose = newValue
+        }
+    }
+
+    var onFindQueryChanged: ((String) -> Void)? {
+        get { findInPageActionBar.onQueryChanged }
+        set { findInPageActionBar.onQueryChanged = newValue }
+    }
+
+    var onFindPrevious: (() -> Void)? {
+        get { findInPageActionBar.onPrevious }
+        set { findInPageActionBar.onPrevious = newValue }
+    }
+
+    var onFindNext: (() -> Void)? {
+        get { findInPageActionBar.onNext }
+        set { findInPageActionBar.onNext = newValue }
     }
     
     private(set) var item: Item?
     
     private let pageZoomActionBar = PageZoomActionBar()
+    private let findInPageActionBar = FindInPageActionBar()
     
     // MARK: - Lifecycle
     
@@ -58,6 +79,10 @@ final class ActionBar: UIView {
         self.item = item
         isHidden = item == nil
         pageZoomActionBar.isHidden = item != .pageZoom
+        findInPageActionBar.isHidden = item != .findInPage
+        if item != .findInPage {
+            findInPageActionBar.endSearchEditing()
+        }
     }
     
     func setPageZoomLevel(_ level: Int) {
@@ -71,6 +96,18 @@ final class ActionBar: UIView {
     func previousPageZoomLevel() -> Int {
         return pageZoomActionBar.previousZoomLevel()
     }
+
+    var isFindSearchFocused: Bool {
+        findInPageActionBar.isSearchFocused
+    }
+
+    func focusFindInPage() {
+        findInPageActionBar.focus()
+    }
+
+    func updateFindResult(_ result: FindInPageResult?) {
+        findInPageActionBar.updateResult(result)
+    }
     
     // MARK: - View Setup
     
@@ -81,6 +118,7 @@ final class ActionBar: UIView {
     
     private func configureHierarchy() {
         addSubview(pageZoomActionBar)
+        addSubview(findInPageActionBar)
     }
     
     private func configureConstraints() {
@@ -91,6 +129,11 @@ final class ActionBar: UIView {
             pageZoomActionBar.leadingAnchor.constraint(equalTo: leadingAnchor),
             pageZoomActionBar.trailingAnchor.constraint(equalTo: trailingAnchor),
             pageZoomActionBar.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            findInPageActionBar.topAnchor.constraint(equalTo: topAnchor),
+            findInPageActionBar.leadingAnchor.constraint(equalTo: leadingAnchor),
+            findInPageActionBar.trailingAnchor.constraint(equalTo: trailingAnchor),
+            findInPageActionBar.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 }

@@ -12,6 +12,7 @@ protocol AddressBarDelegate: AnyObject {
     func addressBarAddonItems(_ addressBar: AddressBar) -> [AddressBarMenu.AddonItem]
     func addressBar(_ addressBar: AddressBar, didSelectAddon item: AddonMenuItem)
     func addressBarDidRequestPageZoom(_ addressBar: AddressBar)
+    func addressBarDidRequestFindInPage(_ addressBar: AddressBar)
     func addressBarDidRequestTranslation(_ addressBar: AddressBar)
     func addressBarDidRequestWebsiteModeChange(_ addressBar: AddressBar)
     func addressBarDidRequestWebsiteSettings(_ addressBar: AddressBar)
@@ -306,6 +307,10 @@ final class AddressBar: UIView {
             onPageZoom: { [weak self] in
                 guard let self else { return }
                 self.delegate?.addressBarDidRequestPageZoom(self)
+            },
+            onFindInPage: { [weak self] in
+                guard let self else { return }
+                self.delegate?.addressBarDidRequestFindInPage(self)
             },
             onTranslatePage: { [weak self] in
                 guard let self else { return }

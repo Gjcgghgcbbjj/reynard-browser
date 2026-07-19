@@ -5,6 +5,7 @@
 //  Created by Minh Ton on 10/6/26.
 //
 
+import GeckoView
 import UIKit
 
 final class BrowserChrome: UIView {
@@ -30,6 +31,10 @@ final class BrowserChrome: UIView {
     var onPageZoomOut: (() -> Void)?
     var onPageZoomIn: (() -> Void)?
     var onPageZoomReset: (() -> Void)?
+    var onFindQueryChanged: ((String) -> Void)?
+    var onFindPrevious: (() -> Void)?
+    var onFindNext: (() -> Void)?
+    var onFindInPageDismiss: (() -> Void)?
     
     private let addressBar: AddressBar = {
         let view = AddressBar()
@@ -167,15 +172,25 @@ final class BrowserChrome: UIView {
             return
         }
         
+        if actionBar.item == .findInPage && item != .findInPage {
+            onFindInPageDismiss?()
+        }
         actionBar.setItem(item)
         showActionBar(animated: animated)
+        if item == .findInPage {
+            actionBar.focusFindInPage()
+        }
     }
     
     func dismissActionBar(animated: Bool) {
         guard !actionBar.isHidden else { return }
+        let dismissedItem = actionBar.item
         
         let finish = {
             self.actionBar.setItem(nil)
+            if dismissedItem == .findInPage {
+                self.onFindInPageDismiss?()
+            }
         }
         
         guard animated else {
@@ -210,6 +225,17 @@ final class BrowserChrome: UIView {
     
     func previousPageZoomLevel() -> Int {
         return actionBar.previousPageZoomLevel()
+    }
+
+    var isFindInPageFocused: Bool {
+        actionBar.isFindSearchFocused
+    }
+
+    func updateFindInPageResult(_ result: FindInPageResult?) {
+        guard actionBar.item == .findInPage else {
+            return
+        }
+        actionBar.updateFindResult(result)
     }
     
     // MARK: - Overlay Content
@@ -417,6 +443,9 @@ final class BrowserChrome: UIView {
         actionBar.onPageZoomOut = { [weak self] in self?.onPageZoomOut?() }
         actionBar.onPageZoomIn = { [weak self] in self?.onPageZoomIn?() }
         actionBar.onPageZoomReset = { [weak self] in self?.onPageZoomReset?() }
+        actionBar.onFindQueryChanged = { [weak self] query in self?.onFindQueryChanged?(query) }
+        actionBar.onFindPrevious = { [weak self] in self?.onFindPrevious?() }
+        actionBar.onFindNext = { [weak self] in self?.onFindNext?() }
         actionBar.onClose = { [weak self] in self?.dismissActionBar(animated: true) }
     }
     

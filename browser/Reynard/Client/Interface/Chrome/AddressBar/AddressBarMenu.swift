@@ -25,6 +25,7 @@ enum AddressBarMenu {
         addonItems: [AddonItem],
         onAddonSelected: @escaping (AddonMenuItem) -> Void,
         onPageZoom: @escaping () -> Void,
+        onFindInPage: @escaping () -> Void,
         onTranslatePage: @escaping () -> Void,
         onChangeWebsiteMode: @escaping () -> Void,
         onWebsiteSettings: @escaping () -> Void,
@@ -76,6 +77,18 @@ enum AddressBarMenu {
             pageActions.append(UIAction(title: NSLocalizedString("Page Zoom", comment: ""), image: UIImage(named: "reynard.textformat.size")) { _ in
                 onPageZoom()
             })
+        }
+
+        if let url,
+           url.absoluteString.lowercased() != "about:blank" {
+            pageActions.append(
+                UIAction(
+                    title: NSLocalizedString("Find in Page", comment: ""),
+                    image: UIImage(named: "reynard.magnifyingglass")
+                ) { _ in
+                    onFindInPage()
+                }
+            )
         }
 
         if canTranslatePage {

@@ -71,6 +71,10 @@ extension BrowserViewController: AddressBarDelegate, AddressBarGestureDelegate {
         browserChrome.showActionBar(.pageZoom, animated: true)
     }
 
+    func addressBarDidRequestFindInPage(_ addressBar: AddressBar) {
+        findInPageCoordinator.present()
+    }
+
     func addressBarDidRequestTranslation(_ addressBar: AddressBar) {
         guard let selectedTab = tabManager.selectedTab,
               let sourceURL = tabManager.shareableURL(for: selectedTab) else {

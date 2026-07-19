@@ -53,6 +53,11 @@ final class BrowserViewController: UIViewController {
     )
     lazy var contextMenuCoordinator = ContextMenuCoordinator(host: self, sessionManager: sessionManager)
     lazy var downloadsCoordinator = DownloadsCoordinator(delegate: self)
+    lazy var findInPageCoordinator = FindInPageCoordinator(
+        browserChrome: browserChrome
+    ) { [weak self] in
+        self?.tabManager.selectedTab?.session
+    }
     lazy var sidebarCoordinator = SidebarCoordinator(
         host: self,
         canHostSidebar: allowsSidebarHosting
@@ -301,6 +306,18 @@ final class BrowserViewController: UIViewController {
         }
         browserChrome.onPageZoomReset = { [weak self] in
             self?.setSelectedPageZoomLevel(Prefs.AppearanceSettings.defaultPageZoomLevel)
+        }
+        browserChrome.onFindQueryChanged = { [weak self] query in
+            self?.findInPageCoordinator.queryChanged(query)
+        }
+        browserChrome.onFindPrevious = { [weak self] in
+            self?.findInPageCoordinator.findPrevious()
+        }
+        browserChrome.onFindNext = { [weak self] in
+            self?.findInPageCoordinator.findNext()
+        }
+        browserChrome.onFindInPageDismiss = { [weak self] in
+            self?.findInPageCoordinator.actionBarDidDismiss()
         }
     }
     
@@ -681,7 +698,9 @@ final class BrowserViewController: UIViewController {
             view.bounds.maxY - keyboardFrame.minY - view.safeAreaInsets.bottom
         )
         let animation = keyboardAnimation(from: notification)
-        if !searchOverlayCoordinator.isFocused && !tabOverview.isPresented && keyboardInset > 0 {
+        let isBrowserChromeInputFocused = searchOverlayCoordinator.isFocused ||
+        browserChrome.isFindInPageFocused
+        if !isBrowserChromeInputFocused && !tabOverview.isPresented && keyboardInset > 0 {
             contentView.relocateFocusedInput(
                 above: keyboardFrame,
                 animationDuration: animation.duration,
@@ -695,7 +714,7 @@ final class BrowserViewController: UIViewController {
         }
         
         let shouldDockChrome = browserLayout.chromeMode == .phone
-        && searchOverlayCoordinator.isFocused
+        && isBrowserChromeInputFocused
         && !tabOverview.isPresented
         && keyboardInset > 0
         browserChrome.dockAddressBar(offset: shouldDockChrome ? -keyboardInset : 0)

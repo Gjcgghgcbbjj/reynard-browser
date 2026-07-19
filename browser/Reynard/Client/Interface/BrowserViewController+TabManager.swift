@@ -31,6 +31,7 @@ extension BrowserViewController: TabManagerDelegate {
     }
     
     func tabManager(_ tabManager: TabManager, didSelectTabAt index: Int, previousIndex: Int?) {
+        findInPageCoordinator.dismissPresentation(animated: false)
         tabBar.setPendingExpansion(at: nil)
         
         guard let selectedTab = tabManager.activeTabs[safe: index] else {
@@ -64,6 +65,7 @@ extension BrowserViewController: TabManagerDelegate {
     }
     
     func tabManager(_ tabManager: TabManager, didReplaceSelectedSession previousSession: GeckoSession, with replacementSession: GeckoSession) {
+        findInPageCoordinator.dismissPresentation(animated: false)
         if tabManager.selectedTab?.session === replacementSession {
             contentView.setSession(replacementSession)
         }
@@ -118,6 +120,7 @@ extension BrowserViewController: TabManagerDelegate {
             
         case .location:
             if index == tabManager.selectedTabIndex {
+                findInPageCoordinator.dismissPresentation(animated: false)
                 let tab = tabManager.activeTabs[index]
                 contentView.noteHistoryLocationChange()
                 refreshAddressBar()
