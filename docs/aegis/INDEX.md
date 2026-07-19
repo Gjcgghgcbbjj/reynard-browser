@@ -33,3 +33,4 @@ Entries are workspace records, not authoritative runtime decisions.
 | 2026-07-19 | artifact | docs/aegis/work/2026-07-19-ios16-stability-foundation/evidence-bundle-draft-task6-commit.json | 2026-07-19-ios16-stability-foundation evidence task6-commit |
 | 2026-07-19 | artifact | docs/aegis/work/2026-07-19-ios16-stability-foundation/evidence-bundle-draft-task7-source-checks.json | 2026-07-19-ios16-stability-foundation evidence task7-source-checks |
 | 2026-07-19 | artifact | docs/aegis/work/2026-07-19-ios16-stability-foundation/evidence-bundle-draft-task7-commit.json | 2026-07-19-ios16-stability-foundation evidence task7-commit |
+| 2026-07-19 | plan | docs/aegis/plans/2026-07-19-via-translation.md | Via Phase 1 Webpage Translation Implementation Plan |
