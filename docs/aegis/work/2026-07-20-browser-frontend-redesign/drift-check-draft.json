@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "taskId": "2026-07-20-browser-frontend-redesign",
+  "taskIntentRef": "docs/aegis/work/2026-07-20-browser-frontend-redesign/task-intent-draft.json",
+  "baselineRefs": [
+    "docs/aegis/specs/2026-07-20-browser-frontend-redesign-design.md",
+    "docs/aegis/specs/2026-07-19-ios16-stability-usability-design.md",
+    "docs/aegis/baseline/2026-07-19-initial-baseline.md"
+  ],
+  "scopeStatus": "not-yet-verified",
+  "compatStatus": "not-yet-verified",
+  "retirementStatus": "not-yet-verified",
+  "newRiskSignals": [
+    "WSL cannot compile UIKit/Gecko targets or produce physical-device performance evidence",
+    "Oversized current UI owners require delete-after-migration to avoid duplicate responsibility"
+  ],
+  "decision": "needs-baseline-readback"
+}

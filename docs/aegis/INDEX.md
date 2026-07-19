@@ -51,3 +51,14 @@ Entries are workspace records, not authoritative runtime decisions.
 | 2026-07-20 | artifact | docs/aegis/work/2026-07-19-via-translation/gate-input-pack.json | 2026-07-19-via-translation gate input pack |
 | 2026-07-20 | work | docs/aegis/work/2026-07-19-via-translation/proof-bundle.md | 2026-07-19-via-translation proof bundle |
 | 2026-07-20 | spec | docs/aegis/specs/2026-07-20-browser-frontend-redesign-design.md | Reynard Browser Frontend Redesign Design |
+| 2026-07-20 | plan | docs/aegis/plans/2026-07-20-browser-frontend-redesign.md | Reynard Browser Frontend Redesign Implementation Plan |
+| 2026-07-20 | work | docs/aegis/work/2026-07-20-browser-frontend-redesign/10-intent.md | Reynard Browser Frontend Redesign intent |
+| 2026-07-20 | work | docs/aegis/work/2026-07-20-browser-frontend-redesign/20-checkpoint.md | Reynard Browser Frontend Redesign checkpoint |
+| 2026-07-20 | work | docs/aegis/work/2026-07-20-browser-frontend-redesign/90-evidence.md | Reynard Browser Frontend Redesign evidence |
+| 2026-07-20 | work | docs/aegis/work/2026-07-20-browser-frontend-redesign/99-reflection.md | Reynard Browser Frontend Redesign reflection |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/task-intent-draft.json | Reynard Browser Frontend Redesign task intent draft |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/baseline-read-set-hint.json | Reynard Browser Frontend Redesign baseline read-set hint |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/baseline-usage-draft.json | Reynard Browser Frontend Redesign baseline usage draft |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/impact-statement-draft.json | Reynard Browser Frontend Redesign impact statement draft |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/todo-checkpoint-draft.json | Reynard Browser Frontend Redesign todo checkpoint draft |
+| 2026-07-20 | artifact | docs/aegis/work/2026-07-20-browser-frontend-redesign/drift-check-draft.json | Reynard Browser Frontend Redesign drift check draft |

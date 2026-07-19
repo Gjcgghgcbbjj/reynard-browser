@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "affectedLayers": [
+    "UIKit browser shell, chrome, tabs, homepage, library/settings, Gecko feature bridges, accessibility, localization, and performance evidence"
+  ],
+  "owners": [
+    "BrowserViewController composition plus focused UI/feature owners; Gecko, SessionManager, TabManager, and stores remain authoritative"
+  ],
+  "invariants": [
+    "No WebKit, SwiftUI, second tab/store owner, permanent dual UI, or loss of recovery access"
+  ],
+  "compatBoundary": "iOS 16 UIKit and Gecko; preserve existing user data and regular/private tab behavior",
+  "nonGoals": [
+    "IPA packaging, CloudKit, Via/Firefox asset copying, or persistence rewrites"
+  ]
+}

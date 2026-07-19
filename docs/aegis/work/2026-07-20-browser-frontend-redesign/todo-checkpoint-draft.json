@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "aegis.schema.v0",
+  "taskId": "2026-07-20-browser-frontend-redesign",
+  "currentTodo": "Task 2: Phase 0 portable motion policy",
+  "completedTodos": [],
+  "activeSlice": "Design and motion foundation",
+  "evidenceRefs": [],
+  "blockedOn": "Xcode/device evidence unavailable on WSL but source execution can continue",
+  "nextStep": "Write RED MotionPolicy tests and implement the minimal portable policy",
+  "updatedAt": "2026-07-20"
+}
