@@ -100,7 +100,9 @@ xcode=$xcode_app
 release=$(tr -d '\000\r\n' < "$ROOT_DIR/engine/release.txt")
 EOF
 
-	tar -czf "$archive" \
+	# Gecko's dist/include tree contains absolute symlinks into the object tree.
+	# Dereference them so the uploaded artifact is portable and safe to restore.
+	tar -czhf "$archive" \
 		-C "$ROOT_DIR" \
 		"$GECKO_DIST_REL" \
 		"$DEFAULT_THEME_REL" \

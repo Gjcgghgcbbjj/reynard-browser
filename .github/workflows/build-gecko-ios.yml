@@ -80,7 +80,8 @@ jobs:
           cargo --version
 
       - name: Restore Gecko build caches
-        uses: actions/cache@v4
+        id: gecko-cache
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/.cargo/registry
@@ -125,6 +126,17 @@ jobs:
             IPHONEOS_SDK_DIR="$IPHONEOS_SDK_DIR" \
             ./tools/development/build-gecko.sh \
             2>&1 | tee build-gecko.log
+
+      - name: Save Gecko build caches
+        if: steps.gecko-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.mozbuild/toolchains
+            .cache/sccache
+          key: gecko-ios-${{ runner.os }}-${{ inputs.xcode_version }}-${{ hashFiles('engine/release.txt', 'patches/**/*.patch', 'tools/development/build-gecko.sh', 'tools/development/gecko-artifact.sh') }}
 
       - name: Package and verify Gecko artifact
         shell: bash

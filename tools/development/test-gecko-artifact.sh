@@ -24,6 +24,8 @@ printf '%s\n' 'patch-v1' > "$FIXTURE/patches/widget/test.patch"
 printf '%s\n' '#!/bin/sh' 'echo build' > "$FIXTURE/tools/development/build-gecko.sh"
 printf '%s\n' 'xul' > "$FIXTURE/engine/firefox/obj-aarch64-apple-ios/dist/bin/XUL"
 printf '%s\n' 'header' > "$FIXTURE/engine/firefox/obj-aarch64-apple-ios/dist/include/test.h"
+printf '%s\n' 'generated-header' > "$FIXTURE/generated-header.h"
+ln -s "$FIXTURE/generated-header.h" "$FIXTURE/engine/firefox/obj-aarch64-apple-ios/dist/include/generated.h"
 printf '%s\n' 'theme' > "$FIXTURE/engine/firefox/toolkit/mozapps/extensions/default-theme/theme.css"
 
 key_one="$(REYNARD_ROOT_DIR="$FIXTURE" "$HELPER" key Xcode_26.4.1.app)"
@@ -43,6 +45,8 @@ REYNARD_ROOT_DIR="$FIXTURE" "$HELPER" restore "$archive" Xcode_26.4.1.app
 REYNARD_ROOT_DIR="$FIXTURE" "$HELPER" verify Xcode_26.4.1.app
 [ -s "$FIXTURE/engine/firefox/obj-aarch64-apple-ios/dist/bin/XUL" ] || fail "XUL was not restored"
 [ -s "$FIXTURE/engine/firefox/toolkit/mozapps/extensions/default-theme/theme.css" ] || fail "theme was not restored"
+[ ! -L "$FIXTURE/engine/firefox/obj-aarch64-apple-ios/dist/include/generated.h" ] || fail "absolute header symlink was not dereferenced"
+grep -Fqx 'generated-header' "$FIXTURE/engine/firefox/obj-aarch64-apple-ios/dist/include/generated.h" || fail "dereferenced header content was not restored"
 
 if REYNARD_ROOT_DIR="$FIXTURE" "$HELPER" verify Xcode_26.5.app >/dev/null 2>&1; then
 	fail "mismatched Xcode key was accepted"
