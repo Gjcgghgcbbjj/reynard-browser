@@ -72,6 +72,8 @@ final class TabManagerImplementation: NSObject, TabManager {
         self.faviconStore = faviconStore
         self.historyStore = historyStore
 
+        super.init()
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleJITRetryRequested),
