@@ -1,10 +1,10 @@
 import UIKit
 
 final class SidebarTabListViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDragDelegate, UICollectionViewDropDelegate {
-    private enum Section { case tabs }
+    private static let tabsSection = "tabs"
     private weak var tabsDataSource: TabOverviewDataSource?
     private var mode: TabOverview.Mode = .regularTabs
-    private var dataSource: UICollectionViewDiffableDataSource<Section, UUID>!
+    private var dataSource: UICollectionViewDiffableDataSource<String, UUID>!
 
     private lazy var modeControl: UISegmentedControl = {
         let control = UISegmentedControl(items: [
@@ -52,8 +52,8 @@ final class SidebarTabListViewController: UIViewController, UICollectionViewDele
         guard isViewLoaded else { return }
         let tabs = currentTabs
         let selectedID = selectedTabID
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
-        snapshot.appendSections([.tabs])
+        var snapshot = NSDiffableDataSourceSnapshot<String, UUID>()
+        snapshot.appendSections([Self.tabsSection])
         snapshot.appendItems(tabs.map(\.id))
         dataSource.apply(snapshot, animatingDifferences: animated)
         if let selectedID,
@@ -147,7 +147,7 @@ final class SidebarTabListViewController: UIViewController, UICollectionViewDele
             cell.accessories = [.customView(configuration: .init(customView: UIButton(primaryAction: closeAction), placement: .trailing()))]
             cell.accessibilityHint = NSLocalizedString("Double tap to switch tab. Drag to reorder.", comment: "")
         }
-        dataSource = UICollectionViewDiffableDataSource<Section, UUID>(collectionView: collectionView) { collectionView, indexPath, id in
+        dataSource = UICollectionViewDiffableDataSource<String, UUID>(collectionView: collectionView) { collectionView, indexPath, id in
             collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: id)
         }
     }

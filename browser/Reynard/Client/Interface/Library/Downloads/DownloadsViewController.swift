@@ -28,7 +28,6 @@ final class DownloadsViewController: UIViewController, UITableViewDataSource, UI
     private let headerView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
-        BrowserListStyle.apply(to: view)
         return view
     }()
     

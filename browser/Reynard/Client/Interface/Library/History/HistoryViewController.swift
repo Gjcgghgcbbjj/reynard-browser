@@ -61,7 +61,6 @@ final class HistoryViewController: UIViewController, UITableViewDataSource, UITa
     private let headerView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
-        BrowserListStyle.apply(to: view)
         return view
     }()
     
