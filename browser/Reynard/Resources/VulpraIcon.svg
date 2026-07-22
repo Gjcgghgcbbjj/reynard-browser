@@ -18,7 +18,8 @@
       <feDropShadow dx="0" dy="28" stdDeviation="30" flood-color="#050716" flood-opacity=".5"/>
     </filter>
   </defs>
-  <rect width="1024" height="1024" rx="226" fill="url(#bg)"/>
+  <!-- Keep the source square; iOS applies the platform corner mask. -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
   <circle cx="512" cy="496" r="420" fill="url(#glow)"/>
   <g filter="url(#shadow)">
     <path d="M212 258c61 9 120 29 174 60l126 297 126-297c54-31 113-51 174-60L638 771c-38 52-81 91-126 119-45-28-88-67-126-119L212 258Z" fill="url(#mark)"/>
