@@ -44,6 +44,7 @@ public class GeckoSession {
                 "userAgentMode": settings.websiteMode.userAgentMode,
                 "viewportMode": settings.websiteMode.viewportMode,
                 "pageZoom": settings.pageZoom.scale,
+                "useTrackingProtection": settings.trackingProtection,
             ])
     }
     
@@ -102,6 +103,7 @@ public class GeckoSession {
         set { mediaSessionHandler.setDelegate(newValue) }
     }
     public lazy var mediaSession = MediaSession(session: self)
+    public lazy var finder = SessionFinder(dispatcher: dispatcher)
     private lazy var autofillHandler = GeckoAutofillHandler(session: self)
     private lazy var pictureInPictureHandler = newPictureInPictureHandler(self)
     public var pictureInPictureDelegate: PictureInPictureDelegate? {
@@ -161,7 +163,7 @@ public class GeckoSession {
         let settings: [String: Any?] = [
             "chromeUri": nil,
             "screenId": 0,
-            "useTrackingProtection": false,
+            "useTrackingProtection": sessionSettings.trackingProtection,
             "userAgentMode": sessionSettings.websiteMode.userAgentMode,
             "userAgentOverride": sessionSettings.websiteMode.userAgentOverride,
             "viewportMode": sessionSettings.websiteMode.viewportMode,
