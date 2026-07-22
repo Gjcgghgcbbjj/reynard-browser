@@ -1,6 +1,6 @@
 import Foundation
 
-final class AtomicJSONStore<Value: Codable> {
+struct AtomicJSONStore<Value: Codable> {
     private let url: URL
     private let queue: DispatchQueue
     private let encoder = JSONEncoder()
