@@ -67,6 +67,10 @@ jobs:
           cargo --version
           ldid -h >/dev/null 2>&1 || true
 
+      - name: Initialize idevice source
+        shell: bash
+        run: git submodule update --init --depth 1 support/idevice
+
       - name: Restore Rust dependency caches
         uses: actions/cache@v4
         with:
