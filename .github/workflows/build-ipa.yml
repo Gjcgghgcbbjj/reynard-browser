@@ -153,13 +153,22 @@ jobs:
           test -s dist/Reynard-Jailbroken.ipa
           shasum -a 256 dist/Reynard.ipa dist/Reynard-TrollStore.tipa dist/Reynard-Jailbroken.ipa | tee dist/SHA256SUMS.txt
 
-      - name: Upload installable packages
+      - name: Upload TrollStore test package
         uses: actions/upload-artifact@v4
         with:
-          name: reynard-ios-packages-${{ github.run_id }}
+          name: vulpra-trollstore-${{ github.run_id }}
+          path: |
+            dist/Reynard-TrollStore.tipa
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload alternate installable packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: vulpra-ios-alternates-${{ github.run_id }}
           path: |
             dist/Reynard.ipa
-            dist/Reynard-TrollStore.tipa
             dist/Reynard-Jailbroken.ipa
             dist/SHA256SUMS.txt
           if-no-files-found: error
