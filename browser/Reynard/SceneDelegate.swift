@@ -1,89 +1,31 @@
-//
-//  SceneDelegate.swift
-//  Reynard
-//
-//  Created by Minh Ton on 1/2/26.
-//
-
 import UIKit
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-    
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let windowScene = (scene as? UIWindowScene) else { return }
-        
-        let browserViewController = BrowserViewController()
-        browserViewController.sessionManager.setApplicationForeground(scene.activationState != .background)
-        
+    private var browser: BrowserViewController?
+
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
+               options connectionOptions: UIScene.ConnectionOptions) {
+        guard let windowScene = scene as? UIWindowScene else { return }
+        let initialURL = RuntimeURLRouter.resolve(connectionOptions.urlContexts.first?.url)
+        VulpraAppearance.applyGlobal()
+        let browser = BrowserViewController(initialURL: initialURL)
         let window = UIWindow(windowScene: windowScene)
-        window.overrideUserInterfaceStyle = AppAppearanceController.userInterfaceStyle(for: Prefs.AppearanceSettings.appAppearance)
         window.backgroundColor = .systemBackground
-        window.rootViewController = browserViewController
-        window.makeKeyAndVisible()
+        window.tintColor = VulpraAppearance.accent
+        window.rootViewController = browser
+        self.browser = browser
         self.window = window
-        
-        handleIncomingURLContexts(connectionOptions.urlContexts)
+        window.makeKeyAndVisible()
     }
-    
+
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        handleIncomingURLContexts(URLContexts)
+        guard let url = RuntimeURLRouter.resolve(URLContexts.first?.url) else { return }
+        browser?.open(url)
     }
-    
-    func sceneDidDisconnect(_ scene: UIScene) {}
-    
-    func sceneDidBecomeActive(_ scene: UIScene) {}
-    
-    func sceneWillResignActive(_ scene: UIScene) {
-        (window?.rootViewController as? BrowserViewController)?
-            .sessionManager.applicationWillResignActive()
-    }
-    
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        (window?.rootViewController as? BrowserViewController)?
-            .sessionManager.setApplicationForeground(true)
-    }
-    
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        (window?.rootViewController as? BrowserViewController)?
-            .sessionManager.setApplicationForeground(false)
-    }
-    
-    private func handleIncomingURLContexts(_ urlContexts: Set<UIOpenURLContext>) {
-        guard let incomingURL = urlContexts.first?.url else {
-            return
-        }
-        handleIncomingURL(incomingURL)
-    }
-    
-    private func handleIncomingURL(_ incomingURL: URL) {
-        guard let browserViewController = window?.rootViewController as? BrowserViewController,
-              let resolvedURL = resolvedBrowserURL(from: incomingURL) else {
-            return
-        }
-        
-        DispatchQueue.main.async {
-            browserViewController.loadViewIfNeeded()
-            browserViewController.sidebarCoordinator.loadContentIfNeeded()
-            browserViewController.sidebarCoordinator.openExternalURL(resolvedURL)
-        }
-    }
-    
-    private func resolvedBrowserURL(from incomingURL: URL) -> URL? {
-        guard let scheme = incomingURL.scheme?.lowercased() else {
-            return nil
-        }
-        
-        if scheme == "http" || scheme == "https" {
-            return incomingURL
-        }
-        
-        guard scheme == "reynard",
-              let components = URLComponents(url: incomingURL, resolvingAgainstBaseURL: false),
-              let encodedURL = components.queryItems?.first(where: { $0.name == "url" })?.value else {
-            return nil
-        }
-        
-        return URL(string: encodedURL)
-    }
+
+    func sceneDidBecomeActive(_ scene: UIScene) { browser?.setActive(true) }
+    func sceneWillResignActive(_ scene: UIScene) { browser?.setActive(false) }
+    func sceneDidEnterBackground(_ scene: UIScene) { browser?.setActive(false) }
+    func sceneDidDisconnect(_ scene: UIScene) { browser?.closePrivateTabs() }
 }
